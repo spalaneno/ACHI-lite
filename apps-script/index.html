@@ -1,1 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body{font-family:Arial;padding:20px}
+input,select,button{width:100%;padding:8px;margin:5px 0}
+button{background:#145a32;color:white;border:none}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+td,th{border:1px solid #ccc;padding:6px}
+</style>
+</head>
 
+<body>
+
+<div id="loginBox">
+  <h3>Login</h3>
+  <input id="u" placeholder="Username">
+  <input id="p" type="password" placeholder="Password">
+  <button onclick="doLogin()">Login</button>
+</div>
+
+<div id="app" style="display:none">
+  <h3 id="title"></h3>
+
+  <div id="inputBox">
+    <input type="date" id="tanggal">
+    <select id="kapal"></select>
+    <select id="kategori">
+      <option>Anfrakan</option>
+      <option>Non</option>
+    </select>
+    <select id="pos"></select>
+    <input id="nominal" type="number" placeholder="Nominal">
+    <input id="ket" placeholder="Keterangan">
+    <button onclick="simpan()">Simpan</button>
+  </div>
+
+  <div id="dataBox" style="display:none">
+    <h3>Data Pengeluaran</h3>
+    <table id="tabel"></table>
+  </div>
+
+  <div id="guestBox" style="display:none">
+    <h3>Profil Kapal</h3>
+    <table id="kapalT"></table>
+    <h3>Pengurus Kapal</h3>
+    <table id="pengurusT"></table>
+  </div>
+</div>
+
+<script>
+let role,user,masterPos;
+
+function doLogin(){
+  google.script.run.withSuccessHandler(r=>{
+    if(!r.ok){alert('Login gagal');return;}
+    role=r.role; user=r.user;
+    loginBox.style.display='none';
+    app.style.display='block';
+    title.innerText='Login sebagai '+role;
+    init();
+  }).login(u.value,p.value);
+}
+
+function init(){
+  if(role=='GUEST'){
+    guestBox.style.display='block';
+    google.script.run.withSuccessHandler(drawProfil).getProfil();
+    return;
+  }
+
+  google.script.run.withSuccessHandler(d=>{
+    d.kapal.slice(1).forEach(x=>kapal.innerHTML+=`<option>${x[0]}</option>`);
+    masterPos=d.pos.slice(1);
+  }).getMaster();
+
+  if(role=='SUPER_ADMIN'){
+    dataBox.style.display='block';
+    loadData();
+  }
+}
+
+kategori.onchange=()=>{
+  pos.innerHTML='';
+  masterPos.filter(p=>p[0]==kategori.value)
+    .forEach(p=>pos.innerHTML+=`<option>${p[1]}</option>`);
+}
+
+function simpan(){
+  google.script.run.simpanPengeluaran({
+    tanggal:tanggal.value,
+    kapal:kapal.value,
+    kategori:kategori.value,
+    pos:pos.value,
+    nominal:nominal.value,
+    keterangan:ket.value,
+    user:user
+  });
+  alert('Tersimpan');
+  if(role=='SUPER_ADMIN')loadData();
+}
+
+function loadData(){
+  google.script.run.withSuccessHandler(drawTable).getPengeluaran();
+}
+
+function drawTable(d){
+  let h='<tr>'+d[0].map(x=>`<th>${x}</th>`).join('')+'<th>Aksi</th></tr>';
+  for(let i=1;i<d.length;i++){
+    h+='<tr>'+d[i].map(c=>`<td contenteditable>${c}</td>`).join('')
+    +`<td>
+      <button onclick="save(${i+1},this)">💾</button>
+      <button onclick="del(${i+1})">🗑️</button>
+    </td></tr>`;
+  }
+  tabel.innerHTML=h;
+}
+
+function save(r,b){
+  let td=b.parentElement.parentElement.querySelectorAll('td');
+  let data=[...td].slice(0,-1).map(x=>x.innerText);
+  google.script.run.updatePengeluaran(r,data);
+}
+
+function del(r){
+  if(confirm('Hapus data?')){
+    google.script.run.deletePengeluaran(r);
+    loadData();
+  }
+}
+
+function drawProfil(d){
+  kapalT.innerHTML=makeTable(d.kapal);
+  pengurusT.innerHTML=makeTable(d.pengurus);
+}
+
+function makeTable(d){
+  let h='<tr>'+d[0].map(x=>`<th>${x}</th>`).join('')+'</tr>';
+  for(let i=1;i<d.length;i++)
+    h+='<tr>'+d[i].map(c=>`<td>${c}</td>`).join('')+'</tr>';
+  return h;
+}
+</script>
+
+</body>
+</html>
