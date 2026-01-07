@@ -1,1 +1,24 @@
+<input id="u" placeholder="Username">
+<input id="p" type="password">
+<button onclick="login()">Login</button>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbwHK1HGWYPnTecxN6KyYleZJzVv-J9TzdE-qbDp5QzznoWnUZbn3fZe2hgm5bNW_AnA/exec";
+
+function login(){
+  fetch(API,{
+    method:"POST",
+    headers:{ "Content-Type":"application/x-www-form-urlencoded" },
+    body:`action=login&username=${u.value}&password=${p.value}`
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    if(d.status=="ok"){
+      localStorage.setItem("user",d.user);
+      localStorage.setItem("role",d.role);
+      alert("Login sukses");
+    } else alert("Login gagal");
+  });
+}
+</script>
 
