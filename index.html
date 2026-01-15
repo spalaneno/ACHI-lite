@@ -1,72 +1,212 @@
-function renderList(data) {
-    const listCont = document.getElementById('main-list'); // Tampilan HP
-    const tableCont = document.getElementById('table-output'); // Tampilan Print
-    
-    let total = 0;
-    
-    // 1. Tampilan Card (Mobile Friendly)
-    let cardHtml = data.map(i => {
-        total += Number(i.Jumlah);
-        return `
-        <div class="report-card mb-3">
-            <div class="flex justify-between items-start mb-2">
-                <div>
-                    <span class="text-[9px] font-bold bg-gray-100 px-2 py-1 rounded text-gray-600 uppercase">${i.Kapal}</span>
-                    <p class="text-sm font-bold mt-1 text-gray-800 uppercase">${i.Keterangan}</p>
-                </div>
-                <p class="text-sm font-black text-achi-red">Rp${Number(i.Jumlah).toLocaleString('id-ID')}</p>
-            </div>
-            <div class="flex justify-between text-[8px] text-gray-400 italic font-bold">
-                <span>By: ${i.Admin}</span>
-                <span>${new Date(i.Tanggal).toLocaleDateString('id-ID')}</span>
-            </div>
-        </div>`;
-    }).join('');
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Laporan ACHI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .achi-red { background-color: #e21e26; }
+        .text-achi-red { color: #e21e26; }
+        @media print {
+            .no-print { display: none !important; }
+            #print-area { display: block !important; }
+            body { background: white; font-family: 'Times New Roman', serif; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            th, td { border: 1px solid black; padding: 8px; font-size: 10pt; text-align: left; }
+            th { background-color: #f2f2f2 !important; }
+            .kop { border-bottom: 3px double black; text-align: center; margin-bottom: 20px; }
+        }
+        .print-only { display: none; }
+    </style>
+</head>
+<body class="bg-gray-100 max-w-md mx-auto min-h-screen pb-20">
 
-    // 2. Tampilan Tabel (Professional Print)
-    let tableHtml = `
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 5%">No</th>
-                <th style="width: 15%">Tanggal</th>
-                <th style="width: 20%">Armada</th>
-                <th style="width: 40%">Keterangan / Alasan</th>
-                <th style="width: 20%">Nominal</th>
-            </tr>
-        </thead>
-        <tbody>`;
-    
-    data.forEach((i, index) => {
-        tableHtml += `
-            <tr>
-                <td style="text-align: center">${index + 1}</td>
-                <td>${new Date(i.Tanggal).toLocaleDateString('id-ID')}</td>
-                <td style="font-weight: bold">${i.Kapal}</td>
-                <td>${i.Keterangan} <br> <small style="color: #666 italic">${i.Alasan || ''}</small></td>
-                <td style="text-align: right; font-weight: bold">Rp ${Number(i.Jumlah).toLocaleString('id-ID')}</td>
-            </tr>`;
-    });
-
-    tableHtml += `
-            <tr class="total-row">
-                <td colspan="4" style="text-align: right; padding-right: 15px;">TOTAL PENGELUARAN</td>
-                <td style="text-align: right; font-size: 11pt; color: red;">Rp ${total.toLocaleString('id-ID')}</td>
-            </tr>
-        </tbody>
-    </table>`;
-
-    // Masukkan ke masing-masing container
-    listCont.innerHTML = cardHtml + `
-        <div class="p-4 bg-gray-800 text-white rounded-2xl flex justify-between items-center shadow-lg mt-6">
-            <span class="text-xs font-bold opacity-70">TOTAL REKAP</span>
-            <span class="text-lg font-black italic">Rp${total.toLocaleString('id-ID')}</span>
+    <div id="login-page" class="p-8 pt-20 text-center bg-white min-h-screen">
+        <h1 class="text-4xl font-black text-achi-red italic mb-8">ACHI</h1>
+        <div class="space-y-4">
+            <input id="u-name" type="text" placeholder="Username" class="w-full p-4 border rounded-xl bg-gray-50">
+            <input id="u-pass" type="password" placeholder="Password" class="w-full p-4 border rounded-xl bg-gray-50">
+            <button onclick="login()" id="btn-login" class="w-full achi-red text-white p-4 rounded-xl font-bold uppercase">Masuk</button>
         </div>
-        <button onclick="window.print()" class="w-full bg-blue-600 text-white font-bold p-4 rounded-xl mt-4 no-print shadow-md uppercase tracking-widest text-xs">
-            <i class="fas fa-print mr-2"></i> Cetak Laporan Resmi
-        </button>
-    `;
-    
-    tableCont.innerHTML = tableHtml;
-    document.getElementById('print-admin-name').innerText = currentUser.nama;
-}
+    </div>
+
+    <div id="app" class="hidden">
+        <div class="achi-red p-6 text-white rounded-b-[30px] shadow-lg mb-4 no-print">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p id="user-display" class="font-bold text-lg italic">-</p>
+                    <p id="role-display" class="text-[10px] uppercase font-bold text-yellow-300"></p>
+                </div>
+                <button onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+
+        <div id="owner-menu" class="px-4 mb-4 hidden no-print">
+            <div class="bg-white p-4 rounded-2xl shadow-sm border space-y-3">
+                <p class="text-[10px] font-bold text-gray-400 uppercase italic">Menu Laporan Profesional</p>
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="date" id="start-date" class="p-2 border rounded text-xs">
+                    <input type="date" id="end-date" class="p-2 border rounded text-xs">
+                </div>
+                <button onclick="applyFilter()" class="w-full achi-red text-white p-2 rounded-lg text-xs font-bold">TERAPKAN FILTER</button>
+            </div>
+        </div>
+
+        <div id="print-area" class="px-4">
+            <div class="print-only kop">
+                <h1 class="text-2xl font-black text-red-600">PT. ACHI</h1>
+                <p class="text-[9px] font-bold uppercase tracking-widest">Armada Crewing & Handling Integrasi</p>
+                <p id="print-period" class="text-[10px] italic mt-2"></p>
+            </div>
+            
+            <div id="main-list" class="space-y-3 no-print"></div>
+            <div id="table-output" class="print-only"></div>
+
+            <div class="print-only mt-10 grid grid-cols-2 text-center">
+                <div>
+                    <p class="text-xs mb-16">Dibuat Oleh,</p>
+                    <p id="p-admin" class="text-xs font-bold border-t border-black inline-block px-4">Admin</p>
+                </div>
+                <div>
+                    <p class="text-xs mb-16">Disetujui Oleh,</p>
+                    <p class="text-xs font-bold border-t border-black inline-block px-4">Hengky / Owner</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t p-3 flex justify-around no-print shadow-lg">
+            <button onclick="loadData('today')" class="text-achi-red text-center"><i class="fas fa-calendar-day"></i><p class="text-[9px] font-bold">HARI INI</p></button>
+            <button onclick="openModal()" class="achi-red w-12 h-12 rounded-full text-white -mt-8 border-4 border-white shadow-lg"><i class="fas fa-plus"></i></button>
+            <button id="nav-rep" onclick="toggleOwnerMenu()" class="text-gray-400 text-center hidden"><i class="fas fa-file-invoice"></i><p class="text-[9px] font-bold">LAPORAN</p></button>
+        </div>
+    </div>
+
+    <div id="modal" class="fixed inset-0 bg-black/50 hidden items-end z-50 no-print">
+        <div class="bg-white w-full rounded-t-3xl p-6 max-w-md animate-slide-up">
+            <div class="flex justify-between mb-4">
+                <h3 class="font-bold text-achi-red">INPUT TRANSAKSI</h3>
+                <button onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="space-y-4">
+                <select id="f-kapal" class="w-full p-4 border rounded-xl bg-gray-50 text-sm font-bold">
+                    <option>KM. Nabawi 09</option><option>KM. Lastika Star</option>
+                    <option>KM. Srikandi 01</option><option>Rakit 01</option>
+                </select>
+                <input id="f-ket" type="text" placeholder="Keterangan" class="w-full p-4 border rounded-xl">
+                <input id="f-jumlah" type="number" placeholder="Nominal Rp" class="w-full p-4 border rounded-xl font-bold">
+                <input id="f-file" type="file" accept="image/*" class="text-xs">
+                <button onclick="saveData()" id="btn-save" class="w-full achi-red text-white p-4 rounded-xl font-bold">SIMPAN</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = "https://script.google.com/macros/s/AKfycbz6XoTTt7dIhDWTdRV1dJjV6Q0aWu8T0icaQyA9OLkIpJeYm_HOax9XjKfOfsxMhDo/exec";
+        let currentUser = JSON.parse(localStorage.getItem('achi_session'));
+        let allData = [];
+
+        window.onload = () => { if(currentUser) showApp(currentUser); };
+
+        async function login() {
+            const u = document.getElementById('u-name').value;
+            const p = document.getElementById('u-pass').value;
+            const r = await fetch(`${API}?action=login&username=${u}&password=${p}`);
+            const d = await r.json();
+            if(d.status == 'success') {
+                localStorage.setItem('achi_session', JSON.stringify(d));
+                currentUser = d; showApp(d);
+            } else { alert("Gagal!"); }
+        }
+
+        function showApp(d) {
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('app').classList.remove('hidden');
+            document.getElementById('user-display').innerText = d.nama;
+            document.getElementById('p-admin').innerText = d.nama;
+            document.getElementById('role-display').innerText = d.level == 1 ? "Admin Operasional" : (d.level == 2 ? "Accounting / OD" : "Owner");
+            if(d.level >= 2) {
+                document.getElementById('nav-rep').classList.remove('hidden');
+            }
+            loadData('today');
+        }
+
+        async function loadData(mode) {
+            const r = await fetch(`${API}?action=getTransaksi`);
+            allData = await r.json();
+            
+            let dataToShow = allData;
+            if(currentUser.level == 1) dataToShow = allData.filter(i => i.Admin == currentUser.nama);
+            
+            if(mode == 'today') {
+                const today = new Date().toLocaleDateString('id-ID');
+                dataToShow = dataToShow.filter(i => new Date(i.Tanggal).toLocaleDateString('id-ID') == today);
+            }
+            render(dataToShow);
+        }
+
+        function render(data) {
+            const list = document.getElementById('main-list');
+            const table = document.getElementById('table-output');
+            let total = 0;
+
+            // Render Card untuk HP
+            list.innerHTML = data.map(i => {
+                total += Number(i.Jumlah);
+                return `<div class="bg-white p-4 rounded-2xl shadow-sm border-l-4 border-gray-800">
+                    <div class="flex justify-between text-[10px] text-gray-400 font-bold mb-1 uppercase"><span>${i.Kapal}</span><span>${new Date(i.Tanggal).toLocaleDateString('id-ID')}</span></div>
+                    <div class="flex justify-between items-center"><p class="text-sm font-bold text-gray-700 uppercase">${i.Keterangan}</p><p class="text-sm font-black text-red-600">Rp${Number(i.Jumlah).toLocaleString()}</p></div>
+                </div>`;
+            }).join('') + `<div class="p-4 bg-gray-800 text-white rounded-2xl flex justify-between font-black"><span>TOTAL</span><span>Rp${total.toLocaleString()}</span></div>`;
+
+            // Render Tabel untuk Cetak
+            let tHtml = `<table><thead><tr><th>No</th><th>Tanggal</th><th>Armada</th><th>Keterangan</th><th>Admin</th><th>Nominal</th></tr></thead><tbody>`;
+            data.forEach((i, idx) => {
+                tHtml += `<tr><td>${idx+1}</td><td>${new Date(i.Tanggal).toLocaleDateString('id-ID')}</td><td>${i.Kapal}</td><td>${i.Keterangan}</td><td>${i.Admin}</td><td style="text-align:right">Rp${Number(i.Jumlah).toLocaleString()}</td></tr>`;
+            });
+            tHtml += `<tr><td colspan="5" style="text-align:right; font-weight:bold">TOTAL PENGELUARAN</td><td style="text-align:right; font-weight:bold; color:red">Rp${total.toLocaleString()}</td></tr></tbody></table>`;
+            table.innerHTML = tHtml;
+
+            if(currentUser.level >= 2) {
+                list.innerHTML += `<button onclick="window.print()" class="w-full bg-blue-600 text-white p-4 rounded-xl font-bold mt-2"><i class="fas fa-print mr-2"></i>CETAK LAPORAN RESMI</button>`;
+            }
+        }
+
+        function applyFilter() {
+            const s = new Date(document.getElementById('start-date').value);
+            const e = new Date(document.getElementById('end-date').value);
+            s.setHours(0,0,0,0); e.setHours(23,59,59,999);
+            const filtered = allData.filter(i => {
+                const d = new Date(i.Tanggal);
+                return d >= s && d <= e;
+            });
+            document.getElementById('print-period').innerText = `PERIODE: ${s.toLocaleDateString('id-ID')} - ${e.toLocaleDateString('id-ID')}`;
+            render(filtered);
+        }
+
+        async function saveData() {
+            const btn = document.getElementById('btn-save'); btn.innerText = "PROSES..."; btn.disabled = true;
+            const file = document.getElementById('f-file').files[0];
+            let img = null, mime = null;
+            if(file) {
+                const reader = new FileReader();
+                img = await new Promise(res => { reader.onload = () => res(reader.result.split(',')[1]); reader.readAsDataURL(file); });
+                mime = file.type;
+            }
+            const payload = {
+                kapal: document.getElementById('f-kapal').value, keterangan: document.getElementById('f-ket').value,
+                jumlah: document.getElementById('f-jumlah').value, user: currentUser.nama, image: img, mimeType: mime
+            };
+            await fetch(API, { method: 'POST', body: JSON.stringify(payload) });
+            alert("Tersimpan!"); location.reload();
+        }
+
+        function toggleOwnerMenu() { document.getElementById('owner-menu').classList.toggle('hidden'); }
+        function logout() { localStorage.clear(); location.reload(); }
+        function openModal() { document.getElementById('modal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+    </script>
+</body>
+</html>
