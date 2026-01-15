@@ -7,11 +7,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         .achi-red { background-color: #e21e26; }
         body { background-color: #f3f4f6; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .animate-up { animation: slideUp 0.4s ease-out; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
         @media print {
             .no-print { display: none !important; }
             .print-only { display: block !important; }
+            body { background: white; padding: 0; }
             .kop-surat { text-align: center; border-bottom: 4px double black; padding-bottom: 10px; margin-bottom: 20px; }
             table { width: 100%; border-collapse: collapse; margin-top: 10px; }
             th, td { border: 1px solid black; padding: 5px; font-size: 9pt; text-align: left; }
@@ -21,54 +26,61 @@
 </head>
 <body class="max-w-md mx-auto min-h-screen pb-20">
 
-    <div id="login-page" class="p-10 pt-20 text-center bg-white min-h-screen">
-        <img src="logo.png" class="w-32 mx-auto mb-4">
-        <h1 class="text-4xl font-black text-[#e21e26] italic leading-none">ACHI</h1>
-        <p class="text-[8px] font-bold text-gray-400 tracking-[0.3em] uppercase mb-12 italic">Aplikasi Crewing & Handling Integrasi</p>
+    <div id="login-page" class="p-10 pt-24 text-center bg-white min-h-screen">
+        <img src="logo.png" class="w-48 mx-auto mb-1"> 
+        <p class="text-[9px] font-black text-gray-400 tracking-[0.25em] uppercase mb-12 italic">Aplikasi Crewing & Handling Integrasi</p>
+        
         <div class="space-y-3">
-            <input id="u-name" type="text" placeholder="Username" class="w-full p-4 rounded-2xl border bg-gray-50 outline-none text-center">
-            <input id="u-pass" type="password" placeholder="Password" class="w-full p-4 rounded-2xl border bg-gray-50 outline-none text-center">
-            <button onclick="login()" id="btn-login" class="w-full achi-red text-white p-4 rounded-2xl font-bold uppercase shadow-lg">Masuk</button>
+            <input id="u-name" type="text" placeholder="Username" class="w-full p-4 rounded-2xl border bg-gray-50 outline-none text-center focus:ring-2 ring-red-500 transition-all">
+            <input id="u-pass" type="password" placeholder="Password" class="w-full p-4 rounded-2xl border bg-gray-50 outline-none text-center focus:ring-2 ring-red-500 transition-all">
+            <button onclick="login()" id="btn-login" class="w-full achi-red text-white p-4 rounded-2xl font-bold uppercase shadow-xl active:scale-95 transition-transform">Masuk Sistem</button>
         </div>
+        <p class="mt-8 text-[10px] text-gray-300 font-bold uppercase tracking-widest">Efendy Jaya Abadi</p>
     </div>
 
     <div id="app" class="hidden">
         <div class="achi-red p-6 rounded-b-[40px] text-white shadow-xl no-print">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <img src="logo.png" class="w-10 h-10 bg-white rounded-lg p-1">
+                    <img src="logo.png" class="w-10 h-10 bg-white rounded-lg p-1 shadow-inner">
                     <div>
-                        <h2 id="disp-name" class="font-bold text-sm leading-none">-</h2>
-                        <p id="disp-role" class="text-[8px] font-bold text-yellow-300 uppercase mt-1"></p>
+                        <h2 id="disp-name" class="font-black text-sm leading-none uppercase">-</h2>
+                        <p id="disp-role" class="text-[8px] font-bold text-yellow-300 uppercase mt-1 tracking-tighter"></p>
                     </div>
                 </div>
-                <button onclick="logout()" class="p-2 bg-white/10 rounded-full"><i class="fas fa-power-off text-xs"></i></button>
+                <button onclick="logout()" class="p-2 bg-white/10 rounded-full hover:bg-white/20"><i class="fas fa-power-off text-xs"></i></button>
             </div>
         </div>
 
-        <div class="px-4 mt-4">
-            <div id="owner-stats" class="hidden grid grid-cols-3 gap-2 mb-6">
-                <div class="bg-gray-900 p-3 rounded-2xl text-white text-center">
-                    <p class="text-[7px] text-gray-400 uppercase">Harian</p>
-                    <p id="stat-day" class="text-[10px] font-black">Rp0</p>
+        <div class="px-4 mt-6">
+            <div id="owner-stats" class="hidden grid grid-cols-3 gap-2 mb-6 animate-up">
+                <div class="bg-gray-900 p-4 rounded-3xl text-white text-center border border-gray-800">
+                    <p class="text-[7px] text-gray-500 uppercase font-bold">Harian</p>
+                    <p id="stat-day" class="text-[11px] font-black">Rp0</p>
                 </div>
-                <div class="bg-gray-900 p-3 rounded-2xl text-white text-center border-x border-gray-700">
-                    <p class="text-[7px] text-gray-400 uppercase">Mingguan</p>
-                    <p id="stat-week" class="text-[10px] font-black">Rp0</p>
+                <div class="bg-gray-900 p-4 rounded-3xl text-white text-center border border-gray-800">
+                    <p class="text-[7px] text-gray-500 uppercase font-bold">Mingguan</p>
+                    <p id="stat-week" class="text-[11px] font-black">Rp0</p>
                 </div>
-                <div class="bg-gray-900 p-3 rounded-2xl text-white text-center">
-                    <p class="text-[7px] text-gray-400 uppercase">Bulanan</p>
-                    <p id="stat-month" class="text-[10px] font-black">Rp0</p>
+                <div class="bg-gray-900 p-4 rounded-3xl text-white text-center border border-gray-800">
+                    <p class="text-[7px] text-gray-500 uppercase font-bold">Bulanan</p>
+                    <p id="stat-month" class="text-[11px] font-black">Rp0</p>
                 </div>
             </div>
 
-            <div id="section-awak" class="mb-6">
-                <h3 class="text-[10px] font-black text-gray-400 uppercase mb-3 tracking-widest italic">Informasi Saldo & Panjar</h3>
-                <div id="list-awak" class="space-y-2"></div>
+            <div id="section-awak" class="mb-8">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest italic">Informasi Saldo & Panjar</h3>
+                    <i class="fas fa-id-card text-gray-300"></i>
+                </div>
+                <div id="list-awak" class="space-y-3"></div>
             </div>
 
-            <div id="section-trans" class="no-print pb-10">
-                <h3 class="text-[10px] font-black text-gray-400 uppercase mb-3 tracking-widest italic">Monitoring Anfrakan</h3>
+            <div id="section-trans" class="no-print pb-16">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest italic">Monitoring Anfrakan</h3>
+                    <i class="fas fa-history text-gray-300"></i>
+                </div>
                 <div id="list-trans" class="space-y-3"></div>
             </div>
         </div>
@@ -79,61 +91,84 @@
                 <p class="text-[9px] font-bold tracking-[0.2em]">Laporan Operasional ACHI</p>
             </div>
             <div id="table-out"></div>
-            <div id="sig-area" class="mt-10 grid grid-cols-2 text-center text-[10pt]">
-                <div><p class="mb-16">Dibuat Oleh,</p><p id="sig-user" class="font-bold border-t border-black inline-block px-6 uppercase">-</p></div>
-                <div><p class="mb-16">Disetujui Oleh,</p><p class="font-bold border-t border-black inline-block px-6 uppercase font-black">Hengky / Owner</p></div>
+            <div id="sig-area" class="mt-12 grid grid-cols-2 text-center text-[10pt]">
+                <div><p class="mb-20">Dibuat Oleh,</p><p id="sig-user" class="font-bold border-t border-black inline-block px-8 uppercase">-</p></div>
+                <div><p class="mb-20">Disetujui Oleh,</p><p class="font-bold border-t border-black inline-block px-8 uppercase font-black">Hengky / Owner</p></div>
             </div>
         </div>
 
-        <div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t p-3 flex justify-around no-print shadow-2xl items-center">
-            <button onclick="location.reload()" class="text-gray-400 flex flex-col items-center"><i class="fas fa-home text-lg"></i><span class="text-[7px] font-bold mt-1">BERANDA</span></button>
-            <button id="btn-add" onclick="openModal()" class="achi-red w-12 h-12 rounded-full text-white -mt-10 border-4 border-white shadow-lg flex items-center justify-center"><i class="fas fa-plus"></i></button>
-            <button onclick="window.print()" class="text-gray-400 flex flex-col items-center"><i class="fas fa-print text-lg"></i><span class="text-[7px] font-bold mt-1">CETAK</span></button>
+        <div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/90 backdrop-blur-md border-t p-4 flex justify-around no-print shadow-2xl items-center z-50">
+            <button onclick="location.reload()" class="text-gray-400 flex flex-col items-center"><i class="fas fa-sync-alt text-lg"></i><span class="text-[7px] font-bold mt-1 uppercase">Refresh</span></button>
+            <button id="btn-add" onclick="openModal()" class="achi-red w-14 h-14 rounded-full text-white -mt-12 border-4 border-white shadow-xl flex items-center justify-center active:scale-90 transition-transform"><i class="fas fa-plus text-xl"></i></button>
+            <button onclick="window.print()" class="text-gray-400 flex flex-col items-center"><i class="fas fa-print text-lg"></i><span class="text-[7px] font-bold mt-1 uppercase">Cetak</span></button>
         </div>
     </div>
 
     <div id="modal" class="fixed inset-0 bg-black/60 hidden items-end z-[100] no-print">
-        <div class="bg-white w-full rounded-t-[40px] p-8 animate-slide-up">
+        <div class="bg-white w-full rounded-t-[40px] p-8 animate-up">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="font-black text-[#e21e26] uppercase italic">Form Input</h3>
-                <button onclick="closeModal()" class="text-gray-300 text-xl"><i class="fas fa-times"></i></button>
+                <h3 id="modal-title" class="font-black text-[#e21e26] uppercase italic">Pengajuan Baru</h3>
+                <button onclick="closeModal()" class="text-gray-300 text-2xl"><i class="fas fa-times"></i></button>
             </div>
             <div class="space-y-4">
-                <select id="f-tipe" class="w-full p-4 bg-gray-50 border rounded-2xl text-sm font-bold">
+                <select id="f-tipe" class="w-full p-4 bg-gray-50 border rounded-2xl text-sm font-bold outline-none">
                     <option value="Anfrakan Kapal">Anfrakan Kapal</option>
                     <option value="Pembelian Darat">Pembelian Darat (Kantor)</option>
                 </select>
-                <select id="f-cat" class="w-full p-4 bg-gray-50 border rounded-2xl text-sm">
-                    <option>Dapur</option><option>Mesin</option><option>Operasional</option><option>Lainnya</option>
+                <select id="f-cat" class="w-full p-4 bg-gray-50 border rounded-2xl text-sm outline-none">
+                    <option>Dapur</option><option>Mesin</option><option>Operasional Kapal</option><option>Kebutuhan Kantor</option>
                 </select>
                 <input id="f-ket" type="text" placeholder="Nama Barang / Keperluan" class="w-full p-4 border rounded-2xl text-sm bg-gray-50 outline-none">
-                <input id="f-alasan" type="text" placeholder="Alasan Pengajuan" class="w-full p-4 border rounded-2xl text-sm bg-gray-50 outline-none">
-                <input id="f-jumlah" type="number" placeholder="Nominal Rp" class="w-full p-4 border rounded-2xl text-sm font-bold bg-gray-50 outline-none">
-                <button onclick="sendData()" id="btn-send" class="w-full achi-red text-white p-5 rounded-2xl font-bold uppercase shadow-xl">Kirim Sekarang</button>
+                <input id="f-alasan" type="text" placeholder="Alasan / Urgensi" class="w-full p-4 border rounded-2xl text-sm bg-gray-50 outline-none">
+                <input id="f-jumlah" type="number" placeholder="Nominal Rp" class="w-full p-4 border rounded-2xl text-sm font-black bg-gray-50 outline-none">
+                <button onclick="sendData()" id="btn-send" class="w-full achi-red text-white p-5 rounded-2xl font-bold uppercase shadow-xl active:scale-95 transition-transform">Kirim Pengajuan</button>
             </div>
         </div>
     </div>
 
     <script>
-        const API = "https://script.google.com/macros/s/AKfycbys4Sb8gzQbyAQVSkFDJdNWMC9Kj8k4GxnNppJcNeSneLuUlgXjquDh2KYbypc11HYm/exec";
+        const API = "https://script.google.com/macros/s/AKfycbwP5n4Nn7ho6t57BveQGRqlCndIuAKdreu_FS9GffmWSWnS5Ax01Zz0ijP6KxPef6X7/exec";
         let user = null;
 
         async function login() {
             const u = document.getElementById('u-name').value;
             const p = document.getElementById('u-pass').value;
-            const res = await fetch(`${API}?action=login&username=${u}&password=${p}`);
-            const d = await res.json();
-            if(d.status === 'success') {
-                user = d;
-                document.getElementById('login-page').style.display = 'none';
-                document.getElementById('app').classList.remove('hidden');
-                init();
-            } else alert("Gagal Login!");
+            if(!u || !p) return alert("Isi Username & Password!");
+            
+            document.getElementById('btn-login').innerText = "PROSES...";
+            try {
+                const res = await fetch(`${API}?action=login&username=${u}&password=${p}`);
+                const d = await res.json();
+                if(d.status === 'success') {
+                    user = d;
+                    document.getElementById('login-page').style.display = 'none';
+                    document.getElementById('app').classList.remove('hidden');
+                    init();
+                } else {
+                    alert("User atau Password Salah!");
+                    document.getElementById('btn-login').innerText = "Masuk Sistem";
+                }
+            } catch(e) { 
+                alert("Koneksi Error!"); 
+                document.getElementById('btn-login').innerText = "Masuk Sistem";
+            }
         }
 
         function init() {
             document.getElementById('disp-name').innerText = user.nama;
             document.getElementById('disp-role').innerText = user.jabatan || "Guest";
+            
+            // Level 3 (Admin) tidak bisa Anfrakan Kapal, hanya Pembelian Darat
+            if(user.level === 3) {
+                const selectTipe = document.getElementById('f-tipe');
+                selectTipe.innerHTML = '<option value="Pembelian Darat">Pembelian Darat (Kantor)</option>';
+            }
+            // Level 4 (Kapten/KKM) tidak bisa Pembelian Darat
+            if(user.level === 4) {
+                const selectTipe = document.getElementById('f-tipe');
+                selectTipe.innerHTML = '<option value="Anfrakan Kapal">Anfrakan Kapal</option>';
+            }
+
             if(user.level <= 3) document.getElementById('owner-stats').classList.remove('hidden');
             if(user.level === 1) document.getElementById('sig-area').style.display = 'none';
             document.getElementById('sig-user').innerText = user.nama;
@@ -149,16 +184,20 @@
 
         function renderAwak(data) {
             const cont = document.getElementById('list-awak');
+            if(data.length === 0) { cont.innerHTML = '<p class="text-center text-[10px] text-gray-400 italic">Tidak ada data awak</p>'; return; }
             cont.innerHTML = data.map(i => `
-                <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
-                    <div class="flex justify-between items-start mb-2">
-                        <p class="text-[10px] font-black uppercase">${i[0]} <br><span class="text-[8px] text-red-600 font-bold">${i[1]}</span></p>
-                        <span class="text-[7px] bg-green-100 text-green-600 px-2 py-0.5 rounded-full font-bold uppercase">${i[6]}</span>
+                <div class="bg-white p-5 rounded-[30px] border border-gray-100 shadow-sm animate-up">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <p class="text-[11px] font-black uppercase text-gray-800">${i[0]}</p>
+                            <p class="text-[8px] text-[#e21e26] font-bold uppercase tracking-tighter">${i[1]} • ${i[2]}</p>
+                        </div>
+                        <span class="text-[7px] bg-green-100 text-green-600 px-2.5 py-1 rounded-full font-black uppercase">${i[6]}</span>
                     </div>
-                    <div class="grid grid-cols-3 gap-2 border-t pt-2 text-center">
-                        <div><p class="text-[7px] text-gray-400">GAJI</p><p class="text-[9px] font-bold">Rp${Number(i[3]).toLocaleString()}</p></div>
-                        <div><p class="text-[7px] text-red-400 font-bold">PANJAR</p><p class="text-[9px] font-bold text-red-600">Rp${Number(i[4]).toLocaleString()}</p></div>
-                        <div class="text-right"><p class="text-[7px] text-blue-500 font-bold uppercase tracking-tighter">SISA SALDO</p><p class="text-[10px] font-black text-blue-700">Rp${Number(i[5]).toLocaleString()}</p></div>
+                    <div class="grid grid-cols-3 gap-2 border-t border-gray-50 pt-3 text-center">
+                        <div><p class="text-[7px] text-gray-400 font-bold uppercase">Gaji</p><p class="text-[10px] font-black">Rp${Number(i[3]).toLocaleString()}</p></div>
+                        <div><p class="text-[7px] text-red-400 font-bold uppercase">Panjar</p><p class="text-[10px] font-black text-red-600">Rp${Number(i[4]).toLocaleString()}</p></div>
+                        <div class="text-right"><p class="text-[7px] text-blue-500 font-bold uppercase">Saldo</p><p class="text-[11px] font-black text-blue-800">Rp${Number(i[5]).toLocaleString()}</p></div>
                     </div>
                 </div>
             `).join('');
@@ -171,29 +210,39 @@
 
             listCont.innerHTML = data.map(i => {
                 total += Number(i[6]);
-                return `<div class="bg-white p-4 rounded-2xl border-l-4 border-red-600 shadow-sm mb-3">
-                    <div class="flex justify-between text-[7px] font-bold text-gray-400 uppercase"><span>${i[2]}</span><span>${i[8]}</span></div>
-                    <p class="text-xs font-bold mt-1 uppercase">${i[5]}</p>
-                    <p class="text-[9px] text-gray-400 italic">${i[9]}</p>
-                    <div class="flex justify-between items-end mt-2"><span class="text-[8px] bg-gray-100 px-2 py-0.5 rounded font-bold">${i[3]}</span><span class="text-xs font-black">Rp${Number(i[6]).toLocaleString()}</span></div>
+                const st = i[8] || "PROSES";
+                return `<div class="bg-white p-5 rounded-[30px] border-l-4 border-[#e21e26] shadow-sm mb-3 animate-up">
+                    <div class="flex justify-between text-[7px] font-black text-gray-400 uppercase"><span>${i[2]}</span><span>${st}</span></div>
+                    <p class="text-xs font-black mt-1 uppercase text-gray-700 leading-tight">${i[5]}</p>
+                    <p class="text-[9px] text-gray-400 italic mt-0.5">${i[9] || '-'}</p>
+                    <div class="flex justify-between items-end mt-3">
+                        <span class="text-[8px] bg-gray-100 px-3 py-1 rounded-full font-black uppercase text-gray-500">${i[3]}</span>
+                        <span class="text-sm font-black text-gray-800">Rp${Number(i[6]).toLocaleString()}</span>
+                    </div>
                 </div>`;
             }).join('');
 
             let t = `<table><thead><tr><th>No</th><th>Tanggal</th><th>Kapal</th><th>Keterangan</th><th>Status</th><th>Jumlah</th></tr></thead><tbody>`;
             data.forEach((i, x) => t += `<tr><td>${x+1}</td><td>${new Date(i[1]).toLocaleDateString()}</td><td>${i[2]}</td><td>${i[5]}</td><td>${i[8]}</td><td align="right">Rp${Number(i[6]).toLocaleString()}</td></tr>`);
-            tableCont.innerHTML = t + `<tr><td colspan="5" align="right"><b>TOTAL</b></td><td align="right"><b>Rp${total.toLocaleString()}</b></td></tr></tbody></table>`;
+            tableCont.innerHTML = t + `<tr><td colspan="5" align="right"><b>TOTAL KESELURUHAN</b></td><td align="right"><b>Rp${total.toLocaleString()}</b></td></tr></tbody></table>`;
         }
 
         async function sendData() {
             const btn = document.getElementById('btn-send');
+            const jml = document.getElementById('f-jumlah').value;
+            if(!jml || jml <= 0) return alert("Masukan nominal yang valid!");
+
             btn.innerText = "MENGIRIM..."; btn.disabled = true;
             const payload = {
                 tipe: document.getElementById('f-tipe').value, kategori: document.getElementById('f-cat').value,
                 keterangan: document.getElementById('f-ket').value, alasan: document.getElementById('f-alasan').value,
-                jumlah: document.getElementById('f-jumlah').value, pemohon: user.nama, kapal: user.kapal
+                jumlah: jml, pemohon: user.nama, kapal: user.kapal
             };
-            await fetch(API, { method: 'POST', body: JSON.stringify(payload) });
-            location.reload();
+            try {
+                await fetch(API, { method: 'POST', body: JSON.stringify(payload) });
+                alert("Pengajuan Berhasil Dikirim!");
+                location.reload();
+            } catch(e) { alert("Gagal mengirim!"); btn.innerText = "Kirim Pengajuan"; btn.disabled = false; }
         }
 
         function logout() { localStorage.clear(); location.reload(); }
