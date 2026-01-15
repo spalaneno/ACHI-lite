@@ -8,99 +8,113 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --achi-red: #e21e26; }
-        body { background-color: #f3f4f6; font-family: 'Inter', sans-serif; }
-        .bca-card { background: white; border-radius: 1.5rem; padding: 1.2rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
-        .menu-icon { background: linear-gradient(135deg, #e21e26 0%, #8b0000 100%); width: 55px; height: 55px; border-radius: 1.2rem; display: flex; align-items: center; justify-content: center; color: white; margin-bottom: 5px; }
-        .btn-status { font-size: 7px; font-weight: 900; padding: 2px 8px; border-radius: 99px; text-transform: uppercase; }
-        .bg-achi { background-color: var(--achi-red); }
+        body { background-color: #f3f4f6; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .bg-achi { background: linear-gradient(180deg, #8b0000 0%, #e21e26 100%); }
+        .bca-card { background: white; border-radius: 1.5rem; padding: 1.2rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); }
+        .menu-icon { background: linear-gradient(135deg, #e21e26 0%, #8b0000 100%); width: 55px; height: 55px; border-radius: 1.2rem; display: flex; align-items: center; justify-content: center; color: white; margin-bottom: 5px; box-shadow: 0 4px 12px rgba(226,30,38,0.2); }
+        .btn-status { font-size: 7px; font-weight: 900; padding: 3px 10px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .animate-up { animation: fadeInUp 0.4s ease-out; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="pb-10">
 
-    <div id="login-page" class="fixed inset-0 bg-[#8b0000] z-[200] flex flex-col items-center justify-center p-8 text-center">
-        <img src="logo.png" class="w-64 mb-1">
-        <p class="text-[9px] font-black tracking-[0.3em] uppercase mb-12 text-white italic">Crewing & Handling Integration</p>
-        <div class="w-full max-w-xs space-y-3">
-            <input id="u-name" type="text" placeholder="USER ID" class="w-full p-4 rounded-xl text-center font-bold outline-none bg-white/20 text-white placeholder-white/50 border-none">
-            <input id="u-pass" type="password" placeholder="KODE AKSES" class="w-full p-4 rounded-xl text-center font-bold outline-none bg-white/20 text-white placeholder-white/50 border-none">
-            <button onclick="login()" class="w-full bg-white text-[#e21e26] p-4 rounded-xl font-black uppercase">Masuk</button>
+    <div id="login-page" class="fixed inset-0 bg-achi z-[200] flex flex-col items-center justify-center p-8 text-center">
+        <img src="logo.png" class="w-64 mb-2 drop-shadow-xl">
+        <p class="text-[9px] font-black tracking-[0.4em] uppercase mb-12 text-white/80 italic">Crewing & Handling Integration</p>
+        <div class="w-full max-w-xs space-y-4">
+            <input id="u-name" type="text" placeholder="USER ID" class="w-full p-4 rounded-2xl text-center font-bold outline-none bg-white/20 text-white placeholder-white/40 border-none backdrop-blur-md">
+            <input id="u-pass" type="password" placeholder="KODE AKSES" class="w-full p-4 rounded-2xl text-center font-bold outline-none bg-white/20 text-white placeholder-white/40 border-none backdrop-blur-md">
+            <button onclick="login()" class="w-full bg-white text-[#e21e26] p-4 rounded-2xl font-black uppercase shadow-2xl active:scale-95 transition-transform">Masuk Aplikasi</button>
         </div>
     </div>
 
     <div id="app" class="hidden min-h-screen">
-        <div class="bg-achi p-6 pb-20 text-white flex justify-between items-center shadow-lg">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-white rounded-lg p-1"><img src="logo.png"></div>
-                <div><h2 id="disp-name" class="font-black text-xs uppercase leading-none">-</h2><p id="disp-role" class="text-[8px] font-bold text-yellow-300 uppercase mt-1"></p></div>
+        <div class="bg-[#e21e26] p-6 pb-24 text-white flex justify-between items-center relative shadow-lg">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-white rounded-2xl p-1.5 shadow-inner"><img src="logo.png" class="w-full h-full object-contain"></div>
+                <div>
+                    <h2 id="disp-name" class="font-black text-sm uppercase leading-none tracking-tight">-</h2>
+                    <p id="disp-role" class="text-[9px] font-bold text-yellow-300 uppercase mt-1.5 tracking-widest opacity-90"></p>
+                </div>
             </div>
-            <button onclick="logout()" class="opacity-70"><i class="fas fa-power-off text-lg"></i></button>
+            <button onclick="logout()" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"><i class="fas fa-power-off text-lg"></i></button>
         </div>
 
-        <div class="px-6 -mt-10">
+        <div class="px-6 -mt-14 relative z-10">
             <div class="bca-card grid grid-cols-3 gap-4 text-center">
-                <div onclick="loadData()" class="flex flex-col items-center"><div class="menu-icon"><i class="fas fa-sync-alt"></i></div><span class="text-[8px] font-bold">REFRESH</span></div>
-                <div id="btn-minta" class="flex flex-col items-center"><div class="menu-icon" id="icon-minta"><i class="fas fa-file-signature"></i></div><span class="text-[8px] font-bold">MINTA ANFRAK</span></div>
-                <div onclick="alert('Fitur segera hadir')" class="flex flex-col items-center"><div class="menu-icon"><i class="fas fa-wallet"></i></div><span class="text-[8px] font-bold">SALDO</span></div>
+                <div onclick="loadData()" class="flex flex-col items-center active:scale-90 transition-transform"><div class="menu-icon"><i class="fas fa-sync-alt"></i></div><span class="text-[8px] font-black uppercase">Refresh</span></div>
+                <div id="btn-minta" class="flex flex-col items-center active:scale-90 transition-transform"><div class="menu-icon" id="icon-minta"><i class="fas fa-file-contract"></i></div><span class="text-[8px] font-black uppercase">Anfrakan</span></div>
+                <div onclick="alert('Fitur Segera Hadir')" class="flex flex-col items-center active:scale-90 transition-transform"><div class="menu-icon"><i class="fas fa-ship"></i></div><span class="text-[8px] font-black uppercase">Info Kapal</span></div>
             </div>
         </div>
 
         <div class="px-6 mt-8">
-            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 italic">Alur Monitoring</h3>
             <div id="main-list" class="space-y-4"></div>
         </div>
     </div>
 
-    <div id="modal-reject" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-[150] p-6">
-        <div class="bg-white w-full max-w-sm rounded-3xl p-6">
-            <h3 class="font-black text-red-600 uppercase mb-2">Tolak Anfrakan?</h3>
-            <p class="text-[10px] text-gray-400 mb-4 font-bold uppercase">Berikan alasan penolakan agar pemohon mengerti.</p>
-            <textarea id="f-alasan-reject" class="w-full p-4 bg-gray-50 border rounded-xl text-xs outline-none h-24 mb-4" placeholder="Contoh: Barang masih ada di gudang / Double Input"></textarea>
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="closeModal()" class="py-3 text-xs font-bold text-gray-400 uppercase">Batal</button>
-                <button onclick="submitReject()" class="bg-red-600 text-white py-3 rounded-xl font-black text-xs uppercase">Ya, Tolak!</button>
+    <div id="modal-reject" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-[150] p-8 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fas fa-times"></i></div>
+                <h3 class="font-black text-gray-800 uppercase">Tolak Pengajuan?</h3>
+                <p class="text-[10px] text-gray-400 font-bold uppercase mt-1">Berikan alasan penolakan</p>
+            </div>
+            <textarea id="f-alasan-reject" class="w-full p-4 bg-gray-50 border-none rounded-2xl text-xs outline-none h-28 mb-6 font-medium shadow-inner" placeholder="Tulis alasan di sini..."></textarea>
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="closeModal()" class="py-4 text-xs font-black text-gray-400 uppercase tracking-widest">Batal</button>
+                <button onclick="submitReject()" class="bg-red-600 text-white py-4 rounded-2xl font-black text-xs uppercase shadow-lg shadow-red-200">Reject</button>
             </div>
         </div>
     </div>
 
-    <div id="modal-harga" class="fixed inset-0 bg-black/80 hidden items-end z-[100] p-4">
-        <div class="bg-white w-full rounded-t-[2.5rem] p-8">
-            <h3 class="font-black text-green-600 uppercase mb-4 italic">Realisasi Pembelian</h3>
-            <div class="space-y-4">
-                <p id="h-item" class="text-xs font-bold text-gray-600"></p>
-                <input id="f-harga" type="number" placeholder="Harga Total (Rp)" class="w-full p-4 border rounded-xl font-black outline-none bg-yellow-50">
+    <div id="modal-harga" class="fixed inset-0 bg-black/80 hidden items-end z-[100] p-4 backdrop-blur-sm">
+        <div class="bg-white w-full rounded-t-[3rem] p-8 animate-up">
+            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
+            <h3 class="font-black text-green-600 uppercase mb-2 italic tracking-tighter text-lg">Input Pembelian Real</h3>
+            <p id="h-item" class="text-[10px] font-bold text-gray-400 uppercase border-b pb-4 mb-6"></p>
+            
+            <div class="space-y-5">
+                <div>
+                    <label class="text-[9px] font-black text-gray-400 uppercase ml-1">Nominal Nota</label>
+                    <input id="f-harga" type="number" placeholder="Rp 0" class="w-full p-5 border-none rounded-2xl font-black text-xl outline-none bg-yellow-50 text-yellow-700 shadow-inner mt-1">
+                </div>
                 
-                <div class="space-y-2">
-                    <p class="text-[8px] font-black text-gray-400 uppercase">Lampiran Nota</p>
+                <div class="space-y-3">
+                    <label class="text-[9px] font-black text-gray-400 uppercase ml-1">Lampiran Dokumen</label>
                     <input type="file" id="f-image" accept="image/*" class="hidden" onchange="previewImg(this)">
-                    <button id="btn-foto" onclick="document.getElementById('f-image').click()" class="w-full bg-gray-100 py-3 rounded-xl text-[10px] font-black text-gray-600 uppercase"><i class="fas fa-camera mr-2"></i>Ambil Foto Nota</button>
-                    <img id="img-preview" class="hidden w-full h-32 object-cover rounded-xl mt-2">
-                    <div id="area-alasan-nota" class="hidden mt-2">
-                        <input id="f-alasan-tanpa-nota" type="text" placeholder="Kenapa tidak ada nota?" class="w-full p-3 border-red-300 border bg-red-50 rounded-xl text-xs outline-none">
+                    <button id="btn-foto" onclick="document.getElementById('f-image').click()" class="w-full bg-gray-100 py-4 rounded-2xl text-[10px] font-black text-gray-600 uppercase flex items-center justify-center gap-3"><i class="fas fa-camera text-lg"></i> Ambil Foto Nota</button>
+                    <img id="img-preview" class="hidden w-full h-44 object-cover rounded-2xl mt-2 shadow-md border-4 border-white">
+                    
+                    <div id="area-alasan-nota" class="hidden animate-up">
+                        <input id="f-alasan-tanpa-nota" type="text" placeholder="Alasan tidak ada nota fisik?" class="w-full p-4 border-red-200 border bg-red-50 rounded-2xl text-xs outline-none text-red-600 font-bold">
                     </div>
-                    <p id="msg-nota" onclick="toggleNoNota()" class="text-[9px] text-red-500 font-bold text-center cursor-pointer underline">Tidak ada nota? Klik di sini</p>
+                    <p id="msg-nota" onclick="toggleNoNota()" class="text-[10px] text-red-500 font-black text-center cursor-pointer underline py-2 uppercase tracking-tighter">Tidak ada nota?</p>
                 </div>
 
-                <button onclick="submitHarga()" id="btn-submit-harga" class="w-full bg-green-600 text-white p-5 rounded-2xl font-bold uppercase shadow-lg">Simpan & Selesai</button>
+                <button onclick="submitHarga()" id="btn-submit-harga" class="w-full bg-green-600 text-white p-5 rounded-2xl font-black uppercase shadow-xl shadow-green-100 mt-4 active:scale-95 transition-transform">Simpan & Selesaikan</button>
             </div>
         </div>
     </div>
 
-    <div id="modal-anfrak" class="fixed inset-0 bg-black/80 hidden items-end z-[100] p-4">
-        <div class="bg-white w-full rounded-t-[2.5rem] p-8 max-h-[85vh] overflow-y-auto">
-            <h3 class="font-black text-[#e21e26] uppercase mb-4">Pengajuan Baru</h3>
-            <div class="space-y-3">
-                <select id="f-cat" class="w-full p-4 bg-gray-100 rounded-xl text-xs font-bold outline-none"></select>
-                <input id="f-ket" type="text" placeholder="Nama Barang" class="w-full p-4 border rounded-xl text-xs outline-none">
-                <input id="f-alasan" type="text" placeholder="Alasan/Keperluan" class="w-full p-4 border rounded-xl text-xs outline-none">
-                <input id="f-qty" type="text" placeholder="Jumlah (Contoh: 10 Liter)" class="w-full p-4 border rounded-xl text-xs font-bold outline-none">
-                <button onclick="sendAnfrakan()" id="btn-send" class="w-full bg-[#e21e26] text-white p-4 rounded-xl font-bold uppercase mt-2">Kirim</button>
-                <button onclick="closeModal()" class="w-full text-gray-400 py-2 text-xs font-bold uppercase">Batal</button>
+    <div id="modal-anfrak" class="fixed inset-0 bg-black/80 hidden items-end z-[100] p-4 backdrop-blur-sm">
+        <div class="bg-white w-full rounded-t-[3rem] p-8 max-h-[90vh] overflow-y-auto animate-up">
+            <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
+            <h3 class="font-black text-[#e21e26] uppercase mb-6 tracking-tighter text-lg">Buat Pengajuan Baru</h3>
+            <div class="space-y-4">
+                <select id="f-cat" class="w-full p-4 bg-gray-100 rounded-2xl text-xs font-black outline-none border-none text-gray-700"></select>
+                <input id="f-ket" type="text" placeholder="Apa yang dibeli?" class="w-full p-4 border-none bg-gray-50 rounded-2xl text-xs font-bold outline-none shadow-inner">
+                <input id="f-alasan" type="text" placeholder="Untuk keperluan apa?" class="w-full p-4 border-none bg-gray-50 rounded-2xl text-xs font-bold outline-none shadow-inner">
+                <input id="f-qty" type="text" placeholder="Jumlah & Satuan (misal: 10 Liter)" class="w-full p-4 border-none bg-gray-50 rounded-2xl text-xs font-black outline-none shadow-inner">
+                <button onclick="sendAnfrakan()" id="btn-send" class="w-full bg-[#e21e26] text-white p-5 rounded-2xl font-black uppercase shadow-xl shadow-red-200 mt-4">Kirim Permintaan</button>
+                <button onclick="closeModal()" class="w-full text-gray-400 py-3 text-[10px] font-black uppercase tracking-widest mt-2">Batal</button>
             </div>
         </div>
     </div>
 
     <script>
-        const API = "https://script.google.com/macros/s/AKfycbyaG5MLjnUCUiJf-bq7zt_qlkZ4lvQ_N8qkw6ffnqRy4eEXSF8zT_pKm0Ee0ytHzcdt/exec";
+        const API = "https://script.google.com/macros/s/AKfycbxX89a-Lh-Y0Y10uU6mCxQxSgz-BmIrpOLdYv6B29F66kajAkARYHUxKq0tugdMpc2L/exec"; // <-- GANTI DENGAN URL WEB APP BAPAK
         let user = JSON.parse(localStorage.getItem('achi_user')) || null;
         let activeId = null;
         let base64Image = "";
@@ -111,28 +125,29 @@
         async function login() {
             const u = document.getElementById('u-name').value;
             const p = document.getElementById('u-pass').value;
+            if(!u || !p) return;
             const res = await fetch(`${API}?action=login&username=${u}&password=${p}`);
             const d = await res.json();
             if(d.status === 'success') {
                 user = d; localStorage.setItem('achi_user', JSON.stringify(d)); startApp();
-            } else alert("Akses Ditolak!");
+            } else alert("Login Gagal!");
         }
 
         function startApp() {
             document.getElementById('login-page').style.display = 'none';
             document.getElementById('app').classList.remove('hidden');
             document.getElementById('disp-name').innerText = user.nama;
-            document.getElementById('disp-role').innerText = user.jabatan;
+            document.getElementById('disp-role').innerText = user.jabatan + " • " + (user.kapal || 'DARAT');
             
             const btnMinta = document.getElementById('btn-minta');
             if (user.level === 3) {
-                btnMinta.onclick = () => alert("Admin hanya menyetujui & input harga.");
-                document.getElementById('icon-minta').classList.add('opacity-30');
+                btnMinta.onclick = () => alert("Admin hanya berhak verifikasi & input harga.");
+                document.getElementById('icon-minta').parentElement.classList.add('opacity-30');
             } else {
                 btnMinta.onclick = () => {
                     const selCat = document.getElementById('f-cat');
                     if (user.jabatan === 'KKM') selCat.innerHTML = '<option>Kamar Mesin</option>';
-                    else selCat.innerHTML = '<option>Dapur</option><option>Operasional Kapal</option><option>Kamar Mesin (Darurat)</option><option>Harian</option>';
+                    else selCat.innerHTML = '<option>Dapur</option><option>Operasional Kapal</option><option>Harian</option><option>Kamar Mesin (Darurat)</option>';
                     document.getElementById('modal-anfrak').style.display = 'flex';
                 };
             }
@@ -140,6 +155,8 @@
         }
 
         async function loadData() {
+            const cont = document.getElementById('main-list');
+            cont.innerHTML = `<div class="p-20 text-center text-gray-300 font-black text-[10px] uppercase animate-pulse">Sinkronisasi Data...</div>`;
             const res = await fetch(`${API}?action=getData`);
             const data = await res.json();
             renderList(data.transaksi);
@@ -147,116 +164,99 @@
 
         function renderList(data) {
             const cont = document.getElementById('main-list');
-            cont.innerHTML = data.reverse().map(i => {
-                let statusColor = i[9] === 'MENUNGGU ADMIN' ? 'bg-orange-100 text-orange-600' : 
-                                 i[9] === 'DISETUJUI OWNER' ? 'bg-blue-100 text-blue-600' : 
-                                 i[9] === 'SELESAI' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600';
-                
-                let actionBtn = "";
+            const active = data.filter(i => i[9] === 'MENUNGGU ADMIN' || i[9] === 'DISETUJUI OWNER');
+            const history = data.filter(i => i[9] === 'SELESAI' || i[9] === 'REJECTED');
+
+            let html = `<h3 class="text-[10px] font-black text-red-500 uppercase tracking-[0.2em] mb-4 italic">Antrean Aktif (${active.length})</h3>`;
+            html += active.length ? active.reverse().map(i => renderCard(i, false)).join('') : `<div class="bg-white p-10 rounded-[2rem] text-center text-gray-300 font-bold text-[9px] uppercase border-2 border-dashed border-gray-100">Kosong</div>`;
+            
+            html += `<h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-10 mb-4 italic">Riwayat Selesai</h3>`;
+            html += history.reverse().map(i => renderCard(i, true)).join('');
+            cont.innerHTML = html;
+        }
+
+        function renderCard(i, isHistory) {
+            let statusCol = i[9] === 'MENUNGGU ADMIN' ? 'bg-orange-100 text-orange-600' : 
+                            i[9] === 'DISETUJUI OWNER' ? 'bg-blue-100 text-blue-600' : 
+                            i[9] === 'SELESAI' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600';
+            
+            let actionBtn = "";
+            if (!isHistory) {
                 if ((user.level === 3 || user.level === 1) && i[9] === 'MENUNGGU ADMIN') {
-                    actionBtn = `
-                        <div class="grid grid-cols-2 gap-2 mt-3">
-                            <button onclick="openReject('${i[0]}')" class="bg-gray-100 text-red-600 text-[8px] font-black p-3 rounded-xl uppercase">Reject</button>
-                            <button onclick="changeStatus('${i[0]}', 'DISETUJUI OWNER')" class="bg-blue-600 text-white text-[8px] font-black p-3 rounded-xl uppercase">Approve</button>
-                        </div>`;
-                } else if (user.level === 1 && i[9] === 'DISETUJUI OWNER') {
-                    actionBtn = `<button onclick="openReject('${i[0]}')" class="mt-2 w-full bg-gray-50 text-red-400 text-[8px] font-bold p-2 rounded-lg">BATALKAN / REJECT</button>`;
+                    actionBtn = `<div class="grid grid-cols-2 gap-2 mt-4"><button onclick="openReject('${i[0]}')" class="bg-gray-100 text-red-600 text-[9px] font-black py-3 rounded-xl uppercase">Reject</button><button onclick="changeStatus('${i[0]}', 'DISETUJUI OWNER')" class="bg-blue-600 text-white text-[9px] font-black py-3 rounded-xl uppercase shadow-lg shadow-blue-50">Approve</button></div>`;
                 } else if (user.level === 3 && i[9] === 'DISETUJUI OWNER') {
-                    actionBtn = `<button onclick="openHarga('${i[0]}', '${i[5]}')" class="mt-3 w-full bg-green-600 text-white text-[8px] font-black p-3 rounded-xl uppercase tracking-widest">Beli & Input Harga</button>`;
+                    actionBtn = `<button onclick="openHarga('${i[0]}', '${i[5]}')" class="mt-4 w-full bg-green-600 text-white text-[9px] font-black py-4 rounded-xl uppercase shadow-lg shadow-green-50">Beli & Input Harga</button>`;
+                } else if (user.level === 1 && i[9] === 'DISETUJUI OWNER') {
+                    actionBtn = `<button onclick="openReject('${i[0]}')" class="mt-2 w-full text-red-400 text-[8px] font-bold py-2 opacity-50 uppercase italic">Batalkan</button>`;
                 }
-
-                return `
-                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
-                    <div class="flex justify-between mb-3">
-                        <span class="${statusColor} btn-status">${i[9]}</span>
-                        <span class="text-[8px] font-bold text-gray-300 italic">${new Date(i[1]).toLocaleDateString()}</span>
-                    </div>
-                    <p class="text-[11px] font-black text-gray-800 uppercase leading-tight">${i[5]}</p>
-                    <p class="text-[9px] text-gray-400 mt-1">Qty: ${i[6]} • ${i[2]}</p>
-                    ${i[12] ? `<p class="mt-2 text-[8px] bg-red-50 p-2 rounded-lg text-red-500 font-bold italic border border-red-100">Info: ${i[12]}</p>` : ''}
-                    <div class="mt-3 pt-3 border-t flex justify-between items-center">
-                        <span class="text-[10px] font-black text-red-600">${i[7] > 0 ? 'Rp'+Number(i[7]).toLocaleString() : 'Menunggu Harga...'}</span>
-                        ${i[11] ? `<a href="${i[11]}" target="_blank" class="text-[8px] text-blue-500 font-black underline">LIHAT NOTA</a>` : ''}
-                    </div>
-                    ${actionBtn}
-                </div>`;
-            }).join('');
-        }
-
-        // FUNGSI REJECT
-        function openReject(id) { activeId = id; document.getElementById('modal-reject').style.display = 'flex'; }
-        async function submitReject() {
-            const alasan = document.getElementById('f-alasan-reject').value;
-            if(!alasan) return alert("Alasan reject wajib diisi!");
-            await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'changeStatus', id: activeId, statusBaru: 'REJECTED', alasan: alasan }) });
-            location.reload();
-        }
-
-        async function changeStatus(id, status) {
-            if(!confirm("Setujui pengajuan ini?")) return;
-            await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'changeStatus', id: id, statusBaru: status }) });
-            loadData();
-        }
-
-        // FUNGSI LOGIKA NOTA
-        function toggleNoNota() {
-            isNoNota = !isNoNota;
-            const area = document.getElementById('area-alasan-nota');
-            const btnFoto = document.getElementById('btn-foto');
-            const msg = document.getElementById('msg-nota');
-            if(isNoNota) {
-                area.classList.remove('hidden'); btnFoto.classList.add('opacity-30');
-                msg.innerText = "Gunakan Kamera Kembali";
-            } else {
-                area.classList.add('hidden'); btnFoto.classList.remove('opacity-30');
-                msg.innerText = "Tidak ada nota? Klik di sini";
             }
-        }
 
-        function openHarga(id, item) {
-            activeId = id; document.getElementById('h-item').innerText = item;
-            document.getElementById('modal-harga').style.display = 'flex';
-        }
-
-        async function submitHarga() {
-            const h = document.getElementById('f-harga').value;
-            const alasanTanpa = document.getElementById('f-alasan-tanpa-nota').value;
-            if(!h) return alert("Harga wajib diisi!");
-            if(!base64Image && !isNoNota) return alert("Foto nota wajib ada atau isi alasan jika tidak ada nota!");
-            if(isNoNota && !alasanTanpa) return alert("Alasan tanpa nota wajib diisi!");
-
-            document.getElementById('btn-submit-harga').innerText = "MENYIMPAN...";
-            await fetch(API, { method: 'POST', body: JSON.stringify({ 
-                action: 'updateHarga', id: activeId, harga: h, image: base64Image, alasanTanpaNota: alasanTanpa 
-            }) });
-            location.reload();
+            return `<div class="bg-white p-6 rounded-[2rem] shadow-sm mb-4 animate-up ${isHistory ? 'opacity-60' : 'border-l-4 border-[#e21e26]'}">
+                <div class="flex justify-between mb-4"><span class="${statusCol} btn-status">${i[9]}</span><span class="text-[8px] font-bold text-gray-300">${new Date(i[1]).toLocaleDateString('id-ID')}</span></div>
+                <p class="text-[12px] font-black text-gray-800 uppercase leading-tight">${i[5]}</p>
+                <p class="text-[9px] text-gray-400 mt-1 uppercase font-bold italic">Qty: ${i[6]} • ${i[2]} • ${i[8]}</p>
+                ${i[12] ? `<p class="mt-3 p-3 bg-red-50 rounded-xl text-[9px] text-red-500 font-bold border border-red-100 italic">Info: ${i[12]}</p>` : ''}
+                <div class="mt-4 pt-4 border-t flex justify-between items-center">
+                    <span class="text-[12px] font-black text-[#e21e26] tracking-tighter">${i[7] > 0 ? 'Rp '+Number(i[7]).toLocaleString('id-ID') : (i[9] === 'REJECTED' ? 'REJECTED' : 'ESTIMASI...')}</span>
+                    ${i[11] ? `<a href="${i[11]}" target="_blank" class="text-[9px] bg-blue-50 text-blue-600 px-3 py-1.5 rounded-full font-black uppercase">Nota</a>` : ''}
+                </div>
+                ${actionBtn}
+            </div>`;
         }
 
         async function sendAnfrakan() {
-            const payload = { 
-                tipe: "Anfrakan Kapal", kategori: document.getElementById('f-cat').value,
-                keterangan: document.getElementById('f-ket').value, alasan: document.getElementById('f-alasan').value,
-                qty: document.getElementById('f-qty').value, pemohon: user.nama, kapal: user.kapal
-            };
+            const btn = document.getElementById('btn-send');
+            btn.disabled = true; btn.innerText = "SEDANG MENGIRIM...";
+            const payload = { tipe: "Anfrakan Kapal", kategori: document.getElementById('f-cat').value, keterangan: document.getElementById('f-ket').value, alasan: document.getElementById('f-alasan').value, qty: document.getElementById('f-qty').value, pemohon: user.nama, kapal: user.kapal };
             await fetch(API, { method: 'POST', body: JSON.stringify(payload) });
             location.reload();
         }
 
-        function previewImg(input) {
-            let reader = new FileReader();
-            reader.onload = (e) => { 
-                document.getElementById('img-preview').src = e.target.result;
-                document.getElementById('img-preview').classList.remove('hidden');
-                base64Image = e.target.result;
-                isNoNota = false; document.getElementById('area-alasan-nota').classList.add('hidden');
+        async function changeStatus(id, status) {
+            if(!confirm("Proses approval?")) return;
+            await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'changeStatus', id: id, statusBaru: status }) });
+            loadData();
+        }
+
+        function openReject(id) { activeId = id; document.getElementById('modal-reject').style.display = 'flex'; }
+        async function submitReject() {
+            const al = document.getElementById('f-alasan-reject').value;
+            if(!al) return alert("Alasan wajib diisi!");
+            await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'changeStatus', id: activeId, statusBaru: 'REJECTED', alasan: al }) });
+            location.reload();
+        }
+
+        function openHarga(id, item) { activeId = id; document.getElementById('h-item').innerText = item; document.getElementById('modal-harga').style.display = 'flex'; }
+        function toggleNoNota() { 
+            isNoNota = !isNoNota; 
+            document.getElementById('area-alasan-nota').classList.toggle('hidden'); 
+            document.getElementById('btn-foto').classList.toggle('opacity-30');
+            document.getElementById('msg-nota').innerText = isNoNota ? "Gunakan Kamera" : "Tidak ada nota?";
+        }
+
+        function previewImg(i) {
+            let r = new FileReader();
+            r.onload = (e) => { 
+                document.getElementById('img-preview').src = e.target.result; 
+                document.getElementById('img-preview').classList.remove('hidden'); 
+                base64Image = e.target.result; 
+                isNoNota = false; 
+                document.getElementById('area-alasan-nota').classList.add('hidden'); 
             };
-            reader.readAsDataURL(input.files[0]);
+            r.readAsDataURL(i.files[0]);
+        }
+
+        async function submitHarga() {
+            const h = document.getElementById('f-harga').value;
+            const al = document.getElementById('f-alasan-tanpa-nota').value;
+            if(!h || (!base64Image && !isNoNota) || (isNoNota && !al)) return alert("Data tidak lengkap!");
+            document.getElementById('btn-submit-harga').innerText = "MENYIMPAN...";
+            await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'updateHarga', id: activeId, harga: h, image: base64Image, alasanTanpaNota: al }) });
+            location.reload();
         }
 
         function logout() { localStorage.clear(); location.reload(); }
-        function closeModal() { 
-            document.querySelectorAll('[id^="modal"]').forEach(m => m.style.display = 'none'); 
-        }
+        function closeModal() { document.querySelectorAll('[id^="modal"]').forEach(m => m.style.display = 'none'); }
     </script>
 </body>
 </html>
