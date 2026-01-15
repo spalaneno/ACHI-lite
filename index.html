@@ -127,7 +127,8 @@
     </div>
 
     <script>
-        const API = "https://script.google.com/macros/s/AKfycbyHdv7bTACKVAHccutE8iDdk888pUycCT9XHINLdvdG_5EpPWCtd0GjZ1duSZlthZeR/execItem('achi_session'));
+        const API = ""; https://script.google.com/macros/s/AKfycbwiQ4jFiovkcE5vvArQZwqwJiMHDx-jUJMhvfj14S1nP_o_-pBcku_yLd6Xji40mTcL/exec
+        let currentUser = JSON.parse(localStorage.getItem('achi_session'));
         let allData = [];
 
         window.onload = () => { if(currentUser) showApp(currentUser); };
