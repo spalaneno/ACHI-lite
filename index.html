@@ -3,22 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ACHI Integrated System</title>
+    <title>ACHI Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .achi-red { background-color: #e21e26; }
         .text-achi-red { color: #e21e26; }
-        body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f8f9fa; font-family: 'Inter', sans-serif; }
         
         @media print {
             .no-print { display: none !important; }
             .print-only { display: block !important; }
-            body { background: white !important; }
-            #app { padding: 0; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid black; padding: 8px; font-size: 10pt; }
-            .kop { border-bottom: 3px double black; text-align: center; margin-bottom: 20px; }
+            body { background: white !important; padding: 0; }
+            #app { max-width: 100%; }
+            table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+            th, td { border: 1px solid black; padding: 6px; font-size: 9pt; text-align: left; }
+            th { background-color: #f2f2f2 !important; }
+            .kop { border-bottom: 3px double black; text-align: center; margin-bottom: 20px; padding-bottom: 10px; }
         }
         .print-only { display: none; }
     </style>
@@ -27,111 +28,117 @@
 
     <div id="login-page" class="p-10 pt-24 text-center bg-white min-h-screen flex flex-col items-center">
         <h1 class="text-5xl font-black text-achi-red italic mb-2">ACHI</h1>
-        <p class="text-[10px] font-bold text-gray-400 tracking-[0.3em] mb-12 uppercase italic">Fleet Integration</p>
-        <div class="w-full space-y-4">
-            <input id="u-name" type="text" placeholder="Username" class="w-full p-4 rounded-2xl border bg-gray-50 text-center outline-none focus:border-red-500">
-            <input id="u-pass" type="password" placeholder="Password" class="w-full p-4 rounded-2xl border bg-gray-50 text-center outline-none focus:border-red-500">
-            <button onclick="login()" id="btn-login" class="w-full achi-red text-white p-4 rounded-2xl font-bold shadow-lg uppercase tracking-widest active:scale-95 transition">Masuk</button>
+        <p class="text-[10px] font-bold text-gray-300 tracking-[0.3em] mb-12 uppercase italic">Admin & Owner System</p>
+        <div class="w-full space-y-3">
+            <input id="u-name" type="text" placeholder="Username" class="w-full p-4 rounded-2xl border bg-gray-50 text-center outline-none">
+            <input id="u-pass" type="password" placeholder="Password" class="w-full p-4 rounded-2xl border bg-gray-50 text-center outline-none">
+            <button onclick="login()" id="btn-login" class="w-full achi-red text-white p-4 rounded-2xl font-bold shadow-lg uppercase active:scale-95 transition">Masuk System</button>
         </div>
     </div>
 
     <div id="app" class="hidden">
-        <div class="achi-red p-6 rounded-b-[40px] text-white shadow-xl mb-6 no-print">
+        <div class="achi-red p-6 rounded-b-[40px] text-white shadow-xl mb-4 no-print">
             <div class="flex justify-between items-center">
                 <div>
-                    <p id="user-display" class="text-xl font-bold italic">-</p>
-                    <p id="role-display" class="text-[9px] opacity-80 uppercase tracking-widest font-bold text-yellow-300"></p>
+                    <p id="user-display" class="text-lg font-bold italic">-</p>
+                    <p id="role-display" class="text-[9px] uppercase font-bold text-yellow-300"></p>
                 </div>
-                <button onclick="logout()" class="opacity-50 hover:opacity-100 transition"><i class="fas fa-sign-out-alt"></i></button>
+                <button onclick="logout()" class="opacity-50"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </div>
 
-        <div id="dashboard-summary" class="px-6 mb-6 hidden no-print">
+        <div id="dashboard-summary" class="px-4 mb-4 hidden no-print">
             <div class="grid grid-cols-3 gap-2">
-                <div class="bg-white p-3 rounded-2xl shadow-sm border-t-4 border-blue-500 text-center">
-                    <p class="text-[8px] font-bold text-gray-400 uppercase">Hari Ini</p>
-                    <p id="sum-day" class="text-[10px] font-black text-gray-800 mt-1">Rp0</p>
+                <div class="bg-white p-3 rounded-2xl shadow-sm border-b-4 border-blue-500 text-center">
+                    <p class="text-[7px] font-bold text-gray-400 uppercase">Hari Ini</p>
+                    <p id="sum-day" class="text-[9px] font-black mt-1">Rp0</p>
                 </div>
-                <div class="bg-white p-3 rounded-2xl shadow-sm border-t-4 border-green-500 text-center">
-                    <p class="text-[8px] font-bold text-gray-400 uppercase">Minggu Ini</p>
-                    <p id="sum-week" class="text-[10px] font-black text-gray-800 mt-1">Rp0</p>
+                <div class="bg-white p-3 rounded-2xl shadow-sm border-b-4 border-green-500 text-center">
+                    <p class="text-[7px] font-bold text-gray-400 uppercase">Minggu Ini</p>
+                    <p id="sum-week" class="text-[9px] font-black mt-1">Rp0</p>
                 </div>
-                <div class="bg-white p-3 rounded-2xl shadow-sm border-t-4 border-orange-500 text-center">
-                    <p class="text-[8px] font-bold text-gray-400 uppercase">Bulan Ini</p>
-                    <p id="sum-month" class="text-[10px] font-black text-gray-800 mt-1">Rp0</p>
+                <div class="bg-white p-3 rounded-2xl shadow-sm border-b-4 border-orange-500 text-center">
+                    <p class="text-[7px] font-bold text-gray-400 uppercase">Bulan Ini</p>
+                    <p id="sum-month" class="text-[9px] font-black mt-1">Rp0</p>
                 </div>
             </div>
         </div>
 
-        <div id="owner-menu" class="px-6 mb-6 hidden no-print">
-            <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex items-center gap-2">
-                <input type="date" id="start-date" class="flex-1 p-2 bg-gray-50 border rounded-xl text-[10px] outline-none">
-                <input type="date" id="end-date" class="flex-1 p-2 bg-gray-50 border rounded-xl text-[10px] outline-none">
-                <button onclick="applyFilter()" class="achi-red text-white px-4 py-2 rounded-xl text-[10px] font-bold uppercase"><i class="fas fa-search"></i></button>
+        <div class="px-4 mb-4 no-print">
+            <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100">
+                <div class="grid grid-cols-2 gap-2 mb-2">
+                    <input type="date" id="start-date" class="p-2 bg-gray-50 border rounded-xl text-[10px]">
+                    <input type="date" id="end-date" class="p-2 bg-gray-50 border rounded-xl text-[10px]">
+                </div>
+                <div class="flex gap-2">
+                    <select id="filter-kapal" class="flex-1 p-2 bg-gray-50 border rounded-xl text-[10px] font-bold">
+                        <option value="SEMUA">-- SEMUA KAPAL --</option>
+                        <option>KM. Nabawi 09</option><option>KM. Lastika Star</option>
+                        <option>KM. Srikandi 01</option><option>Rakit 01</option>
+                    </select>
+                    <button onclick="applyFilter()" class="achi-red text-white px-4 rounded-xl text-[10px] font-bold uppercase">Cari</button>
+                </div>
             </div>
         </div>
 
-        <div id="content-area" class="px-6 pb-10">
+        <div id="content-area" class="px-4">
             <div class="print-only kop">
                 <h1 class="text-3xl font-black text-red-600">PT. ACHI</h1>
                 <p class="text-[10px] font-bold uppercase tracking-widest">Armada Crewing & Handling Integrasi</p>
-                <div style="margin-top:10px; font-weight:bold; text-decoration:underline;">LAPORAN PENGELUARAN RESMI</div>
+                <div style="margin-top:10px; font-weight:bold; text-decoration:underline;">LAPORAN TRANSAKSI PENGELUARAN</div>
                 <p id="print-period" class="text-[9px] italic mt-1"></p>
             </div>
 
-            <h3 id="view-label" class="font-bold text-gray-400 text-[10px] uppercase mb-4 tracking-widest flex items-center no-print italic">
-                <span class="w-1.5 h-3 achi-red mr-2 rounded-full"></span> Pengeluaran Hari Ini
+            <h3 id="view-label" class="font-bold text-gray-400 text-[10px] uppercase mb-3 px-2 italic no-print">
+                <i class="fas fa-list-ul mr-1"></i> Data Transaksi
             </h3>
             
             <div id="main-list" class="space-y-3 no-print"></div>
             <div id="table-output" class="print-only"></div>
 
-            <div class="print-only mt-10 grid grid-cols-2 text-center">
+            <div id="signature-area" class="print-only mt-10 grid grid-cols-2 text-center">
                 <div>
-                    <p class="text-[10pt] mb-16">Dibuat Oleh,</p>
-                    <p id="p-admin" class="text-[10pt] font-bold border-t border-black inline-block px-6 uppercase">-</p>
+                    <p class="text-[9pt] mb-16">Dibuat Oleh,</p>
+                    <p id="p-admin" class="text-[9pt] font-bold border-t border-black inline-block px-6 uppercase">-</p>
                 </div>
                 <div>
-                    <p class="text-[10pt] mb-16">Disetujui Oleh,</p>
-                    <p class="text-[10pt] font-bold border-t border-black inline-block px-6 uppercase">Hengky / Owner</p>
+                    <p class="text-[9pt] mb-16">Disetujui Oleh,</p>
+                    <p class="text-[9pt] font-bold border-t border-black inline-block px-6 uppercase">Hengky / Owner</p>
                 </div>
             </div>
         </div>
 
-        <div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/80 backdrop-blur-md border-t p-4 flex justify-around items-center no-print shadow-2xl z-50">
-            <button onclick="loadInitialData()" class="text-gray-400 hover:text-achi-red flex flex-col items-center">
-                <i class="fas fa-sync-alt text-xl"></i><span class="text-[8px] font-bold mt-1">REFRESH</span>
+        <div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t p-4 flex justify-around items-center no-print shadow-2xl z-50">
+            <button onclick="loadInitialData()" class="text-gray-400 flex flex-col items-center">
+                <i class="fas fa-home text-xl"></i><span class="text-[8px] font-bold mt-1 uppercase">Beranda</span>
             </button>
             <button onclick="openModal()" class="achi-red w-14 h-14 rounded-full text-white -mt-12 border-4 border-white shadow-xl flex items-center justify-center transition active:scale-90">
                 <i class="fas fa-plus text-xl"></i>
             </button>
-            <button id="nav-rep-btn" onclick="toggleFilterMenu()" class="hidden text-gray-400 hover:text-achi-red flex flex-col items-center">
-                <i class="fas fa-filter text-xl"></i><span class="text-[8px] font-bold mt-1">FILTER</span>
+            <button onclick="window.print()" class="text-gray-400 flex flex-col items-center">
+                <i class="fas fa-print text-xl"></i><span class="text-[8px] font-bold mt-1 uppercase">Cetak</span>
             </button>
         </div>
     </div>
 
     <div id="modal" class="fixed inset-0 bg-black/60 hidden items-end z-[100] no-print text-center">
         <div class="bg-white w-full rounded-t-[40px] p-8 max-w-md animate-slide-up shadow-2xl">
-            <h3 class="font-bold text-achi-red mb-6 uppercase tracking-widest italic border-b pb-2">Form Pengeluaran</h3>
+            <h3 class="font-bold text-achi-red mb-6 uppercase tracking-widest italic border-b pb-2">Input Transaksi Baru</h3>
             <div class="space-y-4">
-                <select id="f-kapal" class="w-full p-4 bg-gray-50 border rounded-2xl text-sm font-bold">
+                <select id="f-kapal" class="w-full p-4 bg-gray-100 border rounded-2xl text-sm font-bold">
                     <option>KM. Nabawi 09</option><option>KM. Lastika Star</option>
                     <option>KM. Srikandi 01</option><option>Rakit 01</option>
                 </select>
                 <input id="f-ket" type="text" placeholder="Keterangan" class="w-full p-4 border rounded-2xl text-sm outline-none">
-                <input id="f-jumlah" type="number" placeholder="Nominal" class="w-full p-4 border rounded-2xl text-sm font-bold text-achi-red">
+                <input id="f-jumlah" type="number" placeholder="Nominal Rp" class="w-full p-4 border rounded-2xl text-sm font-bold">
                 <input id="f-file" type="file" accept="image/*" class="text-[10px] w-full mt-2">
-                <button onclick="saveData()" id="btn-save" class="w-full achi-red text-white p-5 rounded-2xl font-bold uppercase shadow-xl">Simpan Data</button>
-                <button onclick="closeModal()" class="text-gray-400 text-xs mt-2 uppercase font-bold">Batal</button>
+                <button onclick="saveData()" id="btn-save" class="w-full achi-red text-white p-5 rounded-2xl font-bold uppercase shadow-xl transition active:scale-95">Kirim Data</button>
             </div>
         </div>
     </div>
 
     <script>
-        // MASUKKAN URL API ANDA DI SINI
         const API = "https://script.google.com/macros/s/AKfycbwiQ4jFiovkcE5vvArQZwqwJiMHDx-jUJMhvfj14S1nP_o_-pBcku_yLd6Xji40mTcL/exec";
-        
         let currentUser = JSON.parse(localStorage.getItem('achi_session'));
         let allData = [];
 
@@ -140,14 +147,14 @@
         async function login() {
             const u = document.getElementById('u-name').value.trim();
             const p = document.getElementById('u-pass').value.trim();
-            if(!u || !p) return alert("Isi Login!");
-            document.getElementById('btn-login').innerText = "PROSES...";
+            if(!u || !p) return alert("Data login tidak lengkap!");
+            document.getElementById('btn-login').innerText = "MENYAMBUNGKAN...";
             const r = await fetch(`${API}?action=login&username=${u}&password=${p}`);
             const d = await r.json();
             if(d.status === 'success') {
                 localStorage.setItem('achi_session', JSON.stringify(d));
                 currentUser = d; showApp(d);
-            } else { alert("Salah!"); document.getElementById('btn-login').innerText = "MASUK"; }
+            } else { alert("Login Gagal!"); document.getElementById('btn-login').innerText = "Masuk System"; }
         }
 
         function showApp(d) {
@@ -155,28 +162,31 @@
             document.getElementById('app').classList.remove('hidden');
             document.getElementById('user-display').innerText = d.nama;
             document.getElementById('p-admin').innerText = d.nama;
-            document.getElementById('role-display').innerText = d.level === 1 ? "Admin Operasional" : (d.level === 2 ? "Accounting" : "Owner");
+            document.getElementById('role-display').innerText = d.level === 1 ? "Staff Operasional" : (d.level === 2 ? "Accounting (OD)" : "Owner (Direksi)");
             
-            if(d.level >= 2) {
-                document.getElementById('dashboard-summary').classList.remove('hidden');
-                document.getElementById('nav-rep-btn').classList.remove('hidden');
+            if(d.level >= 2) document.getElementById('dashboard-summary').classList.remove('hidden');
+            
+            // LOGIKA TANDA TANGAN: Hilangkan jika Owner (Level 3)
+            if(d.level === 3) {
+                document.getElementById('signature-area').classList.remove('grid');
+                document.getElementById('signature-area').classList.add('hidden');
             }
+
             loadInitialData();
         }
 
         async function loadInitialData() {
-            const list = document.getElementById('main-list');
-            list.innerHTML = '<p class="text-center text-[10px] font-bold text-gray-400 animate-pulse">Menghubungkan ke server...</p>';
             const r = await fetch(`${API}?action=getTransaksi`);
             allData = await r.json();
-            
             if(currentUser.level >= 2) calculateStats(allData);
             
-            // Default Tampilan: Hari Ini
             const today = new Date().toLocaleDateString('id-ID');
             let filtered = allData.filter(i => new Date(i.Tanggal).toLocaleDateString('id-ID') == today);
+            
+            // Level 1 hanya lihat data sendiri
             if(currentUser.level === 1) filtered = filtered.filter(i => i.Admin === currentUser.nama);
             
+            document.getElementById('view-label').innerText = "Hari Ini: " + today;
             render(filtered);
         }
 
@@ -194,7 +204,6 @@
                 if(iDate >= startOfWeek) wSum += val;
                 if(iDate >= startOfMonth) mSum += val;
             });
-
             document.getElementById('sum-day').innerText = "Rp" + dSum.toLocaleString();
             document.getElementById('sum-week').innerText = "Rp" + wSum.toLocaleString();
             document.getElementById('sum-month').innerText = "Rp" + mSum.toLocaleString();
@@ -208,38 +217,45 @@
             list.innerHTML = data.map(i => {
                 total += Number(i.Jumlah);
                 return `<div class="bg-white p-4 rounded-3xl shadow-sm border-l-4 border-gray-800">
-                    <div class="flex justify-between text-[9px] text-gray-400 font-bold mb-1 uppercase"><span>${i.Kapal}</span><span>${new Date(i.Tanggal).toLocaleDateString('id-ID')}</span></div>
-                    <div class="flex justify-between items-center"><p class="text-[12px] font-bold text-gray-700 uppercase">${i.Keterangan}</p><p class="text-[12px] font-black text-red-600">Rp${Number(i.Jumlah).toLocaleString()}</p></div>
+                    <div class="flex justify-between text-[8px] text-gray-400 font-bold mb-1 uppercase"><span>${i.Kapal}</span><span>${new Date(i.Tanggal).toLocaleDateString('id-ID')}</span></div>
+                    <div class="flex justify-between items-center"><p class="text-[11px] font-bold text-gray-700">${i.Keterangan}</p><p class="text-[11px] font-black text-red-600">Rp${Number(i.Jumlah).toLocaleString()}</p></div>
+                    <p class="text-[7px] text-gray-300 mt-1 uppercase italic font-bold">Oleh: ${i.Admin}</p>
                 </div>`;
-            }).join('') + `<div class="p-4 bg-gray-800 text-white rounded-2xl flex justify-between font-bold text-xs"><span>TOTAL</span><span>Rp${total.toLocaleString()}</span></div>`;
+            }).join('') + `<div class="p-4 bg-gray-800 text-white rounded-2xl flex justify-between font-bold text-xs"><span>TOTAL REKAP</span><span>Rp${total.toLocaleString()}</span></div>`;
 
-            if(currentUser.level >= 2 && data.length > 0) {
-                list.innerHTML += `<button onclick="window.print()" class="w-full bg-blue-600 text-white p-4 rounded-2xl font-bold mt-2 text-[10px]"><i class="fas fa-print mr-2"></i>CETAK LAPORAN</button>`;
-            }
-
-            let tHtml = `<table><thead><tr><th>No</th><th>Tanggal</th><th>Armada</th><th>Keterangan</th><th>Nominal</th></tr></thead><tbody>`;
+            let tHtml = `<table><thead><tr><th>No</th><th>Tanggal</th><th>Armada</th><th>Keterangan</th><th>Admin</th><th>Nominal</th></tr></thead><tbody>`;
             data.forEach((i, idx) => {
-                tHtml += `<tr><td>${idx+1}</td><td>${new Date(i.Tanggal).toLocaleDateString('id-ID')}</td><td>${i.Kapal}</td><td>${i.Keterangan}</td><td align="right">Rp${Number(i.Jumlah).toLocaleString()}</td></tr>`;
+                tHtml += `<tr><td>${idx+1}</td><td>${new Date(i.Tanggal).toLocaleDateString('id-ID')}</td><td>${i.Kapal}</td><td>${i.Keterangan}</td><td>${i.Admin}</td><td align="right">Rp${Number(i.Jumlah).toLocaleString()}</td></tr>`;
             });
-            tHtml += `<tr><td colspan="4" align="right"><b>TOTAL</b></td><td align="right"><b>Rp${total.toLocaleString()}</b></td></tr></tbody></table>`;
+            tHtml += `<tr><td colspan="5" align="right"><b>TOTAL KESELURUHAN</b></td><td align="right"><b>Rp${total.toLocaleString()}</b></td></tr></tbody></table>`;
             table.innerHTML = tHtml;
         }
 
         async function applyFilter() {
-            const s = new Date(document.getElementById('start-date').value);
-            const e = new Date(document.getElementById('end-date').value);
-            s.setHours(0,0,0,0); e.setHours(23,59,59,999);
-            const filtered = allData.filter(i => {
+            const sVal = document.getElementById('start-date').value;
+            const eVal = document.getElementById('end-date').value;
+            const kVal = document.getElementById('filter-kapal').value;
+            
+            if(!sVal || !eVal) return alert("Pilih Tanggal!");
+
+            const s = new Date(sVal); s.setHours(0,0,0,0);
+            const e = new Date(eVal); e.setHours(23,59,59,999);
+
+            let filtered = allData.filter(i => {
                 const d = new Date(i.Tanggal);
-                return d >= s && d <= e;
+                const matchDate = d >= s && d <= e;
+                const matchKapal = (kVal === "SEMUA") || (i.Kapal === kVal);
+                const matchUser = (currentUser.level >= 2) || (i.Admin === currentUser.nama);
+                return matchDate && matchKapal && matchUser;
             });
-            document.getElementById('view-label').innerText = "Hasil Filter Laporan";
-            document.getElementById('print-period').innerText = `PERIODE: ${s.toLocaleDateString('id-ID')} - ${e.toLocaleDateString('id-ID')}`;
+
+            document.getElementById('view-label').innerText = "Hasil Filter: " + kVal;
+            document.getElementById('print-period').innerText = `PERIODE: ${s.toLocaleDateString('id-ID')} s/d ${e.toLocaleDateString('id-ID')} (${kVal})`;
             render(filtered);
         }
 
         async function saveData() {
-            const btn = document.getElementById('btn-save'); btn.innerText = "KIRIM..."; btn.disabled = true;
+            const btn = document.getElementById('btn-save'); btn.innerText = "MENGIRIM..."; btn.disabled = true;
             const file = document.getElementById('f-file').files[0];
             let img = null, mime = null;
             if(file) {
@@ -252,10 +268,9 @@
                 jumlah: document.getElementById('f-jumlah').value, user: currentUser.nama, image: img, mimeType: mime
             };
             await fetch(API, { method: 'POST', body: JSON.stringify(payload) });
-            alert("Tersimpan!"); location.reload();
+            alert("Berhasil Disimpan!"); location.reload();
         }
 
-        function toggleFilterMenu() { document.getElementById('owner-menu').classList.toggle('hidden'); }
         function logout() { localStorage.clear(); location.reload(); }
         function openModal() { document.getElementById('modal').style.display = 'flex'; }
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
