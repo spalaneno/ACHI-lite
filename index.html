@@ -8,10 +8,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --achi-red: #e21e26; }
-        body { background-color: #f3f4f6; font-family: 'Inter', sans-serif; }
+        body { background-color: #f3f4f6; font-family: 'Inter', sans-serif; overflow-x: hidden; }
         .bg-main { background: linear-gradient(180deg, #8b0000 0%, #e21e26 100%); min-height: 100vh; }
-        .bca-card { background: white; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
-        .menu-icon { background: linear-gradient(135deg, #e21e26 0%, #8b0000 100%); width: 55px; height: 55px; border-radius: 1rem; display: flex; align-items: center; justify-content: center; color: white; margin-bottom: 5px; box-shadow: 0 4px 10px rgba(226, 30, 38, 0.3); }
+        .bca-card { background: white; border-radius: 1.5rem; padding: 1.2rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+        .menu-icon { background: linear-gradient(135deg, #e21e26 0%, #8b0000 100%); width: 55px; height: 55px; border-radius: 1.2rem; display: flex; align-items: center; justify-content: center; color: white; margin-bottom: 5px; }
+        .btn-status { font-size: 7px; font-weight: 900; padding: 2px 8px; border-radius: 99px; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -20,66 +21,74 @@
         <img src="logo.png" class="w-56 mb-2">
         <p class="text-[9px] font-black tracking-[0.3em] uppercase mb-12 text-white/80 italic">Aplikasi Crewing & Handling Integrasi</p>
         <div class="w-full max-w-xs space-y-3">
-            <input id="u-name" type="text" placeholder="USER ID" class="w-full p-4 rounded-xl border-none bg-white/20 text-white placeholder-white/60 text-center font-bold outline-none backdrop-blur-md">
-            <input id="u-pass" type="password" placeholder="KODE AKSES" class="w-full p-4 rounded-xl border-none bg-white/20 text-white placeholder-white/60 text-center font-bold outline-none backdrop-blur-md">
-            <button onclick="login()" class="w-full bg-white text-[#e21e26] p-4 rounded-xl font-black uppercase shadow-xl">Login</button>
+            <input id="u-name" type="text" placeholder="USER ID" class="w-full p-4 rounded-xl border-none bg-white/20 text-white placeholder-white/60 text-center font-bold outline-none">
+            <input id="u-pass" type="password" placeholder="KODE AKSES" class="w-full p-4 rounded-xl border-none bg-white/20 text-white placeholder-white/60 text-center font-bold outline-none">
+            <button onclick="login()" class="w-full bg-white text-[#e21e26] p-4 rounded-xl font-black uppercase">Masuk</button>
         </div>
     </div>
 
-    <div id="app" class="hidden min-h-screen bg-gray-50 text-gray-800 pb-24">
-        <div class="bg-[#e21e26] p-6 pb-24 text-white">
+    <div id="app" class="hidden min-h-screen bg-gray-50 pb-24">
+        <div class="bg-[#e21e26] p-6 pb-20 text-white relative">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-3">
                     <img src="logo.png" class="w-10 h-10 bg-white rounded-lg p-1">
-                    <div><h2 id="disp-name" class="font-black text-sm uppercase">-</h2><p id="disp-role" class="text-[8px] font-bold text-yellow-300 uppercase"></p></div>
+                    <div><h2 id="disp-name" class="font-black text-xs uppercase">-</h2><p id="disp-role" class="text-[8px] font-bold text-yellow-300 uppercase mt-0.5 tracking-tighter"></p></div>
                 </div>
-                <button onclick="logout()"><i class="fas fa-sign-out-alt text-xl"></i></button>
+                <button onclick="logout()"><i class="fas fa-sign-out-alt text-lg"></i></button>
             </div>
         </div>
 
-        <div class="px-6 -mt-16">
-            <div class="bca-card grid grid-cols-3 gap-6 text-center">
-                <div onclick="showSection('trans')" class="flex flex-col items-center"><div class="menu-icon"><i class="fas fa-history"></i></div><span class="text-[8px] font-bold uppercase">History</span></div>
-                <div id="menu-input" onclick="openModal()" class="flex flex-col items-center"><div class="menu-icon"><i class="fas fa-plus"></i></div><span class="text-[8px] font-bold uppercase">Input</span></div>
-                <div onclick="showSection('awak')" class="flex flex-col items-center"><div class="menu-icon"><i class="fas fa-wallet"></i></div><span class="text-[8px] font-bold uppercase">Saldo</span></div>
+        <div class="px-6 -mt-12">
+            <div class="bca-card grid grid-cols-3 gap-4 text-center">
+                <div onclick="loadData()" class="flex flex-col items-center"><div class="menu-icon"><i class="fas fa-sync-alt"></i></div><span class="text-[8px] font-bold">REFRESH</span></div>
+                <div onclick="openModal()" class="flex flex-col items-center"><div class="menu-icon"><i class="fas fa-file-signature"></i></div><span class="text-[8px] font-bold">MINTA ANFRAK</span></div>
+                <div onclick="showSection('awak')" class="flex flex-col items-center"><div class="menu-icon"><i class="fas fa-user-friends"></i></div><span class="text-[8px] font-bold">INFO AWAK</span></div>
             </div>
         </div>
 
-        <div class="px-6 mt-8">
-            <h3 id="section-title" class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 italic">Monitor Transaksi</h3>
-            <div id="main-list" class="space-y-4"></div>
+        <div class="px-6 mt-6">
+            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 italic">Alur Persetujuan & Pembelian</h3>
+            <div id="main-list" class="space-y-3"></div>
         </div>
     </div>
 
-    <div id="modal" class="fixed inset-0 bg-black/80 hidden items-end z-[100]">
-        <div class="bg-white w-full rounded-t-[2.5rem] p-8 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="font-black text-[#e21e26] uppercase">Pengajuan & Bukti</h3>
-                <button onclick="closeModal()" class="text-gray-300 text-3xl">&times;</button>
+    <div id="modal" class="fixed inset-0 bg-black/80 hidden items-end z-[100] p-4">
+        <div class="bg-white w-full rounded-3xl p-6 max-h-[80vh] overflow-y-auto">
+            <h3 class="font-black text-[#e21e26] uppercase mb-4">Pengajuan Anfrakan</h3>
+            <div class="space-y-3">
+                <select id="f-cat" class="w-full p-4 bg-gray-100 rounded-xl text-xs font-bold outline-none">
+                    <option>Dapur</option><option>Operasional Kapal</option><option>Kamar Mesin</option><option>Lainnya</option>
+                </select>
+                <input id="f-ket" type="text" placeholder="Nama Barang (Contoh: Beras 10kg)" class="w-full p-4 border rounded-xl text-xs outline-none">
+                <input id="f-alasan" type="text" placeholder="Keperluan/Alasan" class="w-full p-4 border rounded-xl text-xs outline-none">
+                <input id="f-qty" type="text" placeholder="Jumlah / Satuan (Contoh: 2 Karung)" class="w-full p-4 border rounded-xl text-xs font-bold outline-none">
+                <p class="text-[8px] text-gray-400 italic">* Harga akan diinput oleh Admin/Accounting setelah disetujui Owner.</p>
+                <button onclick="sendAnfrakan()" id="btn-send" class="w-full bg-[#e21e26] text-white p-4 rounded-xl font-bold uppercase mt-2 shadow-lg">Kirim Permintaan</button>
+                <button onclick="closeModal()" class="w-full text-gray-400 font-bold py-2 text-xs">BATAL</button>
             </div>
-            <div class="space-y-4">
-                <select id="f-tipe" class="w-full p-4 bg-gray-100 rounded-xl font-bold text-sm outline-none"></select>
-                <select id="f-cat" class="w-full p-4 bg-gray-100 rounded-xl text-sm outline-none"></select>
-                <input id="f-ket" type="text" placeholder="Nama Barang" class="w-full p-4 border rounded-xl outline-none text-sm">
-                <input id="f-alasan" type="text" placeholder="Alasan" class="w-full p-4 border rounded-xl outline-none text-sm">
-                <input id="f-jumlah" type="number" placeholder="Nominal Rp" class="w-full p-4 border rounded-xl font-black outline-none">
-                
-                <div class="p-4 border-2 border-dashed border-gray-200 rounded-xl text-center">
-                    <p class="text-[10px] font-bold text-gray-400 uppercase mb-2">Upload Bukti / Nota</p>
-                    <input type="file" id="f-image" accept="image/*" class="hidden" onchange="previewImg(this)">
-                    <button onclick="document.getElementById('f-image').click()" class="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-[10px] font-bold uppercase"><i class="fas fa-camera mr-2"></i>Ambil Foto</button>
-                    <img id="img-preview" class="hidden mt-3 w-full rounded-lg shadow-sm">
-                </div>
+        </div>
+    </div>
 
-                <button onclick="sendData()" id="btn-send" class="w-full bg-[#e21e26] text-white p-5 rounded-2xl font-bold uppercase shadow-lg shadow-red-200">Kirim Sekarang</button>
+    <div id="modal-harga" class="fixed inset-0 bg-black/80 hidden items-end z-[100] p-4">
+        <div class="bg-white w-full rounded-3xl p-6">
+            <h3 class="font-black text-[#e21e26] uppercase mb-4">Input Pembelian Real</h3>
+            <div class="space-y-3">
+                <p id="h-item" class="text-xs font-bold text-gray-600"></p>
+                <input id="f-harga" type="number" placeholder="Nominal Sesuai Nota (Rp)" class="w-full p-4 border rounded-xl text-sm font-black outline-none bg-yellow-50">
+                <div class="p-4 border-2 border-dashed rounded-xl text-center">
+                    <input type="file" id="f-image" accept="image/*" class="hidden" onchange="previewImg(this)">
+                    <button onclick="document.getElementById('f-image').click()" class="bg-gray-100 px-4 py-2 rounded-lg text-[10px] font-bold"><i class="fas fa-camera mr-2"></i>FOTO NOTA</button>
+                    <img id="img-preview" class="hidden mt-2 w-full h-32 object-cover rounded-lg">
+                </div>
+                <button onclick="submitHarga()" id="btn-submit-harga" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold uppercase">Simpan & Selesaikan</button>
             </div>
         </div>
     </div>
 
     <script>
-        const API = "https://script.google.com/macros/s/AKfycbxNGXE28-I_8ID7vDO0ueHQzdOIJse38VMKPhjMmnyZFmgZItr-UNUbnb14pxNUIc8/exec";
+        const API = "URL_WEB_APP_BAPAK";
         let user = JSON.parse(localStorage.getItem('achi_user')) || null;
-        let globalData = null;
+        let activeId = null;
         let base64Image = "";
 
         window.onload = () => { if(user) startApp(); };
@@ -90,87 +99,101 @@
             const res = await fetch(`${API}?action=login&username=${u}&password=${p}`);
             const d = await res.json();
             if(d.status === 'success') {
-                user = d;
-                localStorage.setItem('achi_user', JSON.stringify(d));
-                startApp();
-            } else alert("Login Gagal!");
+                user = d; localStorage.setItem('achi_user', JSON.stringify(d)); startApp();
+            } else alert("Akses Ditolak!");
         }
 
         function startApp() {
             document.getElementById('login-page').style.display = 'none';
             document.getElementById('app').classList.remove('hidden');
             document.getElementById('disp-name').innerText = user.nama;
-            document.getElementById('disp-role').innerText = user.jabatan;
-            
-            const selTipe = document.getElementById('f-tipe');
-            const selCat = document.getElementById('f-cat');
-            if(user.level === 3) {
-                selTipe.innerHTML = '<option value="Pembelian Darat">Pembelian Darat (Admin)</option>';
-                selCat.innerHTML = '<option>Kebutuhan Kantor</option><option>Operasional Darat</option>';
-            } else {
-                selTipe.innerHTML = '<option value="Anfrakan Kapal">Anfrakan Kapal</option>';
-                selCat.innerHTML = '<option>Dapur</option><option>Mesin</option><option>Operasional</option>';
-            }
+            document.getElementById('disp-role').innerText = user.jabatan + " • " + (user.kapal || 'Darat');
             loadData();
         }
 
         async function loadData() {
-            const res = await fetch(`${API}?action=getData&level=${user.level}&kapal=${user.kapal}&jabatan=${user.jabatan}&nama=${user.nama}`);
-            globalData = await res.json();
-            showSection('trans');
+            const res = await fetch(`${API}?action=getData`);
+            const data = await res.json();
+            renderList(data.transaksi);
+        }
+
+        function renderList(data) {
+            const cont = document.getElementById('main-list');
+            cont.innerHTML = data.reverse().map(i => {
+                let statusColor = i[9] === 'MENUNGGU ADMIN' ? 'bg-orange-100 text-orange-600' : 
+                                 i[9] === 'DISETUJUI OWNER' ? 'bg-blue-100 text-blue-600' : 
+                                 i[9] === 'SELESAI' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400';
+                
+                // Cek apakah user boleh Approve atau Input Harga
+                let actionBtn = "";
+                if (user.level === 3 && i[9] === 'MENUNGGU ADMIN') {
+                    actionBtn = `<button onclick="approve('${i[0]}', 'DISETUJUI OWNER')" class="mt-3 w-full bg-blue-600 text-white text-[9px] font-black p-2 rounded-lg">APPROVE KE OWNER</button>`;
+                } else if (user.level === 1 && (i[9] === 'MENUNGGU ADMIN' || i[9] === 'DISETUJUI OWNER')) {
+                    actionBtn = `<button onclick="approve('${i[0]}', 'DISETUJUI OWNER')" class="mt-3 w-full bg-[#e21e26] text-white text-[9px] font-black p-2 rounded-lg">ACC SEKARANG (OWNER)</button>`;
+                } else if (user.level === 3 && i[9] === 'DISETUJUI OWNER') {
+                    actionBtn = `<button onclick="openHarga('${i[0]}', '${i[5]}')" class="mt-3 w-full bg-green-600 text-white text-[9px] font-black p-2 rounded-lg">BELI & INPUT HARGA</button>`;
+                }
+
+                return `
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 animate-up">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="${statusColor} btn-status">${i[9]}</span>
+                        <span class="text-[8px] font-bold text-gray-300 italic">${new Date(i[1]).toLocaleDateString()}</span>
+                    </div>
+                    <p class="text-xs font-black text-gray-800 uppercase">${i[5]}</p>
+                    <p class="text-[9px] text-gray-400">Qty: ${i[6]} • Pemohon: ${i[8]} (${i[2]})</p>
+                    <div class="mt-2 flex justify-between items-center">
+                        <span class="text-[10px] font-black text-red-600">${i[7] > 0 ? 'Rp'+Number(i[7]).toLocaleString() : 'Harga Belum Ada'}</span>
+                        ${i[11] ? `<a href="${i[11]}" target="_blank" class="text-[8px] text-blue-500 font-bold underline">LIHAT NOTA</a>` : ''}
+                    </div>
+                    ${actionBtn}
+                </div>`;
+            }).join('');
+        }
+
+        async function approve(id, status) {
+            if(!confirm("Setujui permintaan ini?")) return;
+            await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'approve', id: id, statusBaru: status }) });
+            loadData();
+        }
+
+        function openHarga(id, item) {
+            activeId = id;
+            document.getElementById('h-item').innerText = "Input Harga: " + item;
+            document.getElementById('modal-harga').style.display = 'flex';
+        }
+
+        async function submitHarga() {
+            const h = document.getElementById('f-harga').value;
+            if(!h || !base64Image) return alert("Wajib isi harga dan foto nota!");
+            document.getElementById('btn-submit-harga').innerText = "MENYIMPAN...";
+            await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'updateHarga', id: activeId, harga: h, image: base64Image }) });
+            location.reload();
+        }
+
+        async function sendAnfrakan() {
+            const payload = { 
+                tipe: "Anfrakan Kapal", kategori: document.getElementById('f-cat').value,
+                keterangan: document.getElementById('f-ket').value, alasan: document.getElementById('f-alasan').value,
+                qty: document.getElementById('f-qty').value, pemohon: user.nama, kapal: user.kapal
+            };
+            await fetch(API, { method: 'POST', body: JSON.stringify(payload) });
+            location.reload();
         }
 
         function previewImg(input) {
-            if (input.files && input.files[0]) {
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('img-preview').src = e.target.result;
-                    document.getElementById('img-preview').classList.remove('hidden');
-                    base64Image = e.target.result;
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        function showSection(type) {
-            const list = document.getElementById('main-list');
-            if(type === 'trans') {
-                list.innerHTML = globalData.transaksi.map(i => `
-                    <div class="bg-white p-5 rounded-3xl shadow-sm border-l-8 border-[#e21e26]">
-                        <div class="flex justify-between text-[8px] font-black text-gray-400 uppercase"><span>${i[2]}</span><span>${i[8]}</span></div>
-                        <p class="text-xs font-black mt-1 uppercase text-gray-700">${i[5]}</p>
-                        <div class="flex justify-between items-end mt-3">
-                            <span class="text-sm font-black text-[#e21e26]">Rp${Number(i[6]).toLocaleString()}</span>
-                            ${i[10] ? `<a href="${i[10]}" target="_blank" class="text-[8px] bg-gray-100 px-3 py-1 rounded-full font-bold text-blue-600"><i class="fas fa-paperclip mr-1"></i>LIHAT NOTA</a>` : ''}
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
-
-        async function sendData() {
-            const btn = document.getElementById('btn-send');
-            btn.innerText = "SEDANG MENGUPLOAD..."; btn.disabled = true;
-
-            const payload = {
-                tipe: document.getElementById('f-tipe').value,
-                kategori: document.getElementById('f-cat').value,
-                keterangan: document.getElementById('f-ket').value,
-                alasan: document.getElementById('f-alasan').value,
-                jumlah: document.getElementById('f-jumlah').value,
-                pemohon: user.nama,
-                kapal: user.kapal,
-                image: base64Image // Kirim Base64
+            let reader = new FileReader();
+            reader.onload = (e) => { 
+                document.getElementById('img-preview').src = e.target.result;
+                document.getElementById('img-preview').classList.remove('hidden');
+                base64Image = e.target.result;
             };
-
-            await fetch(API, { method: 'POST', body: JSON.stringify(payload) });
-            alert("Berhasil!");
-            location.reload();
+            reader.readAsDataURL(input.files[0]);
         }
 
         function logout() { localStorage.clear(); location.reload(); }
         function openModal() { document.getElementById('modal').style.display = 'flex'; }
-        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+        function closeModal() { document.getElementById('modal').style.display = 'none'; document.getElementById('modal-harga').style.display = 'none'; }
     </script>
 </body>
 </html>
