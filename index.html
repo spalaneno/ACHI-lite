@@ -7,111 +7,80 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --achi-red: #e21e26; --achi-dark: #1a1a1a; }
-        body { background-color: #003366; font-family: 'Segoe UI', Roboto, sans-serif; color: white; }
-        /* Background Gradasi seperti BCA namun Merah */
-        .bg-main { background: linear-gradient(180deg, #8b0000 0%, #e21e26 40%, #ffffff 100%); min-height: 100vh; }
-        
-        .bca-card { background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%); color: var(--achi-dark); border-radius: 1.5rem; }
-        .menu-icon { background: linear-gradient(135deg, #e21e26 0%, #8b0000 100%); width: 60px; height: 60px; border-radius: 1.2rem; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .menu-label { font-size: 10px; font-weight: 700; color: #1a1a1a; text-transform: uppercase; text-align: center; line-height: 1.2; }
-        
-        @media print { .no-print { display: none !important; } .print-only { display: block !important; color: black; } }
-        .print-only { display: none; }
+        :root { --achi-red: #e21e26; }
+        body { background-color: #f3f4f6; font-family: 'Inter', sans-serif; }
+        .bg-main { background: linear-gradient(180deg, #8b0000 0%, #e21e26 100%); min-height: 100vh; }
+        .bca-card { background: white; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+        .menu-icon { background: linear-gradient(135deg, #e21e26 0%, #8b0000 100%); width: 55px; height: 55px; border-radius: 1rem; display: flex; align-items: center; justify-content: center; color: white; margin-bottom: 5px; box-shadow: 0 4px 10px rgba(226, 30, 38, 0.3); }
     </style>
 </head>
 <body>
 
-    <div id="login-page" class="bg-main flex flex-col items-center justify-center p-8">
-        <img src="logo.png" class="w-64 mb-2">
-        <p class="text-[10px] font-black tracking-[0.3em] uppercase mb-10 text-white italic">Aplikasi Crewing & Handling Integrasi</p>
-        
-        <div class="w-full max-w-xs space-y-4">
+    <div id="login-page" class="bg-main flex flex-col items-center justify-center p-8 text-center">
+        <img src="logo.png" class="w-56 mb-2">
+        <p class="text-[9px] font-black tracking-[0.3em] uppercase mb-12 text-white/80 italic">Aplikasi Crewing & Handling Integrasi</p>
+        <div class="w-full max-w-xs space-y-3">
             <input id="u-name" type="text" placeholder="USER ID" class="w-full p-4 rounded-xl border-none bg-white/20 text-white placeholder-white/60 text-center font-bold outline-none backdrop-blur-md">
             <input id="u-pass" type="password" placeholder="KODE AKSES" class="w-full p-4 rounded-xl border-none bg-white/20 text-white placeholder-white/60 text-center font-bold outline-none backdrop-blur-md">
-            <button onclick="login()" class="w-full bg-white text-[#e21e26] p-4 rounded-xl font-black uppercase shadow-xl hover:bg-gray-100 transition-all">Login</button>
+            <button onclick="login()" class="w-full bg-white text-[#e21e26] p-4 rounded-xl font-black uppercase shadow-xl">Login</button>
         </div>
-        <p class="mt-20 text-[10px] text-white/50 font-bold tracking-widest uppercase">Efendy Jaya Abadi</p>
     </div>
 
-    <div id="app" class="hidden min-h-screen flex flex-col bg-gray-100 text-gray-800">
-        <div class="achi-red p-6 pb-20 no-print relative overflow-hidden">
-            <div class="flex justify-between items-start relative z-10">
-                <div>
-                    <p class="text-white/70 text-[10px] font-bold uppercase tracking-widest">Selamat Datang,</p>
-                    <h2 id="disp-name" class="text-white font-black text-lg uppercase leading-tight">-</h2>
+    <div id="app" class="hidden min-h-screen bg-gray-50 text-gray-800 pb-24">
+        <div class="bg-[#e21e26] p-6 pb-24 text-white">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <img src="logo.png" class="w-10 h-10 bg-white rounded-lg p-1">
+                    <div><h2 id="disp-name" class="font-black text-sm uppercase">-</h2><p id="disp-role" class="text-[8px] font-bold text-yellow-300 uppercase"></p></div>
                 </div>
-                <button onclick="logout()" class="text-white text-2xl"><i class="fas fa-sign-out-alt"></i></button>
-            </div>
-            <div class="absolute bottom-0 left-0 w-full h-12 bg-gray-100" style="border-radius: 50% 50% 0 0 / 100% 100% 0 0;"></div>
-        </div>
-
-        <div class="px-6 -mt-12 relative z-20 no-print">
-            <div class="bca-card p-6 shadow-xl grid grid-cols-3 gap-y-8 gap-x-4">
-                <div onclick="showSection('trans')" class="flex flex-col items-center cursor-pointer active:scale-90 transition-transform">
-                    <div class="menu-icon text-white text-2xl"><i class="fas fa-exchange-alt"></i></div>
-                    <span class="menu-label">Transaksi</span>
-                </div>
-                <div onclick="showSection('awak')" class="flex flex-col items-center cursor-pointer active:scale-90 transition-transform">
-                    <div class="menu-icon text-white text-2xl"><i class="fas fa-users"></i></div>
-                    <span class="menu-label">Info Awak</span>
-                </div>
-                <div id="menu-admin" onclick="openModal()" class="flex flex-col items-center cursor-pointer active:scale-90 transition-transform">
-                    <div class="menu-icon text-white text-2xl"><i class="fas fa-file-invoice-dollar"></i></div>
-                    <span class="menu-label">Input Baru</span>
-                </div>
-                <div onclick="window.print()" class="flex flex-col items-center cursor-pointer active:scale-90 transition-transform">
-                    <div class="menu-icon text-white text-2xl"><i class="fas fa-print"></i></div>
-                    <span class="menu-label">Laporan</span>
-                </div>
-                <div onclick="location.reload()" class="flex flex-col items-center cursor-pointer active:scale-90 transition-transform">
-                    <div class="menu-icon text-white text-2xl"><i class="fas fa-sync"></i></div>
-                    <span class="menu-label">Refresh</span>
-                </div>
+                <button onclick="logout()"><i class="fas fa-sign-out-alt text-xl"></i></button>
             </div>
         </div>
 
-        <div class="px-6 mt-8 pb-32 no-print">
-            <div id="content-title" class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Informasi Terbaru</div>
+        <div class="px-6 -mt-16">
+            <div class="bca-card grid grid-cols-3 gap-6 text-center">
+                <div onclick="showSection('trans')" class="flex flex-col items-center"><div class="menu-icon"><i class="fas fa-history"></i></div><span class="text-[8px] font-bold uppercase">History</span></div>
+                <div id="menu-input" onclick="openModal()" class="flex flex-col items-center"><div class="menu-icon"><i class="fas fa-plus"></i></div><span class="text-[8px] font-bold uppercase">Input</span></div>
+                <div onclick="showSection('awak')" class="flex flex-col items-center"><div class="menu-icon"><i class="fas fa-wallet"></i></div><span class="text-[8px] font-bold uppercase">Saldo</span></div>
+            </div>
+        </div>
+
+        <div class="px-6 mt-8">
+            <h3 id="section-title" class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 italic">Monitor Transaksi</h3>
             <div id="main-list" class="space-y-4"></div>
         </div>
-
-        <div class="print-only p-8 text-black" id="print-area">
-            <div class="kop-surat">
-                <h1 class="text-2xl font-black uppercase">Efendy Jaya Abadi</h1>
-                <p class="text-[10px] font-bold tracking-[0.2em]">LAPORAN OPERASIONAL ACHI</p>
-            </div>
-            <div id="table-out" class="mt-6"></div>
-        </div>
-
-        <div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t flex justify-around p-4 no-print shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
-            <button onclick="showSection('home')" class="text-[#e21e26] flex flex-col items-center"><i class="fas fa-home text-xl"></i><span class="text-[8px] font-bold mt-1">HOME</span></button>
-            <button onclick="showSection('trans')" class="text-gray-400 flex flex-col items-center"><i class="fas fa-list-ul text-xl"></i><span class="text-[8px] font-bold mt-1">HISTORY</span></button>
-            <button onclick="showSection('awak')" class="text-gray-400 flex flex-col items-center"><i class="fas fa-wallet text-xl"></i><span class="text-[8px] font-bold mt-1">SALDO</span></button>
-        </div>
     </div>
 
-    <div id="modal" class="fixed inset-0 bg-black/80 hidden items-end z-[100] no-print">
-        <div class="bg-white w-full rounded-t-[2.5rem] p-8 animate-up text-gray-800">
+    <div id="modal" class="fixed inset-0 bg-black/80 hidden items-end z-[100]">
+        <div class="bg-white w-full rounded-t-[2.5rem] p-8 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="font-black text-[#e21e26] uppercase">Form Pengajuan</h3>
+                <h3 class="font-black text-[#e21e26] uppercase">Pengajuan & Bukti</h3>
                 <button onclick="closeModal()" class="text-gray-300 text-3xl">&times;</button>
             </div>
             <div class="space-y-4">
-                <select id="f-tipe" class="w-full p-4 bg-gray-100 rounded-xl border-none font-bold text-sm outline-none"></select>
-                <select id="f-cat" class="w-full p-4 bg-gray-100 rounded-xl border-none text-sm outline-none"></select>
-                <input id="f-ket" type="text" placeholder="Nama Barang / Keperluan" class="w-full p-4 border rounded-xl bg-gray-50 outline-none">
-                <input id="f-alasan" type="text" placeholder="Alasan" class="w-full p-4 border rounded-xl bg-gray-50 outline-none">
-                <input id="f-jumlah" type="number" placeholder="Nominal Rp" class="w-full p-4 border rounded-xl font-black bg-gray-50 outline-none">
-                <button onclick="sendData()" id="btn-send" class="w-full achi-red text-white p-5 rounded-2xl font-bold uppercase">Kirim Pengajuan</button>
+                <select id="f-tipe" class="w-full p-4 bg-gray-100 rounded-xl font-bold text-sm outline-none"></select>
+                <select id="f-cat" class="w-full p-4 bg-gray-100 rounded-xl text-sm outline-none"></select>
+                <input id="f-ket" type="text" placeholder="Nama Barang" class="w-full p-4 border rounded-xl outline-none text-sm">
+                <input id="f-alasan" type="text" placeholder="Alasan" class="w-full p-4 border rounded-xl outline-none text-sm">
+                <input id="f-jumlah" type="number" placeholder="Nominal Rp" class="w-full p-4 border rounded-xl font-black outline-none">
+                
+                <div class="p-4 border-2 border-dashed border-gray-200 rounded-xl text-center">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase mb-2">Upload Bukti / Nota</p>
+                    <input type="file" id="f-image" accept="image/*" class="hidden" onchange="previewImg(this)">
+                    <button onclick="document.getElementById('f-image').click()" class="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-[10px] font-bold uppercase"><i class="fas fa-camera mr-2"></i>Ambil Foto</button>
+                    <img id="img-preview" class="hidden mt-3 w-full rounded-lg shadow-sm">
+                </div>
+
+                <button onclick="sendData()" id="btn-send" class="w-full bg-[#e21e26] text-white p-5 rounded-2xl font-bold uppercase shadow-lg shadow-red-200">Kirim Sekarang</button>
             </div>
         </div>
     </div>
 
     <script>
-        const API = "https://script.google.com/macros/s/AKfycbx-VwGNMVWdIG1X5L7hSjT4iw9Te6P6GZbfkhJxCMRZjb7jvj3Wr7REa9HYIUC3O482/exec";
+        const API = "https://script.google.com/macros/s/AKfycbxNGXE28-I_8ID7vDO0ueHQzdOIJse38VMKPhjMmnyZFmgZItr-UNUbnb14pxNUIc8/exec";
         let user = JSON.parse(localStorage.getItem('achi_user')) || null;
         let globalData = null;
+        let base64Image = "";
 
         window.onload = () => { if(user) startApp(); };
 
@@ -124,7 +93,7 @@
                 user = d;
                 localStorage.setItem('achi_user', JSON.stringify(d));
                 startApp();
-            } else alert("Akses Ditolak!");
+            } else alert("Login Gagal!");
         }
 
         function startApp() {
@@ -133,15 +102,14 @@
             document.getElementById('disp-name').innerText = user.nama;
             document.getElementById('disp-role').innerText = user.jabatan;
             
-            // Setup Modal Selects
-            const sT = document.getElementById('f-tipe');
-            const sC = document.getElementById('f-cat');
+            const selTipe = document.getElementById('f-tipe');
+            const selCat = document.getElementById('f-cat');
             if(user.level === 3) {
-                sT.innerHTML = '<option value="Pembelian Darat">Pembelian Darat</option>';
-                sC.innerHTML = '<option>Operasional Kantor</option><option>Lainnya</option>';
+                selTipe.innerHTML = '<option value="Pembelian Darat">Pembelian Darat (Admin)</option>';
+                selCat.innerHTML = '<option>Kebutuhan Kantor</option><option>Operasional Darat</option>';
             } else {
-                sT.innerHTML = '<option value="Anfrakan Kapal">Anfrakan Kapal</option>';
-                sC.innerHTML = '<option>Dapur</option><option>Mesin</option><option>Lainnya</option>';
+                selTipe.innerHTML = '<option value="Anfrakan Kapal">Anfrakan Kapal</option>';
+                selCat.innerHTML = '<option>Dapur</option><option>Mesin</option><option>Operasional</option>';
             }
             loadData();
         }
@@ -149,37 +117,31 @@
         async function loadData() {
             const res = await fetch(`${API}?action=getData&level=${user.level}&kapal=${user.kapal}&jabatan=${user.jabatan}&nama=${user.nama}`);
             globalData = await res.json();
-            showSection('home');
+            showSection('trans');
+        }
+
+        function previewImg(input) {
+            if (input.files && input.files[0]) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('img-preview').src = e.target.result;
+                    document.getElementById('img-preview').classList.remove('hidden');
+                    base64Image = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
         }
 
         function showSection(type) {
             const list = document.getElementById('main-list');
-            const title = document.getElementById('content-title');
-            
-            if(type === 'home' || type === 'trans') {
-                title.innerText = "Monitoring Transaksi";
+            if(type === 'trans') {
                 list.innerHTML = globalData.transaksi.map(i => `
-                    <div class="bg-white p-5 rounded-3xl shadow-sm border-l-8 border-[#e21e26] animate-up">
+                    <div class="bg-white p-5 rounded-3xl shadow-sm border-l-8 border-[#e21e26]">
                         <div class="flex justify-between text-[8px] font-black text-gray-400 uppercase"><span>${i[2]}</span><span>${i[8]}</span></div>
                         <p class="text-xs font-black mt-1 uppercase text-gray-700">${i[5]}</p>
                         <div class="flex justify-between items-end mt-3">
-                            <span class="text-[9px] font-bold text-gray-400">${i[3]}</span>
                             <span class="text-sm font-black text-[#e21e26]">Rp${Number(i[6]).toLocaleString()}</span>
-                        </div>
-                    </div>
-                `).join('');
-            } 
-            else if(type === 'awak') {
-                title.innerText = "Informasi Saldo Awak";
-                list.innerHTML = globalData.awak.map(i => `
-                    <div class="bg-white p-5 rounded-3xl shadow-sm animate-up">
-                        <div class="flex justify-between items-center mb-3">
-                            <div><p class="text-xs font-black uppercase">${i[0]}</p><p class="text-[9px] font-bold text-red-500 uppercase">${i[1]}</p></div>
-                            <span class="text-[8px] bg-green-100 text-green-600 px-3 py-1 rounded-full font-black">${i[6]}</span>
-                        </div>
-                        <div class="grid grid-cols-3 gap-2 border-t pt-3 text-center">
-                            <div><p class="text-[8px] text-gray-400 font-bold">PANJAR</p><p class="text-[10px] font-black text-red-600">Rp${Number(i[4]).toLocaleString()}</p></div>
-                            <div class="col-span-2 text-right"><p class="text-[8px] text-gray-400 font-bold">SALDO AKHIR</p><p class="text-sm font-black text-blue-800">Rp${Number(i[5]).toLocaleString()}</p></div>
+                            ${i[10] ? `<a href="${i[10]}" target="_blank" class="text-[8px] bg-gray-100 px-3 py-1 rounded-full font-bold text-blue-600"><i class="fas fa-paperclip mr-1"></i>LIHAT NOTA</a>` : ''}
                         </div>
                     </div>
                 `).join('');
@@ -188,15 +150,22 @@
 
         async function sendData() {
             const btn = document.getElementById('btn-send');
-            btn.innerText = "MENGIRIM..."; btn.disabled = true;
+            btn.innerText = "SEDANG MENGUPLOAD..."; btn.disabled = true;
+
             const payload = {
-                tipe: document.getElementById('f-tipe').value, kategori: document.getElementById('f-cat').value,
-                keterangan: document.getElementById('f-ket').value, alasan: document.getElementById('f-alasan').value,
-                jumlah: document.getElementById('f-jumlah').value, pemohon: user.nama, kapal: user.kapal
+                tipe: document.getElementById('f-tipe').value,
+                kategori: document.getElementById('f-cat').value,
+                keterangan: document.getElementById('f-ket').value,
+                alasan: document.getElementById('f-alasan').value,
+                jumlah: document.getElementById('f-jumlah').value,
+                pemohon: user.nama,
+                kapal: user.kapal,
+                image: base64Image // Kirim Base64
             };
+
             await fetch(API, { method: 'POST', body: JSON.stringify(payload) });
-            closeModal(); loadData();
-            btn.innerText = "Kirim Pengajuan"; btn.disabled = false;
+            alert("Berhasil!");
+            location.reload();
         }
 
         function logout() { localStorage.clear(); location.reload(); }
