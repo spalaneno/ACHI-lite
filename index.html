@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ACHI SYSTEM - Alur Berjenjang</title>
+    <title>ACHI SYSTEM - Multi Input Mode</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -20,7 +20,6 @@
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeIn 0.3s ease-in; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .status-badge { font-size: 7px; font-weight: 900; padding: 3px 8px; border-radius: 99px; text-transform: uppercase; }
     </style>
 </head>
 <body class="pb-10">
@@ -39,12 +38,12 @@
     </div>
 
     <div id="app" class="hidden">
-        <div class="bg-[#e21e26] p-6 pb-20 text-white flex justify-between items-center">
+        <div class="bg-[#e21e26] p-6 pb-20 text-white flex justify-between items-center shadow-lg">
             <div>
-                <h2 id="disp-name" class="font-black text-sm uppercase">-</h2>
-                <p id="disp-role" class="text-[9px] font-bold text-yellow-300 uppercase tracking-widest italic"></p>
+                <h2 id="disp-name" class="font-black text-sm uppercase leading-none">-</h2>
+                <p id="disp-role" class="text-[9px] font-bold text-yellow-300 uppercase mt-1.5 tracking-widest italic"></p>
             </div>
-            <button onclick="logout()" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center"><i class="fas fa-power-off"></i></button>
+            <button onclick="logout()" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"><i class="fas fa-power-off"></i></button>
         </div>
 
         <div class="px-6 -mt-10">
@@ -52,63 +51,41 @@
                 <div class="grid grid-cols-2 gap-4" id="menu-container"></div>
             </div>
 
+            <div id="view-form" class="view-section">
+                <div class="bg-white rounded-[2.5rem] p-8 shadow-xl border border-gray-100">
+                    <h3 id="form-title" class="font-black text-[#e21e26] uppercase mb-6 italic tracking-tight">Pengajuan Baru</h3>
+                    <div class="space-y-4">
+                        <select id="f-cat" class="w-full p-4 bg-gray-100 rounded-xl text-xs font-black outline-none border-none"></select>
+                        <input id="f-ket" type="text" placeholder="Nama Barang / Sparepart" class="w-full p-4 bg-gray-50 rounded-xl text-xs font-bold outline-none border">
+                        <input id="f-qty" type="text" placeholder="Jumlah & Satuan (Contoh: 5 Liter)" class="w-full p-4 bg-gray-50 rounded-xl text-xs font-black outline-none border">
+                        <input id="f-alasan" type="text" placeholder="Untuk Keperluan Apa?" class="w-full p-4 bg-gray-50 rounded-xl text-xs font-bold outline-none border">
+                        
+                        <div class="pt-4 space-y-3">
+                            <button onclick="sendData(false)" id="btn-send-again" class="w-full bg-[#e21e26] text-white p-5 rounded-2xl font-black uppercase shadow-lg active:scale-95">Kirim & Tambah Barang Lagi</button>
+                            <button onclick="showView('home')" class="w-full bg-gray-800 text-white p-4 rounded-2xl font-black uppercase text-[11px] active:scale-95 flex items-center justify-center gap-2">
+                                <i class="fas fa-check-circle"></i> Selesai & Kembali
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="view-list" class="view-section">
                 <div class="flex items-center justify-between mb-4">
-                    <button onclick="showView('home')" class="text-[#e21e26] font-bold text-[10px] uppercase"><i class="fas fa-chevron-left mr-1"></i> Kembali</button>
-                    <button onclick="loadData()" class="text-gray-400 font-bold text-[10px] uppercase"><i class="fas fa-sync"></i> Refresh</button>
+                    <button onclick="showView('home')" class="text-[#e21e26] font-black text-[10px] uppercase"><i class="fas fa-chevron-left mr-1"></i> Kembali ke Menu</button>
+                    <button onclick="loadData()" class="text-gray-400 font-black text-[10px] uppercase"><i class="fas fa-sync"></i> Refresh</button>
                 </div>
                 <div id="main-list" class="space-y-4 pb-20"></div>
             </div>
         </div>
     </div>
 
-    <div id="modal-form" class="fixed inset-0 bg-black/80 hidden items-end z-[300] p-4 backdrop-blur-sm">
-        <div class="bg-white w-full rounded-t-[2.5rem] p-8">
-            <h3 id="form-title" class="font-black text-[#e21e26] uppercase mb-6 italic">Pengajuan</h3>
-            <div class="space-y-3">
-                <select id="f-cat" class="w-full p-4 bg-gray-100 rounded-xl text-xs font-black outline-none border-none"></select>
-                <input id="f-ket" type="text" placeholder="Nama Barang" class="w-full p-4 bg-gray-50 rounded-xl text-xs font-bold outline-none border">
-                <input id="f-qty" type="text" placeholder="Jumlah (contoh: 2 Set)" class="w-full p-4 bg-gray-50 rounded-xl text-xs font-black outline-none border">
-                <input id="f-alasan" type="text" placeholder="Keperluan" class="w-full p-4 bg-gray-50 rounded-xl text-xs font-bold outline-none border">
-                <button onclick="sendData()" id="btn-send" class="w-full bg-[#e21e26] text-white p-4 rounded-xl font-black uppercase shadow-lg mt-2">Kirim Pengajuan</button>
-                <button onclick="closeModal()" class="w-full text-gray-400 py-2 text-[10px] font-black uppercase">Batal</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-reject" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-[400] p-8">
-        <div class="bg-white w-full max-w-sm rounded-[2rem] p-8">
-            <h3 class="font-black text-gray-800 uppercase text-center mb-4">Tolak Pengajuan?</h3>
-            <textarea id="f-alasan-reject" class="w-full p-4 bg-gray-50 rounded-xl text-xs h-24 mb-4 border" placeholder="Alasan penolakan..."></textarea>
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="closeModal()" class="py-3 text-[10px] font-black text-gray-400 uppercase">Batal</button>
-                <button onclick="submitReject()" class="bg-red-600 text-white py-3 rounded-xl font-black text-[10px] uppercase">Reject</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-harga" class="fixed inset-0 bg-black/80 hidden items-end z-[300] p-4 backdrop-blur-sm">
-        <div class="bg-white w-full rounded-t-[2.5rem] p-8">
-            <h3 class="font-black text-green-600 uppercase mb-4 italic">Realisasi Belanja</h3>
-            <p id="h-item" class="text-[10px] font-bold text-gray-400 uppercase mb-6"></p>
-            <div class="space-y-4">
-                <input id="f-harga" type="number" placeholder="Rp Total Nominal" class="w-full p-5 rounded-2xl font-black text-xl bg-yellow-50 border shadow-inner outline-none">
-                <div class="space-y-3">
-                    <input type="file" id="f-image" accept="image/*" class="hidden" onchange="previewImg(this)">
-                    <button id="btn-foto" onclick="document.getElementById('f-image').click()" class="w-full bg-gray-100 py-4 rounded-xl text-[10px] font-black uppercase"><i class="fas fa-camera mr-2"></i> Foto Nota</button>
-                    <img id="img-preview" class="hidden w-full h-40 object-cover rounded-xl border">
-                    <div id="area-alasan-nota" class="hidden">
-                        <input id="f-alasan-tanpa-nota" type="text" placeholder="Kenapa tidak ada nota?" class="w-full p-4 bg-red-50 text-red-600 rounded-xl text-xs font-bold border border-red-100">
-                    </div>
-                    <p id="msg-nota" onclick="toggleNoNota()" class="text-[9px] text-red-500 font-black text-center underline cursor-pointer uppercase">Tidak ada nota?</p>
-                </div>
-                <button onclick="submitHarga()" id="btn-submit-harga" class="w-full bg-green-600 text-white p-5 rounded-2xl font-black uppercase shadow-xl mt-2">Selesaikan & Simpan</button>
-            </div>
-        </div>
-    </div>
+    <div id="modal-reject" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-[400] p-8"><div class="bg-white w-full max-w-sm rounded-[2rem] p-8"><h3 class="font-black text-gray-800 uppercase text-center mb-4 text-sm">Tolak Pengajuan?</h3><textarea id="f-alasan-reject" class="w-full p-4 bg-gray-50 rounded-xl text-xs h-28 mb-6 border" placeholder="Alasan..."></textarea><div class="grid grid-cols-2 gap-3"><button onclick="closeModal()" class="py-3 text-[10px] font-black text-gray-400 uppercase">Batal</button><button onclick="submitReject()" class="bg-red-600 text-white py-3 rounded-xl font-black text-[10px] uppercase">Reject</button></div></div></div>
+    
+    <div id="modal-harga" class="fixed inset-0 bg-black/80 hidden items-end z-[300] p-4 backdrop-blur-sm"><div class="bg-white w-full rounded-t-[2.5rem] p-8"><h3 class="font-black text-green-600 uppercase mb-4 italic">Update Harga & Nota</h3><p id="h-item" class="text-[10px] font-bold text-gray-400 uppercase mb-6"></p><div class="space-y-4"><input id="f-harga" type="number" placeholder="Rp Total Nominal" class="w-full p-5 rounded-2xl font-black text-xl bg-yellow-50 border shadow-inner outline-none"><div class="space-y-3"><input type="file" id="f-image" accept="image/*" class="hidden" onchange="previewImg(this)"><button id="btn-foto" onclick="document.getElementById('f-image').click()" class="w-full bg-gray-100 py-4 rounded-xl text-[10px] font-black uppercase"><i class="fas fa-camera mr-2"></i> Foto Nota</button><img id="img-preview" class="hidden w-full h-40 object-cover rounded-xl border mt-2"><div id="area-alasan-nota" class="hidden"><input id="f-alasan-tanpa-nota" type="text" placeholder="Kenapa tanpa nota?" class="w-full p-4 bg-red-50 text-red-600 rounded-xl text-xs font-bold border"></div><p id="msg-nota" onclick="toggleNoNota()" class="text-[9px] text-red-500 font-black text-center underline uppercase py-2">Tidak ada nota?</p></div><button onclick="submitHarga()" id="btn-submit-harga" class="w-full bg-green-600 text-white p-5 rounded-2xl font-black uppercase mt-2 shadow-xl">Simpan Selesai</button></div></div></div>
 
     <script>
-        const API = "https://script.google.com/macros/s/AKfycbxX89a-Lh-Y0Y10uU6mCxQxSgz-BmIrpOLdYv6B29F66kajAkARYHUxKq0tugdMpc2L/exec"; // <--- ISI URL API 
+        const API = "https://script.google.com/macros/s/AKfycbxX89a-Lh-Y0Y10uU6mCxQxSgz-BmIrpOLdYv6B29F66kajAkARYHUxKq0tugdMpc2L/exec"; // <--- GANTI INI
         let user = JSON.parse(localStorage.getItem('achi_user')) || null;
         let activeId = null;
         let base64Image = "";
@@ -126,7 +103,7 @@
         async function login() {
             const u = document.getElementById('u-name').value;
             const p = document.getElementById('u-pass').value;
-            if(!u || !p) return showMsg("Isi User & Kode!", "#e21e26");
+            if(!u || !p) return showMsg("User & Kode Wajib!", "#e21e26");
             const res = await fetch(`${API}?action=login&username=${u}&password=${p}`);
             const d = await res.json();
             if(d.status === 'success') {
@@ -149,12 +126,12 @@
             if([1, 2, 4, 5].includes(user.level)) menus.push({ id: 'anfrak', label: 'BUAT ANFRAKAN', icon: 'fa-file-invoice', color: 'bg-blue-600' });
             
             let listLabel = [1, 2, 3].includes(user.level) ? "VERIFIKASI & BELANJA" : "STATUS PENGAJUAN";
-            menus.push({ id: 'list', label: listLabel, icon: 'fa-tasks', color: 'bg-green-600' });
-            menus.push({ id: 'logout', label: 'KELUAR', icon: 'fa-sign-out-alt', color: 'bg-gray-400' });
+            menus.push({ id: 'list', label: listLabel, icon: 'fa-list-check', color: 'bg-green-600' });
+            menus.push({ id: 'kapal', label: 'INFO KAPAL', icon: 'fa-ship', color: 'bg-gray-800' });
 
             container.innerHTML = menus.map(m => `
                 <div onclick="handleMenuClick('${m.id}')" class="menu-card">
-                    <div class="icon-box ${m.color} shadow-lg shadow-gray-100"><i class="fas ${m.icon}"></i></div>
+                    <div class="icon-box ${m.color} shadow-lg"><i class="fas ${m.icon}"></i></div>
                     <span class="text-[9px] font-black text-gray-800 uppercase">${m.label}</span>
                 </div>
             `).join('');
@@ -162,8 +139,9 @@
 
         function handleMenuClick(id) {
             if(id === 'list') showView('list');
-            else if(id === 'logout') logout();
-            else openForm(id === 'pp' ? 'Permintaan Pembelian' : 'Anfrakan');
+            else if(id === 'pp') openInputForm('Permintaan Pembelian');
+            else if(id === 'anfrak') openInputForm('Anfrakan');
+            else showMsg("Menu segera hadir");
         }
 
         function showView(view) {
@@ -172,7 +150,7 @@
             if(view === 'list') loadData();
         }
 
-        function openForm(type) {
+        function openInputForm(type) {
             currentType = type;
             document.getElementById('form-title').innerText = type.toUpperCase();
             const selCat = document.getElementById('f-cat');
@@ -183,16 +161,32 @@
             } else {
                 selCat.innerHTML = '<option>PP Kantor</option><option>PP Operasional</option><option>PP Sparepart</option>';
             }
-            document.getElementById('modal-form').style.display = 'flex';
+            showView('form');
         }
 
         async function sendData() {
-            const btn = document.getElementById('btn-send');
-            btn.disabled = true; btn.innerText = "MENGIRIM...";
-            const payload = { action: 'input', tipe: currentType, kategori: document.getElementById('f-cat').value, keterangan: document.getElementById('f-ket').value, alasan: document.getElementById('f-alasan').value, qty: document.getElementById('f-qty').value, pemohon: user.nama, kapal: user.kapal || "KANTOR" };
-            await fetch(API, { method: 'POST', body: JSON.stringify(payload) });
-            showMsg("Pengajuan Terkirim", "#059669");
-            setTimeout(() => location.reload(), 1000);
+            const ket = document.getElementById('f-ket').value;
+            const qty = document.getElementById('f-qty').value;
+            if(!ket || !qty) return showMsg("Lengkapi isian barang!", "#e21e26");
+
+            const btn = document.getElementById('btn-send-again');
+            btn.disabled = true; btn.innerText = "MENYIMPAN...";
+
+            const payload = { action: 'input', tipe: currentType, kategori: document.getElementById('f-cat').value, keterangan: ket, alasan: document.getElementById('f-alasan').value, qty: qty, pemohon: user.nama, kapal: user.kapal || "KANTOR" };
+            
+            try {
+                await fetch(API, { method: 'POST', body: JSON.stringify(payload) });
+                showMsg("Berhasil Tersimpan!", "#059669");
+                
+                // RESET FORM TAPI TETAP DI HALAMAN INPUT
+                document.getElementById('f-ket').value = "";
+                document.getElementById('f-qty').value = "";
+                document.getElementById('f-alasan').value = "";
+                btn.disabled = false; btn.innerText = "Kirim & Tambah Barang Lagi";
+                document.getElementById('f-ket').focus();
+            } catch(e) {
+                showMsg("Gagal Simpan!"); btn.disabled = false;
+            }
         }
 
         async function loadData() {
@@ -207,10 +201,9 @@
             const cont = document.getElementById('main-list');
             const active = data.filter(i => i[9] !== 'SELESAI' && i[9] !== 'REJECTED');
             const history = data.filter(i => i[9] === 'SELESAI' || i[9] === 'REJECTED');
-
-            let html = `<h3 class="text-[9px] font-black text-red-500 mb-4 uppercase tracking-widest italic">Antrean Aktif</h3>`;
+            let html = `<h3 class="text-[9px] font-black text-red-500 mb-4 uppercase italic">Antrean Aktif</h3>`;
             html += active.reverse().map(i => renderCard(i, false)).join('');
-            html += `<h3 class="text-[9px] font-black text-gray-400 mt-10 mb-4 uppercase tracking-widest italic">Selesai/Reject</h3>`;
+            html += `<h3 class="text-[9px] font-black text-gray-400 mt-8 mb-4 uppercase italic">Selesai/Reject</h3>`;
             html += history.reverse().map(i => renderCard(i, true)).join('');
             cont.innerHTML = html;
         }
@@ -220,44 +213,32 @@
             let badge = status === 'MENUNGGU ADMIN' ? 'bg-gray-100 text-gray-500' : 
                         status === 'MENUNGGU PERSETUJUAN OWNER' ? 'bg-orange-100 text-orange-600' :
                         status === 'DISETUJUI OWNER' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600';
-            
             if(status === 'REJECTED') badge = 'bg-red-100 text-red-600';
-
             let actionBtn = "";
             if(!isHistory) {
-                // 1. Verifikasi (Level 2 & 3)
                 if([2, 3].includes(user.level) && status === 'MENUNGGU ADMIN') {
-                    actionBtn = `<div class="grid grid-cols-2 gap-2 mt-4"><button onclick="openReject('${i[0]}')" class="bg-gray-100 text-red-600 text-[9px] font-black py-3 rounded-xl uppercase">Reject</button><button onclick="changeStatus('${i[0]}', 'MENUNGGU PERSETUJUAN OWNER')" class="bg-orange-500 text-white text-[9px] font-black py-3 rounded-xl uppercase">Verifikasi</button></div>`;
+                    actionBtn = `<div class="grid grid-cols-2 gap-2 mt-4"><button onclick="openReject('${i[0]}')" class="bg-gray-50 text-red-600 text-[9px] font-black py-3 rounded-xl uppercase">Reject</button><button onclick="changeStatus('${i[0]}', 'MENUNGGU PERSETUJUAN OWNER')" class="bg-orange-500 text-white text-[9px] font-black py-3 rounded-xl uppercase">Verifikasi</button></div>`;
                 }
-                // 2. Approval Owner (Level 1)
                 else if(user.level === 1 && (status === 'MENUNGGU ADMIN' || status === 'MENUNGGU PERSETUJUAN OWNER')) {
-                    actionBtn = `<div class="grid grid-cols-2 gap-2 mt-4"><button onclick="openReject('${i[0]}')" class="bg-gray-100 text-red-600 text-[9px] font-black py-3 rounded-xl uppercase">Reject</button><button onclick="changeStatus('${i[0]}', 'DISETUJUI OWNER')" class="bg-blue-600 text-white text-[9px] font-black py-3 rounded-xl uppercase">Setujui Owner</button></div>`;
+                    actionBtn = `<div class="grid grid-cols-2 gap-2 mt-4"><button onclick="openReject('${i[0]}')" class="bg-gray-50 text-red-600 text-[9px] font-black py-3 rounded-xl uppercase">Reject</button><button onclick="changeStatus('${i[0]}', 'DISETUJUI OWNER')" class="bg-blue-600 text-white text-[9px] font-black py-3 rounded-xl uppercase">Setujui Owner</button></div>`;
                 }
-                // 3. Eksekusi Belanja (Level 2 & 3) Hanya jika sudah DISETUJUI OWNER
                 else if([2, 3].includes(user.level) && status === 'DISETUJUI OWNER') {
                     actionBtn = `<button onclick="openHarga('${i[0]}', '${i[5]}')" class="mt-4 w-full bg-green-600 text-white text-[9px] font-black py-4 rounded-xl uppercase shadow-lg">Input Harga & Nota</button>`;
                 }
             }
-
             return `<div class="bg-white p-6 rounded-[2rem] shadow-sm mb-4 border-l-4 ${isHistory ? 'opacity-50 border-gray-300' : 'border-[#e21e26]'}">
-                <div class="flex justify-between mb-4"><span class="${badge} status-badge">${status}</span><span class="text-[8px] font-bold text-gray-300">${i[3] || ''}</span></div>
+                <div class="flex justify-between mb-4"><span class="${badge} px-3 py-1 rounded-full text-[7px] font-black uppercase">${status}</span><span class="text-[8px] font-bold text-gray-300">${i[3] || ''}</span></div>
                 <p class="text-[12px] font-black text-gray-800 uppercase leading-tight">${i[5]}</p>
-                <p class="text-[9px] text-gray-400 mt-1 font-bold italic">${i[6]} • ${i[4]} • Oleh: ${i[8]}</p>
-                ${i[12] ? `<p class="mt-3 p-3 bg-red-50 rounded-xl text-[9px] text-red-600 font-bold border border-red-100">Catatan: ${i[12]}</p>` : ''}
-                <div class="mt-4 pt-4 border-t flex justify-between items-center">
-                    <span class="text-[12px] font-black text-red-600">${i[7] > 0 ? 'Rp '+Number(i[7]).toLocaleString() : 'BELUM DIBELI'}</span>
-                    ${i[11] ? `<a href="${i[11]}" target="_blank" class="text-[9px] bg-blue-50 text-blue-600 px-3 py-1.5 rounded-full font-black uppercase">Nota</a>` : ''}
+                <p class="text-[9px] text-gray-400 mt-1 font-bold italic">${i[6]} • ${i[4]} • ${i[8]}</p>
+                <div class="mt-4 pt-4 border-t flex justify-between items-center font-black">
+                    <span class="text-[11px] text-red-600">${i[7] > 0 ? 'Rp '+Number(i[7]).toLocaleString() : 'PENDING'}</span>
+                    ${i[11] ? `<a href="${i[11]}" target="_blank" class="text-[8px] bg-blue-50 text-blue-600 px-3 py-1.5 rounded-full uppercase">Nota</a>` : ''}
                 </div>
                 ${actionBtn}
             </div>`;
         }
 
-        async function changeStatus(id, s) {
-            showMsg("Memperbarui...");
-            await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'changeStatus', id: id, statusBaru: s }) });
-            loadData();
-        }
-
+        async function changeStatus(id, s) { showMsg("Updating..."); await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'changeStatus', id: id, statusBaru: s }) }); loadData(); }
         function openReject(id) { activeId = id; document.getElementById('modal-reject').style.display = 'flex'; }
         async function submitReject() {
             const al = document.getElementById('f-alasan-reject').value;
@@ -265,24 +246,17 @@
             await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'changeStatus', id: activeId, statusBaru: 'REJECTED', alasan: al }) });
             closeModal(); loadData();
         }
-
         function openHarga(id, item) { activeId = id; document.getElementById('h-item').innerText = item; document.getElementById('modal-harga').style.display = 'flex'; }
-        function toggleNoNota() { 
-            isNoNota = !isNoNota; 
-            document.getElementById('area-alasan-nota').classList.toggle('hidden'); 
-            document.getElementById('btn-foto').classList.toggle('opacity-30');
-        }
+        function toggleNoNota() { isNoNota = !isNoNota; document.getElementById('area-alasan-nota').classList.toggle('hidden'); }
         function previewImg(i) { let r = new FileReader(); r.onload = (e) => { document.getElementById('img-preview').src = e.target.result; document.getElementById('img-preview').classList.remove('hidden'); base64Image = e.target.result; }; r.readAsDataURL(i.files[0]); }
-        
         async function submitHarga() {
             const h = document.getElementById('f-harga').value;
             const al = document.getElementById('f-alasan-tanpa-nota').value;
-            if(!h || (!base64Image && !isNoNota)) return showMsg("Lengkapi Data!");
+            if(!h || (!base64Image && !isNoNota)) return showMsg("Data Kurang!");
             showMsg("Menyimpan...");
             await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'updateHarga', id: activeId, harga: h, image: base64Image, alasanTanpaNota: al }) });
             location.reload();
         }
-
         function logout() { localStorage.clear(); location.reload(); }
         function closeModal() { document.querySelectorAll('[id^="modal"]').forEach(m => m.style.display = 'none'); }
     </script>
