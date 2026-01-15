@@ -1,218 +1,72 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ACHI Mobile</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        .achi-red { background-color: #e21e26; }
-        .text-achi-red { color: #e21e26; }
-        body { background-color: #f8f9fa; font-family: sans-serif; }
-        .tab-active { color: #e21e26; border-top: 3px solid #e21e26; }
-        @media print {
-            .no-print { display: none !important; }
-            #print-area { display: block !important; position: absolute; top:0; width:100%; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { border: 1px solid black; padding: 5px; font-size: 10pt; }
-        }
-    </style>
-</head>
-<body class="max-w-md mx-auto min-h-screen relative">
-
-    <div id="login-page" class="p-8 pt-24 text-center bg-white min-h-screen flex flex-col items-center">
-        <h1 class="text-5xl font-black text-achi-red italic mb-2">ACHI</h1>
-        <p class="text-[10px] font-bold text-gray-400 tracking-[0.3em] mb-12 uppercase">Armada Crewing & Handling</p>
-        
-        <div class="w-full space-y-4">
-            <input id="u-name" type="text" placeholder="Username" class="w-full p-4 rounded-xl border border-gray-200 outline-none focus:border-red-500 bg-gray-50">
-            <input id="u-pass" type="password" placeholder="Password" class="w-full p-4 rounded-xl border border-gray-200 outline-none focus:border-red-500 bg-gray-50">
-            <button onclick="login()" id="btn-login" class="w-full achi-red text-white p-4 rounded-xl font-bold shadow-lg">MASUK</button>
-        </div>
-    </div>
-
-    <div id="app" class="hidden pb-24">
-        <div class="achi-red p-6 text-white flex justify-between items-center rounded-b-[30px] shadow-lg no-print">
-            <div>
-                <p id="user-display" class="font-bold text-lg italic">Admin</p>
-                <p id="view-title" class="text-[10px] font-bold opacity-80 uppercase tracking-tighter">Pengeluaran Hari Ini</p>
-            </div>
-            <button onclick="logout()" class="text-white opacity-70"><i class="fas fa-sign-out-alt"></i></button>
-        </div>
-
-        <div id="filter-box" class="p-4 hidden no-print">
-            <div class="bg-white p-4 rounded-2xl shadow-sm border grid grid-cols-2 gap-2">
-                <input type="date" id="start-date" class="p-2 border rounded text-xs">
-                <input type="date" id="end-date" class="p-2 border rounded text-xs">
-                <button onclick="applyFilter()" class="achi-red text-white p-2 rounded text-xs font-bold col-span-2">TERAPKAN FILTER</button>
-            </div>
-        </div>
-
-        <div id="print-area" class="p-4">
-            <div class="hidden print-only text-center border-b-2 border-black pb-4 mb-4">
-                <h2 class="text-2xl font-black">LAPORAN ACHI</h2>
-                <p id="print-subtitle" class="text-xs uppercase"></p>
-            </div>
-
-            <div id="main-list" class="space-y-3"></div>
-        </div>
-
-        <div id="nav-bottom" class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t flex justify-around p-3 no-print z-50 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
-            <button onclick="showToday()" class="flex flex-col items-center text-gray-400" id="nav-home">
-                <i class="fas fa-calendar-day text-lg"></i><span class="text-[9px] font-bold mt-1">HARI INI</span>
-            </button>
-            <button onclick="openModal()" class="flex flex-col items-center text-gray-400">
-                <div class="achi-red w-10 h-10 rounded-full flex items-center justify-center text-white -mt-8 border-4 border-white shadow-lg">
-                    <i class="fas fa-plus"></i>
+function renderList(data) {
+    const listCont = document.getElementById('main-list'); // Tampilan HP
+    const tableCont = document.getElementById('table-output'); // Tampilan Print
+    
+    let total = 0;
+    
+    // 1. Tampilan Card (Mobile Friendly)
+    let cardHtml = data.map(i => {
+        total += Number(i.Jumlah);
+        return `
+        <div class="report-card mb-3">
+            <div class="flex justify-between items-start mb-2">
+                <div>
+                    <span class="text-[9px] font-bold bg-gray-100 px-2 py-1 rounded text-gray-600 uppercase">${i.Kapal}</span>
+                    <p class="text-sm font-bold mt-1 text-gray-800 uppercase">${i.Keterangan}</p>
                 </div>
-                <span class="text-[9px] font-bold mt-1">INPUT</span>
-            </button>
-            <button id="nav-report" onclick="toggleFilter()" class="hidden flex flex-col items-center text-gray-400">
-                <i class="fas fa-file-invoice text-lg"></i><span class="text-[9px] font-bold mt-1">LAPORAN</span>
-            </button>
-        </div>
-    </div>
-
-    <div id="modal" class="fixed inset-0 bg-black/60 hidden items-end z-[100] no-print">
-        <div class="bg-white w-full rounded-t-3xl p-6 max-w-md animate-slide-up">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="font-bold text-achi-red">INPUT PENGELUARAN</h3>
-                <button onclick="closeModal()"><i class="fas fa-times"></i></button>
+                <p class="text-sm font-black text-achi-red">Rp${Number(i.Jumlah).toLocaleString('id-ID')}</p>
             </div>
-            <div class="space-y-4">
-                <select id="f-kapal" class="w-full p-4 bg-gray-50 rounded-xl border">
-                    <option>KM. Nabawi 09</option><option>KM. Lastika Star</option>
-                    <option>KM. Srikandi 01</option><option>Rakit 01</option>
-                </select>
-                <input id="f-ket" type="text" placeholder="Keterangan" class="w-full p-4 bg-gray-50 rounded-xl border">
-                <input id="f-jumlah" type="number" placeholder="Nominal Rp" class="w-full p-4 bg-gray-50 rounded-xl border font-bold">
-                <input id="f-file" type="file" accept="image/*" class="text-xs">
-                <button onclick="kirim()" id="btn-kirim" class="w-full achi-red text-white p-4 rounded-xl font-bold">KIRIM DATA</button>
+            <div class="flex justify-between text-[8px] text-gray-400 italic font-bold">
+                <span>By: ${i.Admin}</span>
+                <span>${new Date(i.Tanggal).toLocaleDateString('id-ID')}</span>
             </div>
+        </div>`;
+    }).join('');
+
+    // 2. Tampilan Tabel (Professional Print)
+    let tableHtml = `
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 5%">No</th>
+                <th style="width: 15%">Tanggal</th>
+                <th style="width: 20%">Armada</th>
+                <th style="width: 40%">Keterangan / Alasan</th>
+                <th style="width: 20%">Nominal</th>
+            </tr>
+        </thead>
+        <tbody>`;
+    
+    data.forEach((i, index) => {
+        tableHtml += `
+            <tr>
+                <td style="text-align: center">${index + 1}</td>
+                <td>${new Date(i.Tanggal).toLocaleDateString('id-ID')}</td>
+                <td style="font-weight: bold">${i.Kapal}</td>
+                <td>${i.Keterangan} <br> <small style="color: #666 italic">${i.Alasan || ''}</small></td>
+                <td style="text-align: right; font-weight: bold">Rp ${Number(i.Jumlah).toLocaleString('id-ID')}</td>
+            </tr>`;
+    });
+
+    tableHtml += `
+            <tr class="total-row">
+                <td colspan="4" style="text-align: right; padding-right: 15px;">TOTAL PENGELUARAN</td>
+                <td style="text-align: right; font-size: 11pt; color: red;">Rp ${total.toLocaleString('id-ID')}</td>
+            </tr>
+        </tbody>
+    </table>`;
+
+    // Masukkan ke masing-masing container
+    listCont.innerHTML = cardHtml + `
+        <div class="p-4 bg-gray-800 text-white rounded-2xl flex justify-between items-center shadow-lg mt-6">
+            <span class="text-xs font-bold opacity-70">TOTAL REKAP</span>
+            <span class="text-lg font-black italic">Rp${total.toLocaleString('id-ID')}</span>
         </div>
-    </div>
-
-    <script>
-        const API = "https://script.google.com/macros/s/AKfycbwFbiGO9GG3A1gUdXv57Dmth9KcJFX4y95EvovUiFMlhaXP5A8l74zoD_SUmuSg2IVU/exec";
-        let currentUser = JSON.parse(localStorage.getItem('achi_session'));
-        let allData = [];
-
-        window.onload = () => { if(currentUser) showApp(currentUser); };
-
-        async function login() {
-            const user = document.getElementById('u-name').value.trim();
-            const pass = document.getElementById('u-pass').value.trim();
-            const btn = document.getElementById('btn-login');
-            btn.innerText = "LOADING...";
-            try {
-                const r = await fetch(`${API}?action=login&username=${user}&password=${pass}`);
-                const d = await r.json();
-                if(d.status === 'success') {
-                    localStorage.setItem('achi_session', JSON.stringify(d));
-                    currentUser = d; showApp(d);
-                } else { alert("User/Pass Salah!"); btn.innerText = "MASUK"; }
-            } catch(e) { alert("Koneksi Eror!"); btn.innerText = "MASUK"; }
-        }
-
-        function showApp(data) {
-            document.getElementById('login-page').style.display = 'none';
-            document.getElementById('app').classList.remove('hidden');
-            document.getElementById('user-display').innerText = data.nama;
-            if(data.level >= 2) document.getElementById('nav-report').classList.remove('hidden');
-            showToday();
-        }
-
-        async function loadData() {
-            try {
-                const r = await fetch(`${API}?action=getTransaksi`);
-                allData = await r.json();
-                return allData;
-            } catch(e) { return []; }
-        }
-
-        async function showToday() {
-            document.getElementById('view-title').innerText = "Pengeluaran Hari Ini";
-            document.getElementById('filter-box').classList.add('hidden');
-            const data = await loadData();
-            const today = new Date().toLocaleDateString('id-ID');
-            
-            // Filter: Hari ini & Level 1 hanya lihat data sendiri
-            const filtered = data.filter(i => {
-                const itemDate = new Date(i.Tanggal).toLocaleDateString('id-ID');
-                const matchDate = itemDate === today;
-                return currentUser.level === 1 ? (matchDate && i.Admin === currentUser.nama) : matchDate;
-            });
-            renderList(filtered);
-        }
-
-        function toggleFilter() {
-            document.getElementById('filter-box').classList.toggle('hidden');
-            document.getElementById('view-title').innerText = "Filter Laporan";
-        }
-
-        function applyFilter() {
-            const start = new Date(document.getElementById('start-date').value);
-            const end = new Date(document.getElementById('end-date').value);
-            start.setHours(0,0,0,0); end.setHours(23,59,59,999);
-
-            const filtered = allData.filter(i => {
-                const d = new Date(i.Tanggal);
-                return d >= start && d <= end;
-            });
-            renderList(filtered);
-            document.getElementById('print-subtitle').innerText = `PERIODE: ${start.toLocaleDateString()} - ${end.toLocaleDateString()}`;
-        }
-
-        function renderList(data) {
-            const cont = document.getElementById('main-list');
-            let total = 0;
-            let html = data.map(i => {
-                total += Number(i.Jumlah);
-                return `
-                <div class="bg-white p-4 rounded-2xl shadow-sm border-l-4 border-gray-800">
-                    <div class="flex justify-between text-[10px] text-gray-400 font-bold mb-1 uppercase">
-                        <span>${i.Kapal}</span><span>${new Date(i.Tanggal).toLocaleTimeString('id-ID')}</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <p class="text-sm font-bold text-gray-700">${i.Keterangan}</p>
-                        <p class="text-sm font-black text-red-600">Rp${Number(i.Jumlah).toLocaleString()}</p>
-                    </div>
-                </div>`;
-            }).join('');
-            
-            html += `<div class="p-4 text-center bg-gray-800 text-white rounded-2xl font-black mt-4">TOTAL: Rp${total.toLocaleString()}</div>`;
-            if(currentUser.level >= 2) html += `<button onclick="window.print()" class="w-full bg-blue-600 text-white p-3 rounded-xl mt-2 no-print font-bold">CETAK PDF</button>`;
-            
-            cont.innerHTML = html;
-        }
-
-        async function kirim() {
-            const btn = document.getElementById('btn-kirim');
-            btn.innerText = "MENGIRIM..."; btn.disabled = true;
-            const file = document.getElementById('f-file').files[0];
-            let img = null;
-            if(file) {
-                const reader = new FileReader();
-                img = await new Promise(res => {
-                    reader.onload = () => res(reader.result.split(',')[1]);
-                    reader.readAsDataURL(file);
-                });
-            }
-            const payload = {
-                kapal: document.getElementById('f-kapal').value,
-                keterangan: document.getElementById('f-ket').value,
-                jumlah: document.getElementById('f-jumlah').value,
-                user: currentUser.nama, image: img, mimeType: file ? file.type : null
-            };
-            await fetch(API, { method: 'POST', body: JSON.stringify(payload) });
-            alert("Tersimpan!"); location.reload();
-        }
-
-        function logout() { localStorage.removeItem('achi_session'); location.reload(); }
-        function openModal() { document.getElementById('modal').style.display = 'flex'; }
-        function closeModal() { document.getElementById('modal').style.display = 'none'; }
-    </script>
-</body>
-</html>
+        <button onclick="window.print()" class="w-full bg-blue-600 text-white font-bold p-4 rounded-xl mt-4 no-print shadow-md uppercase tracking-widest text-xs">
+            <i class="fas fa-print mr-2"></i> Cetak Laporan Resmi
+        </button>
+    `;
+    
+    tableCont.innerHTML = tableHtml;
+    document.getElementById('print-admin-name').innerText = currentUser.nama;
+}
