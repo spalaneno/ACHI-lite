@@ -20,8 +20,8 @@
             .no-print { display: none !important; }
             .print-only { display: block !important; }
             table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #000; padding: 6px; text-align: left; font-size: 9pt; }
-            th { background-color: #eee !important; color: black !important; font-weight: bold; }
+            th, td { border: 1px solid #000; padding: 6px; text-align: left; font-size: 8pt; }
+            th { background-color: #eee !important; color: black !important; font-weight: bold; text-transform: uppercase; }
         }
         .print-only { display: none; }
     </style>
@@ -51,20 +51,20 @@
 
         <div id="owner-report" class="px-6 mb-6 hidden no-print">
             <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
-                <h3 class="text-xs font-bold text-gray-800 uppercase mb-4 text-center border-b pb-2 italic">Filter Laporan Cetak</h3>
+                <h3 class="text-[10px] font-bold text-gray-800 uppercase mb-4 text-center border-b pb-2 italic tracking-widest">Panel Kontrol Accounting</h3>
                 <div class="grid grid-cols-2 gap-3 mb-4">
                     <div>
-                        <label class="text-[9px] font-bold text-gray-400 block ml-1 uppercase">Dari Tanggal</label>
+                        <label class="text-[9px] font-bold text-gray-400 block ml-1 uppercase">Dari</label>
                         <input type="date" id="filter-start" class="w-full p-2 bg-gray-50 border rounded-lg text-xs outline-none">
                     </div>
                     <div>
-                        <label class="text-[9px] font-bold text-gray-400 block ml-1 uppercase">Sampai Tanggal</label>
+                        <label class="text-[9px] font-bold text-gray-400 block ml-1 uppercase">Sampai</label>
                         <input type="date" id="filter-end" class="w-full p-2 bg-gray-50 border rounded-lg text-xs outline-none">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
-                    <button onclick="applyFilter()" class="achi-red text-white py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-md">Filter Data</button>
-                    <button onclick="window.print()" class="bg-gray-800 text-white py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-md">PDF</button>
+                    <button onclick="applyFilter()" class="achi-red text-white py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-md">Terapkan</button>
+                    <button onclick="window.print()" class="bg-gray-800 text-white py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-md">Cetak PDF</button>
                 </div>
             </div>
         </div>
@@ -72,11 +72,11 @@
         <div class="px-6 grid grid-cols-2 gap-4 mb-6 no-print">
             <button onclick="openModal()" class="bg-white p-5 rounded-3xl shadow-md border-b-4 border-gray-800 flex flex-col items-center">
                 <i class="fas fa-plus-circle text-2xl text-achi-red mb-1"></i>
-                <span class="text-[10px] font-bold uppercase">Input Data</span>
+                <span class="text-[10px] font-bold uppercase">Input Baru</span>
             </button>
             <button id="btn-excel" onclick="exportExcel()" class="bg-white p-5 rounded-3xl shadow-md border-b-4 border-green-700 flex flex-col items-center hidden">
                 <i class="fas fa-file-excel text-2xl text-green-700 mb-1"></i>
-                <span class="text-[10px] font-bold uppercase">Excel</span>
+                <span class="text-[10px] font-bold uppercase">Export Excel</span>
             </button>
         </div>
 
@@ -86,8 +86,8 @@
                 <p id="print-period" class="text-[10px] mt-2 italic font-bold text-gray-600"></p>
             </div>
 
-            <h3 id="history-title" class="font-bold text-gray-800 text-xs uppercase mb-4 tracking-widest flex items-center no-print">
-                <span class="w-2 h-4 achi-red mr-2"></span> Riwayat Saya
+            <h3 id="history-title" class="font-bold text-gray-800 text-xs uppercase mb-4 tracking-widest flex items-center no-print italic">
+                <span class="w-2 h-4 achi-red mr-2"></span> Riwayat Transaksi
             </h3>
             
             <div id="list" class="space-y-4"></div>
@@ -100,7 +100,7 @@
                 </div>
                 <div>
                     <p class="text-[10px] font-bold uppercase mb-20 italic">Disetujui Oleh,</p>
-                    <p class="text-[10px] font-bold border-t border-black pt-1 inline-block px-10 uppercase">Hengky / Owner</p>
+                    <p class="text-[10px] font-bold border-t border-black pt-1 inline-block px-10 uppercase">Accounting / OD</p>
                 </div>
             </div>
         </div>
@@ -108,19 +108,19 @@
 
     <div id="modal" class="fixed inset-0 bg-black/70 hidden items-end z-50 no-print">
         <div class="bg-white w-full rounded-t-[40px] p-8 max-w-md shadow-2xl">
-            <h3 class="font-bold text-achi-red mb-6 italic uppercase border-b pb-2">Input Transaksi</h3>
+            <h3 class="font-bold text-achi-red mb-6 italic uppercase border-b pb-2">Form Laporan</h3>
             <div class="space-y-4">
-                <select id="f-kapal" class="w-full p-4 bg-gray-50 border rounded-2xl text-sm font-bold">
+                <select id="f-kapal" class="w-full p-4 bg-gray-50 border rounded-2xl text-sm font-bold outline-none">
                     <option>KM. Nabawi 09</option><option>KM. Lastika Star</option>
                     <option>KM. Srikandi 01</option><option>Rakit 01</option>
                 </select>
-                <input id="f-ket" type="text" placeholder="Keterangan Pengeluaran" class="w-full p-4 bg-gray-50 border rounded-2xl text-sm outline-none">
+                <input id="f-ket" type="text" placeholder="Keterangan" class="w-full p-4 bg-gray-50 border rounded-2xl text-sm outline-none">
                 <input id="f-jumlah" type="number" placeholder="Nominal Rp" class="w-full p-4 bg-gray-50 border rounded-2xl text-sm font-bold text-achi-red outline-none">
                 <div class="p-4 bg-gray-50 rounded-2xl border-2 border-dashed">
                     <input id="f-file" type="file" accept="image/*" class="text-[10px] w-full mb-3">
-                    <textarea id="f-alasan" placeholder="Alasan tanpa bukti nota..." class="w-full p-3 text-xs border rounded-xl h-16 outline-none"></textarea>
+                    <textarea id="f-alasan" placeholder="Alasan tanpa nota..." class="w-full p-3 text-xs border rounded-xl h-16 outline-none bg-white shadow-inner"></textarea>
                 </div>
-                <button onclick="kirim()" id="btn-kirim" class="w-full achi-red text-white p-5 rounded-2xl font-bold uppercase shadow-xl active:scale-95 transition">Simpan Data</button>
+                <button onclick="kirim()" id="btn-kirim" class="w-full achi-red text-white p-5 rounded-2xl font-bold uppercase shadow-xl active:scale-95 transition">Kirim Laporan</button>
                 <button onclick="closeModal()" class="w-full text-gray-400 text-[10px] py-2 font-bold uppercase tracking-widest mt-2">Batal</button>
             </div>
         </div>
@@ -136,15 +136,15 @@
         async function login() {
             const user = document.getElementById('u-name').value;
             const pass = document.getElementById('u-pass').value;
-            if(!user || !pass) return alert("Isi Data!");
+            if(!user || !pass) return alert("Lengkapi Login!");
             const btn = document.getElementById('btn-login');
-            btn.innerText = "VERIFYING...";
+            btn.innerText = "AUTHENTICATING...";
             const r = await fetch(`${API}?action=login&username=${user}&password=${pass}`);
             const d = await r.json();
             if(d.status == 'success') {
                 localStorage.setItem('achi_session', JSON.stringify(d));
                 showApp(d);
-            } else { alert("Login Gagal!"); btn.innerText = "MASUK"; }
+            } else { alert("User/Pass Salah!"); btn.innerText = "MASUK"; }
         }
 
         function showApp(data) {
@@ -153,15 +153,15 @@
             document.getElementById('user-display').innerText = data.nama;
             document.getElementById('print-admin-name').innerText = data.nama;
             
-            // Level 1: Hanya Lihat Riwayat Saya
             if(data.level == 1) {
                 document.getElementById('role-display').innerText = "Admin Operasional";
-                document.getElementById('history-title').innerText = "Riwayat Saya";
-            } 
-            // Level >= 2: Owner/OD (Akses Laporan Lengkap)
-            else {
-                document.getElementById('role-display').innerText = "Owner / Direksi";
-                document.getElementById('history-title').innerText = "Semua Transaksi Armada";
+                document.getElementById('history-title').innerText = "Riwayat Input Saya";
+            } else if(data.level == 2) {
+                document.getElementById('role-display').innerText = "Accounting (OD)";
+                document.getElementById('owner-report').classList.remove('hidden');
+                document.getElementById('btn-excel').classList.remove('hidden');
+            } else {
+                document.getElementById('role-display').innerText = "Owner";
                 document.getElementById('owner-report').classList.remove('hidden');
                 document.getElementById('btn-excel').classList.remove('hidden');
             }
@@ -175,14 +175,7 @@
         async function loadData() {
             const r = await fetch(`${API}?action=getTransaksi`);
             const rawData = await r.json();
-            
-            // LOGIKA FILTER: Jika Level 1, filter berdasarkan nama admin yang sedang login
-            if(currentUser.level == 1) {
-                allData = rawData.filter(i => i.Admin === currentUser.nama);
-            } else {
-                allData = rawData;
-            }
-            
+            allData = (currentUser.level == 1) ? rawData.filter(i => i.Admin === currentUser.nama) : rawData;
             renderList(allData);
         }
 
@@ -196,14 +189,14 @@
                         <span>${i.Kapal}</span><span>${new Date(i.Tanggal).toLocaleDateString('id-ID')}</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <p class="text-sm font-bold uppercase text-gray-700">${i.Keterangan}</p>
+                        <p class="text-sm font-bold uppercase text-gray-700 leading-tight">${i.Keterangan}</p>
                         <p class="text-sm font-black text-red-600">Rp${Number(i.Jumlah).toLocaleString()}</p>
                     </div>
-                    <p class="text-[8px] text-gray-300 mt-2 italic font-bold">Oleh: ${i.Admin}</p>
+                    <p class="text-[8px] text-gray-300 mt-2 font-bold uppercase tracking-widest">Oleh: ${i.Admin}</p>
                 </div>
             `).join('');
 
-            let tableHTML = `<table><thead><tr><th>Tgl</th><th>Kapal</th><th>Keterangan</th><th>Admin</th><th>Nominal</th></tr></thead><tbody>`;
+            let tableHTML = `<table><thead><tr><th>Tanggal</th><th>Kapal</th><th>Keterangan</th><th>Oleh</th><th>Nominal</th></tr></thead><tbody>`;
             let total = 0;
             data.forEach(i => {
                 total += Number(i.Jumlah);
@@ -222,21 +215,18 @@
         function applyFilter() {
             const start = document.getElementById('filter-start').value;
             const end = document.getElementById('filter-end').value;
-            if(!start || !end) return alert("Isi Tanggal!");
-
+            if(!start || !end) return alert("Pilih Rentang Waktu!");
             const filtered = allData.filter(i => {
-                const d = new Date(i.Tanggal);
-                d.setHours(0,0,0,0);
+                const d = new Date(i.Tanggal); d.setHours(0,0,0,0);
                 return d >= new Date(start) && d <= new Date(end);
             });
-            
             document.getElementById('print-period').innerText = `PERIODE: ${new Date(start).toLocaleDateString()} - ${new Date(end).toLocaleDateString()}`;
             renderList(filtered);
         }
 
         async function kirim() {
             const btn = document.getElementById('btn-kirim');
-            btn.innerText = "MENYIMPAN..."; btn.disabled = true;
+            btn.innerText = "SINKRONISASI..."; btn.disabled = true;
             const file = document.getElementById('f-file').files[0];
             let img = null;
             if(file) {
@@ -254,14 +244,14 @@
                 user: currentUser.nama, image: img, mimeType: file ? file.type : null
             };
             await fetch(API, { method: 'POST', body: JSON.stringify(payload) });
-            alert("Tersimpan!"); location.reload();
+            alert("Laporan Terkirim!"); location.reload();
         }
 
         function exportExcel() {
             const ws = XLSX.utils.json_to_sheet(allData);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Rekap");
-            XLSX.writeFile(wb, `ACHI_EXPORT.xlsx`);
+            XLSX.writeFile(wb, `ACHI_REPORT.xlsx`);
         }
     </script>
 </body>
