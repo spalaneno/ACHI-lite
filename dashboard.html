@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - CV Efendy Jaya Abadi</title>
+    <title>Owner Dashboard - CV Efendy Jaya Abadi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         body { background: #030303; color: white; font-family: 'Inter', sans-serif; }
-        .card-boss { background: linear-gradient(135deg, #1a0000, #080808); border: 1px solid #300; border-radius: 2rem; }
-        .menu-item { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1.5rem; transition: 0.3s; }
-        .menu-item:active { background: #1a0000; border-color: #b31d1d; transform: scale(0.95); }
-        .nav-top { background: rgba(10, 0, 0, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid #222; }
+        .card-boss { background: linear-gradient(135deg, #1a0000, #080808); border: 1px solid #300; border-radius: 2.5rem; }
+        .menu-owner { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 2rem; transition: 0.3s; }
+        .menu-owner:active { background: #220000; border-color: #b31d1d; transform: scale(0.95); }
+        .nav-top { background: rgba(10, 0, 0, 0.9); backdrop-filter: blur(15px); border-bottom: 1px solid #222; }
+        .badge-pending { background: #b31d1d; color: white; font-size: 8px; padding: 2px 8px; border-radius: 10px; position: absolute; top: 15px; right: 15px; }
     </style>
 </head>
 <body class="pb-10">
@@ -20,18 +21,18 @@
         <div class="flex items-center gap-3">
             <img src="logo.png" class="h-8">
             <div>
-                <p id="u-nama" class="text-[10px] font-black uppercase italic leading-none text-white">MEMUAT...</p>
-                <p id="u-role" class="text-[7px] text-red-500 font-bold tracking-widest uppercase">CV Efendy Jaya Abadi</p>
+                <p id="u-nama" class="text-[10px] font-black uppercase italic leading-none">MEMUAT...</p>
+                <p class="text-[7px] text-red-500 font-bold tracking-[0.2em] uppercase">Executive Owner</p>
             </div>
         </div>
-        <button onclick="logout()" class="w-10 h-10 rounded-full bg-red-900/20 text-red-600 flex items-center justify-center border border-red-900/30 shadow-lg">
+        <button onclick="logout()" class="w-10 h-10 rounded-full bg-red-900/10 text-red-600 flex items-center justify-center border border-red-900/20">
             <i class="fas fa-sign-out-alt"></i>
         </button>
     </div>
 
     <div class="px-6 mt-6 mb-8">
-        <div class="card-boss p-8 shadow-2xl border-l-4 border-red-600">
-            <p class="text-[9px] text-gray-500 font-black uppercase mb-1 tracking-widest">Live Pengeluaran Bulan Ini</p>
+        <div class="card-boss p-8 shadow-2xl border-l-4 border-red-700">
+            <p class="text-[9px] text-gray-500 font-black uppercase mb-1 tracking-widest">Total Pengeluaran Seluruh Armada</p>
             <h1 id="total-out" class="text-3xl font-black italic mb-6 tracking-tighter">Rp 0</h1>
             
             <div class="space-y-4">
@@ -51,43 +52,80 @@
         </div>
     </div>
 
-    <div class="px-6 grid grid-cols-2 gap-4">
-        <div onclick="location.href='trip.html'" class="menu-item p-6 text-center shadow-lg">
-            <div class="w-10 h-10 bg-red-600/10 rounded-xl flex items-center justify-center mx-auto mb-3 text-red-600">
-                <i class="fas fa-ship text-lg"></i>
-            </div>
-            <p class="text-[10px] font-black uppercase tracking-tighter">Bongkar Trip</p>
+    <div class="px-6 grid grid-cols-1 gap-4" id="menu-container">
         </div>
-        <div onclick="location.href='logistik.html'" class="menu-item p-6 text-center shadow-lg">
-            <div class="w-10 h-10 bg-red-600/10 rounded-xl flex items-center justify-center mx-auto mb-3 text-red-600">
-                <i class="fas fa-edit text-lg"></i>
-            </div>
-            <p class="text-[10px] font-black uppercase tracking-tighter">Input Nota</p>
-        </div>
-        <div onclick="location.href='rekap.html'" class="menu-item p-6 text-center shadow-lg">
-            <div class="w-10 h-10 bg-red-600/10 rounded-xl flex items-center justify-center mx-auto mb-3 text-red-600">
-                <i class="fas fa-chart-bar text-lg"></i>
-            </div>
-            <p class="text-[10px] font-black uppercase tracking-tighter text-gray-200">Rekap Biaya</p>
-        </div>
-        <div onclick="location.href='kru-list.html'" class="menu-item p-6 text-center shadow-lg">
-            <div class="w-10 h-10 bg-red-600/10 rounded-xl flex items-center justify-center mx-auto mb-3 text-red-600">
-                <i class="fas fa-users text-lg"></i>
-            </div>
-            <p class="text-[10px] font-black uppercase tracking-tighter">Hutang Kru</p>
-        </div>
-    </div>
 
     <script>
         const USER = JSON.parse(localStorage.getItem('achi_session'));
-        // BOSS: Masukkan URL Exec (Web App) di sini
-        const API = "URL_WEB_APP_BOSS_DI_SINI";
+        const API = "URL_WEB_APP_BOSS_DI_SINI"; // BOSS: Tempel URL GS Anda di sini
 
         if(!USER) {
             window.location.href = "index.html";
         } else {
             document.getElementById('u-nama').innerText = USER.nama;
-            document.getElementById('u-role').innerText = `${USER.jabatan} | ${USER.kapal || 'ARMADA'}`;
+            renderMenu();
+        }
+
+        function renderMenu() {
+            const container = document.getElementById('menu-container');
+            
+            // LOGIKA MENU BOSS (Level 1 = Owner)
+            if(USER.level == 1) {
+                container.innerHTML = `
+                    <div onclick="location.href='approval.html'" class="menu-owner p-6 flex items-center justify-between relative">
+                        <div class="flex items-center gap-5">
+                            <div class="w-12 h-12 bg-yellow-600/10 rounded-2xl flex items-center justify-center text-yellow-600">
+                                <i class="fas fa-file-signature text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-black uppercase italic">Persetujuan Nota</p>
+                                <p class="text-[8px] text-gray-500 uppercase">Validasi pengeluaran staf</p>
+                            </div>
+                        </div>
+                        <span class="badge-pending animate-pulse">3 Baru</span>
+                    </div>
+
+                    <div onclick="location.href='rekap-global.html'" class="menu-owner p-6 flex items-center justify-between">
+                        <div class="flex items-center gap-5">
+                            <div class="w-12 h-12 bg-blue-600/10 rounded-2xl flex items-center justify-center text-blue-600">
+                                <i class="fas fa-chart-line text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-black uppercase italic">Rekapitulasi Global</p>
+                                <p class="text-[8px] text-gray-500 uppercase">Laba rugi seluruh armada</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-800"></i>
+                    </div>
+
+                    <div onclick="location.href='performa-kapal.html'" class="menu-owner p-6 flex items-center justify-between">
+                        <div class="flex items-center gap-5">
+                            <div class="w-12 h-12 bg-green-600/10 rounded-2xl flex items-center justify-center text-green-600">
+                                <i class="fas fa-anchor text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-black uppercase italic">Performa Kapal</p>
+                                <p class="text-[8px] text-gray-500 uppercase">Detail hasil trip per kapal</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-800"></i>
+                    </div>
+                `;
+            } else {
+                // MENU UNTUK STAFF / ADMIN (Tetap ada Input)
+                container.innerHTML = `
+                    <div class="grid grid-cols-2 gap-4 w-full">
+                        <div onclick="location.href='trip.html'" class="menu-owner p-6 text-center">
+                            <i class="fas fa-plus-circle text-red-600 mb-2"></i>
+                            <p class="text-[10px] font-bold uppercase">Input Trip</p>
+                        </div>
+                        <div onclick="location.href='logistik.html'" class="menu-owner p-6 text-center">
+                            <i class="fas fa-edit text-red-600 mb-2"></i>
+                            <p class="text-[10px] font-bold uppercase">Input Nota</p>
+                        </div>
+                    </div>
+                `;
+            }
         }
 
         async function loadExpense() {
@@ -104,11 +142,11 @@
                 setBar('n', d.nabawi, d.total);
                 setBar('l', d.lastika, d.total);
                 setBar('s', d.srikandi, d.total);
-            } catch(e) { console.error("Error Koneksi API"); }
+            } catch(e) {}
         }
 
         loadExpense();
-        function logout() { if(confirm("Keluar dari Sistem CV EJA, Boss?")) { localStorage.clear(); window.location.href="index.html"; } }
+        function logout() { if(confirm("Logout Boss?")) { localStorage.clear(); window.location.href="index.html"; } }
     </script>
 </body>
 </html>
