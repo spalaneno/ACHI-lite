@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACHI - ADMIN VERIFIER</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .admin-gradient { background: linear-gradient(-45deg, #1e293b, #334155); }
+        .card-admin { background: white; border-radius: 2rem; border: 1px solid #e5e7eb; transition: 0.3s; }
+        .card-admin:active { transform: scale(0.98); }
+    </style>
+</head>
+<body class="bg-slate-50 pb-24">
+    <header class="admin-gradient p-8 text-white rounded-b-[3rem] shadow-xl mb-6">
+        <div class="flex justify-between items-center">
+            <div>
+                <p class="text-[9px] font-bold text-blue-400 tracking-widest uppercase mb-1">Control Tower</p>
+                <h2 id="user-n" class="text-2xl font-black uppercase leading-none"></h2>
+            </div>
+            <button onclick="logout()" class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center border border-white/10"><i class="fas fa-power-off"></i></button>
+        </div>
+    </header>
+
+    <main class="px-6">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="font-black text-slate-700 italic uppercase text-sm">Verifikasi Masuk</h3>
+            <button onclick="refreshData()" class="text-slate-400"><i id="sync-icon" class="fas fa-sync-alt text-lg"></i></button>
+        </div>
+
+        <div id="data-list" class="space-y-4"></div>
+    </main>
+
+<script>
+    const API = "https://script.google.com/macros/s/AKfycbxknjxmr96CRRXtgHZbj8j8lprJGBPzUZhv1o6KqxKq1wyd4Y95ZdtuIMZ9FQ4T2XFS/exec";
+    const USER = JSON.parse(localStorage.getItem('achi_session'));
+
+    if(!USER || USER.level !== 2) window.location.href = "index.html";
+    document.getElementById('user-n').innerText = USER.nama;
+
+    async function refreshData() {
+        const l = document.getElementById('data-list'), ic = document.getElementById('sync-icon');
+        ic.classList.add('fa-spin');
+        try {
+            const r = await fetch(`${API}?action=getData&level=${USER.level}`);
+            const d = await r.json();
+            
+            // Filter hanya yang berstatus MENUNGGU ADMIN
+            const tasks = d.transaksi.filter(i => i[8] === 'MENUNGGU ADMIN');
+            
+            l.innerHTML = tasks.length === 0 ? 
+                '<div class="py-20 text-center text-slate-300 font-bold uppercase text-[10px]">Semua data telah diverifikasi</div>' : 
+                tasks.map(i => `
+                <div class="card-admin p-6 shadow-sm">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-[9px] font-black bg-slate-100 px-2 py-1 rounded-md text-slate-500 uppercase">${i[9]}</span>
+                        <span class="text-[9px] font-bold text-slate-300">${i[1]}</span>
+                    </div>
+                    <p class="text-[10px] text-blue-500 font-bold uppercase mb-1">${i[3]}</p>
+                    <h4 class="text-md font-black text-slate-800 uppercase leading-tight">${i[4]}</h4>
+                    <div class="flex items-center gap-2 mt-2">
+                         <p class="text-lg font-black text-slate-900">${i[6]}</p>
+                         <p class="text-xs font-bold text-slate-400 uppercase">${i[5]}</p>
+                    </div>
+                    <div class="flex gap-2 mt-6">
+                        <button onclick="update('${i[0]}','TELAH DIPERIKSA')" class="flex-1 bg-blue-600 text-white p-4 rounded-xl font-black text-[10px] uppercase shadow-md active:bg-blue-700">Verifikasi</button>
+                        <button onclick="update('${i[0]}','DITOLAK ADMIN')" class="bg-slate-100 text-slate-400 p-4 rounded-xl font-black text-[10px] uppercase">Tolak</button>
+                    </div>
+                </div>
+            `).join('');
+        } catch(e) { l.innerHTML = "Gagal memuat data verifikasi"; }
+        ic.classList.remove('fa-spin');
+    }
+
+    async function update(id, s) {
+        if(!confirm("Verifikasi data ini?")) return;
+        await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'changeStatus', id: id, s: s }) });
+        refreshData();
+    }
+
+    function logout() { localStorage.clear(); window.location.href = "index.html"; }
+    refreshData();
+</script>
+</body>
+</html>
