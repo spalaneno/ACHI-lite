@@ -8,92 +8,80 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
-        :root { --main-red: #b31d1d; --deep-navy: #0a192f; }
-        body { background: #fdfdfd; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        .red-gradient { 
-            background: linear-gradient(-45deg, #b31d1d, #7a1212, #911616);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-        }
-        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 2.5rem; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.1); }
+        :root { --main-red: #b31d1d; }
+        body { background: #fdfdfd; font-family: 'Inter', sans-serif; }
+        .red-gradient { background: linear-gradient(-45deg, #b31d1d, #7a1212); }
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeInUp 0.5s both; }
-        .logo-container { width: 140px; height: 140px; background: white; border-radius: 35px; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3); border: 5px solid white; animation: pulse 3s infinite; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
-        .logo-container img { width: 100%; height: 100%; object-fit: contain; }
-        #toast { visibility: hidden; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #000; color: white; padding: 12px 30px; border-radius: 50px; font-size: 11px; font-weight: 800; z-index: 10000; }
+        #toast { visibility: hidden; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #000; color: white; padding: 12px 30px; border-radius: 50px; font-size: 11px; z-index: 10000; }
         #toast.show { visibility: visible; }
+        .input-field { width: 100%; padding: 1rem; background: #f3f4f6; border-radius: 1rem; font-weight: bold; outline: none; border: 2px solid transparent; transition: 0.3s; }
+        .input-field:focus { border-color: var(--main-red); background: white; }
     </style>
 </head>
 <body>
 
 <div id="toast">Notifikasi</div>
 
-<div id="login-page" class="fixed inset-0 z-[1000] red-gradient flex flex-col items-center justify-center p-10 text-center">
-    <div class="logo-container mb-8 animate__animated animate__zoomIn">
-        <img src="logo.png" alt="Logo">
+<div id="login-page" class="fixed inset-0 z-[1000] red-gradient flex flex-col items-center justify-center p-10 text-center text-white">
+    <div class="w-32 h-32 bg-white rounded-[2rem] p-4 mb-6 animate__animated animate__zoomIn">
+        <img src="logo.png" class="w-full h-full object-contain">
     </div>
-    <div class="animate__animated animate__fadeInUp animate__delay-1s">
-        <h1 class="text-white font-black text-4xl italic uppercase mb-1">ACHI Mobile</h1>
-        <p class="text-white/70 text-[10px] font-bold tracking-[0.4em] mb-12 uppercase">PT Efendy Jaya Abadi</p>
-    </div>
-    <div class="w-full max-w-xs space-y-4 animate__animated animate__fadeInUp animate__delay-2s">
-        <input id="u" type="text" placeholder="USER ID" class="w-full p-5 rounded-2xl bg-white border-none text-center font-bold uppercase shadow-xl outline-none">
-        <input id="p" type="password" placeholder="KODE AKSES" class="w-full p-5 rounded-2xl bg-white border-none text-center font-bold shadow-xl outline-none">
-        <button onclick="doLogin()" id="btn-login" class="w-full red-gradient text-white p-5 rounded-3xl font-black uppercase shadow-2xl active:scale-95 border border-white/20 transition-all">MASUK</button>
+    <h1 class="text-4xl font-black italic uppercase animate__animated animate__fadeInUp">ACHI Mobile</h1>
+    <p class="text-[10px] tracking-[0.4em] mb-10 opacity-70 uppercase animate__animated animate__fadeInUp">Aplikasi Crewing & Handling Integrasi</p>
+    <div class="w-full max-w-xs space-y-4 animate__animated animate__fadeInUp">
+        <input id="u" type="text" placeholder="USER ID" class="w-full p-5 rounded-2xl bg-white text-gray-800 text-center font-bold uppercase outline-none shadow-xl">
+        <input id="p" type="password" placeholder="KODE AKSES" class="w-full p-5 rounded-2xl bg-white text-gray-800 text-center font-bold outline-none shadow-xl">
+        <button onclick="doLogin()" id="btn-login" class="w-full bg-[#0a192f] text-white p-5 rounded-3xl font-black uppercase shadow-2xl active:scale-95">AUTHORIZE ACCESS</button>
     </div>
 </div>
 
 <div id="app" class="hidden min-h-screen">
-    <header class="red-gradient pt-16 pb-28 px-8 flex justify-between items-start text-white rounded-b-[4rem] shadow-2xl relative">
-        <div class="animate__animated animate__fadeInLeft relative z-10">
-            <p class="text-[9px] font-black opacity-70 tracking-widest uppercase">Maritime Terminal</p>
-            <h2 id="user-n" class="text-3xl font-black uppercase mt-1">-</h2>
-            <div id="user-r" class="mt-4 px-4 py-1.5 bg-black/30 rounded-full text-[10px] font-black border border-white/10 text-yellow-400 inline-block uppercase tracking-tighter"></div>
+    <header class="red-gradient pt-12 pb-24 px-8 text-white rounded-b-[3rem] shadow-xl flex justify-between items-start">
+        <div>
+            <div id="user-r" class="bg-black/20 px-3 py-1 rounded-full text-[9px] font-bold uppercase border border-white/10 inline-block mb-2"></div>
+            <h2 id="user-n" class="text-3xl font-black uppercase leading-none">-</h2>
         </div>
-        <div class="flex flex-col items-end gap-3">
-            <button onclick="doLogout()" class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/20"><i class="fas fa-power-off"></i></button>
-            <img src="logo.png" class="w-10 h-10 object-contain brightness-0 invert opacity-40 animate-pulse">
-        </div>
+        <button onclick="doLogout()" class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center"><i class="fas fa-power-off"></i></button>
     </header>
 
-    <main class="px-6 -mt-16 relative z-20">
+    <main class="px-6 -mt-12">
         <section id="view-home" class="view-section active">
-            <div class="glass-panel p-10">
-                <div id="menu-grid" class="grid grid-cols-3 gap-y-12 gap-x-6"></div>
-            </div>
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-xl grid grid-cols-3 gap-6" id="menu-grid"></div>
         </section>
 
         <section id="view-form" class="view-section">
-            <div class="bg-white rounded-[3.5rem] p-10 shadow-2xl">
-                <div class="flex justify-between items-center mb-10">
-                    <h3 id="form-title" class="font-black text-[#b31d1d] text-2xl uppercase italic">Input Task</h3>
-                    <button onclick="openView('home')"><i class="fas fa-times-circle text-gray-300 text-3xl"></i></button>
-                </div>
+            <div class="bg-white rounded-[2.5rem] p-8 shadow-2xl relative">
+                <button onclick="openView('home')" class="absolute right-6 top-6 text-gray-300 text-2xl"><i class="fas fa-times-circle"></i></button>
+                <h3 id="form-title" class="text-2xl font-black text-[#b31d1d] uppercase italic mb-8">ANFRAKAN</h3>
+                
                 <div class="space-y-4">
-                    <select id="f-cat" class="w-full p-4 bg-gray-100 rounded-2xl font-bold outline-none"></select>
-                    <input id="f-ket" type="text" placeholder="Nama Barang" class="w-full p-4 bg-gray-100 rounded-2xl font-bold outline-none">
-                    <input id="f-qty" type="text" placeholder="Jumlah (Contoh: 5 Liter)" class="w-full p-4 bg-gray-100 rounded-2xl font-bold outline-none">
-                    <textarea id="f-aln" placeholder="Alasan Keperluan" rows="3" class="w-full p-4 bg-gray-100 rounded-2xl font-bold outline-none"></textarea>
-                    <button id="btn-save" onclick="submitData()" class="w-full red-gradient text-white p-5 rounded-3xl font-black uppercase shadow-xl">KIRIM</button>
+                    <select id="f-cat" class="input-field"></select>
+                    <input id="f-ket" type="text" placeholder="Nama Barang (Contoh: Beras)" class="input-field">
+                    
+                    <div class="flex gap-4">
+                        <input id="f-qty" type="number" placeholder="Jumlah" class="input-field flex-[2]">
+                        <input id="f-sat" type="text" placeholder="Satuan (Kg/Ltr/Box)" class="input-field flex-[1]">
+                    </div>
+
+                    <button id="btn-save" onclick="submitData()" class="w-full red-gradient text-white p-5 rounded-2xl font-black uppercase shadow-xl mt-4">KIRIM</button>
                 </div>
             </div>
         </section>
 
-        <section id="view-list" class="view-section pb-24">
-            <div class="flex justify-between items-center mb-8">
-                <button onclick="openView('home')" class="font-black text-xs uppercase"><i class="fas fa-chevron-left mr-2"></i> Dashboard</button>
-                <button onclick="refreshData()" class="w-12 h-12 bg-white rounded-2xl shadow-lg text-red-600"><i id="sync-icon" class="fas fa-sync-alt"></i></button>
+        <section id="view-list" class="view-section pb-20">
+            <div class="flex justify-between items-center my-6">
+                <button onclick="openView('home')" class="font-bold text-xs uppercase"><i class="fas fa-arrow-left mr-2"></i> Kembali</button>
+                <button onclick="refreshData()" class="w-10 h-10 bg-white rounded-xl shadow text-red-600"><i id="sync-icon" class="fas fa-sync-alt"></i></button>
             </div>
-            <div id="data-list" class="space-y-6"></div>
+            <div id="data-list" class="space-y-4"></div>
         </section>
     </main>
 </div>
 
 <script>
     const API = "https://script.google.com/macros/s/AKfycbxknjxmr96CRRXtgHZbj8j8lprJGBPzUZhv1o6KqxKq1wyd4Y95ZdtuIMZ9FQ4T2XFS/exec";
-    let USER = JSON.parse(localStorage.getItem('achi_v4_session')) || null;
+    let USER = JSON.parse(localStorage.getItem('achi_session')) || null;
 
     window.onload = () => { if(USER) start(); };
 
@@ -104,14 +92,14 @@
 
     async function doLogin() {
         const u = document.getElementById('u').value, p = document.getElementById('p').value;
-        if(!u || !p) return toast("ID & KODE WAJIB DIISI");
-        const b = document.getElementById('btn-login'); b.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        if(!u || !p) return toast("Lengkapi Data!");
+        document.getElementById('btn-login').innerHTML = "CONNECTING...";
         try {
             const r = await fetch(`${API}?action=login&u=${u}&p=${p}`);
             const d = await r.json();
-            if(d.status === 'success') { USER = d; localStorage.setItem('achi_v4_session', JSON.stringify(d)); start(); }
-            else { toast("AKSES DITOLAK"); b.innerHTML = "MASUK"; }
-        } catch(e) { toast("JARINGAN BERMASALAH"); b.innerHTML = "MASUK"; }
+            if(d.status === 'success') { USER = d; localStorage.setItem('achi_session', JSON.stringify(d)); start(); }
+            else { toast("Akses Gagal!"); document.getElementById('btn-login').innerHTML = "AUTHORIZE ACCESS"; }
+        } catch(e) { toast("Error Jaringan"); }
     }
 
     function start() {
@@ -125,26 +113,11 @@
     function drawMenu() {
         const g = document.getElementById('menu-grid');
         let m = [];
-        const red = "bg-red-50 text-[#b31d1d]";
-        const navy = "bg-slate-100 text-[#0a192f]";
+        if(USER.level === 1) m = [{id:'pp', l:'PP', i:'fa-file-invoice-dollar'}, {id:'anf', l:'Anfrak', i:'fa-ship'}, {id:'lis', l:'Status', i:'fa-chart-bar'}];
+        else if(USER.level === 3) m = [{id:'pp', l:'PP', i:'fa-file-invoice-dollar'}, {id:'buy', l:'Daftar Beli', i:'fa-cart-shopping'}, {id:'lis', l:'Status', i:'fa-list-check'}];
+        else m = [{id:'anf', l:'Anfrakan', i:'fa-anchor'}, {id:'lis', l:'Status', i:'fa-clipboard-check'}];
 
-        if(USER.level === 1) { 
-            m.push({id:'pp', l:'m-PP', i:'fa-file-invoice-dollar', c:red}, {id:'anf', l:'m-Anfrak', i:'fa-ship', c:red}, {id:'lis', l:'Status', i:'fa-chart-pie', c:red});
-        } else if(USER.level === 2) {
-            m.push({id:'pp', l:'m-PP', i:'fa-file-invoice-dollar', c:red}, {id:'anf', l:'m-Anfrak', i:'fa-ship', c:red}, {id:'lis', l:'Monitoring', i:'fa-list-check', c:red});
-        } else if(USER.level === 3) {
-            // Level 3: Tidak Ada Anfrakan, Ada Daftar Beli
-            m.push({id:'pp', l:'m-PP', i:'fa-file-invoice-dollar', c:red}, {id:'buy', l:'Daftar Beli', i:'fa-cart-shopping', c:navy}, {id:'lis', l:'Monitoring', i:'fa-list-check', c:red});
-        } else {
-            m.push({id:'anf', l:'Anfrakan', i:'fa-anchor', c:red}, {id:'lis', l:'Status', i:'fa-clipboard-check', c:red});
-        }
-
-        g.innerHTML = m.map(x => `
-            <div onclick="handle('${x.id}')" class="flex flex-col items-center">
-                <div class="w-16 h-16 rounded-2xl ${x.c} flex items-center justify-center text-2xl shadow-sm mb-2"><i class="fas ${x.i}"></i></div>
-                <span class="text-[10px] font-black uppercase text-center">${x.l}</span>
-            </div>
-        `).join('');
+        g.innerHTML = m.map(x => `<div onclick="handle('${x.id}')" class="flex flex-col items-center"><div class="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center text-xl text-red-600 shadow-sm mb-2"><i class="fas ${x.i}"></i></div><span class="text-[10px] font-black uppercase">${x.l}</span></div>`).join('');
     }
 
     function handle(id) {
@@ -162,46 +135,56 @@
     function openForm(t) {
         document.getElementById('form-title').innerText = t;
         const s = document.getElementById('f-cat');
-        s.innerHTML = t === 'Anfrakan' ? '<option>Anfrakan Deck</option><option>Anfrakan Mesin</option>' : '<option>PP Sparepart</option><option>PP Umum/Kantor</option>';
+        s.innerHTML = t === 'Anfrakan' ? '<option>Anfrakan Deck</option><option>Anfrakan Mesin</option>' : '<option>PP Sparepart</option><option>PP Umum</option>';
         openView('form');
     }
 
     async function submitData() {
-        const k = document.getElementById('f-ket').value, q = document.getElementById('f-qty').value;
-        if(!k || !q) return toast("LENGKAPI DATA!");
-        const b = document.getElementById('btn-save'); b.innerText = "..."; b.disabled = true;
-        const p = { action: 'input', tgl: new Date().toLocaleDateString('id-ID'), jam: new Date().toLocaleTimeString('id-ID'), kategori: document.getElementById('f-cat').value, keterangan: k, qty: q, alasan: document.getElementById('f-aln').value, pemohon: USER.nama, kapal: USER.kapal };
-        try { await fetch(API, { method: 'POST', body: JSON.stringify(p) }); toast("BERHASIL!"); openView('home'); } catch(e) { toast("GAGAL!"); }
-        b.innerText = "KIRIM"; b.disabled = false;
+        const k = document.getElementById('f-ket').value, q = document.getElementById('f-qty').value, s = document.getElementById('f-sat').value;
+        if(!k || !q || !s) return toast("Lengkapi Form!");
+        const b = document.getElementById('btn-save'); b.disabled = true; b.innerText = "MENGIRIM...";
+        
+        const p = { action: 'input', tgl: new Date().toLocaleDateString('id-ID'), jam: new Date().toLocaleTimeString('id-ID'), kategori: document.getElementById('f-cat').value, keterangan: k, satuan: s, qty: q, pemohon: USER.nama, kapal: USER.kapal };
+        
+        try {
+            await fetch(API, { method: 'POST', body: JSON.stringify(p) });
+            toast("Data Terkirim!");
+            document.getElementById('f-ket').value = ""; document.getElementById('f-qty').value = ""; document.getElementById('f-sat').value = "";
+            openView('home');
+        } catch(e) { toast("Gagal Terkirim!"); }
+        b.disabled = false; b.innerText = "KIRIM";
     }
 
     async function refreshData() {
         const l = document.getElementById('data-list'), ic = document.getElementById('sync-icon');
-        ic.classList.add('fa-spin'); l.innerHTML = `<div class="p-20 text-center text-gray-400 font-bold uppercase text-[10px]">Sinkronisasi...</div>`;
+        ic.classList.add('fa-spin');
         try {
             const r = await fetch(`${API}?action=getData&level=${USER.level}&kapal=${USER.kapal}`);
             const d = await r.json();
-            l.innerHTML = d.transaksi.length === 0 ? `<div class="p-10 text-center text-gray-400">DATA KOSONG</div>` : d.transaksi.map(i => renderCard(i)).join('');
-        } catch(e) { l.innerHTML = "Error Sinkronisasi"; }
+            l.innerHTML = d.transaksi.map(i => `
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-[8px] font-black px-2 py-1 bg-gray-100 rounded-full uppercase">${i[8]}</span>
+                        <span class="text-[9px] text-gray-400 font-bold">${i[1]}</span>
+                    </div>
+                    <h4 class="text-sm font-black text-gray-800 uppercase">${i[4]}</h4>
+                    <p class="text-xs font-bold text-red-600 mt-1">${i[6]} ${i[5]}</p>
+                    <p class="text-[9px] text-gray-400 mt-2 font-bold uppercase">${i[7]} • ${i[9]}</p>
+                    ${USER.level === 2 && i[8] === 'MENUNGGU ADMIN' ? `<button onclick="updateStatus('${i[0]}','TELAH DIPERIKSA')" class="w-full mt-4 p-3 bg-blue-600 text-white rounded-xl font-bold text-[10px]">VERIFIKASI</button>` : ''}
+                    ${USER.level === 1 && i[8] === 'TELAH DIPERIKSA' ? `<button onclick="updateStatus('${i[0]}','DISETUJUI OWNER')" class="w-full mt-4 p-3 bg-green-600 text-white rounded-xl font-bold text-[10px]">SETUJUI OWNER</button>` : ''}
+                </div>
+            `).join('');
+        } catch(e) { toast("Gagal Sinkron!"); }
         ic.classList.remove('fa-spin');
     }
 
-    function renderCard(i) {
-        let st = i[8], btn = "";
-        if(USER.level === 2 && st === 'MENUNGGU ADMIN') btn = `<button onclick="update('${i[0]}', 'TELAH DIPERIKSA')" class="w-full bg-slate-100 text-slate-700 py-4 rounded-2xl font-black text-[10px] mt-4 uppercase">Verifikasi Admin</button>`;
-        else if(USER.level === 1 && st === 'TELAH DIPERIKSA') btn = `<button onclick="update('${i[0]}', 'DISETUJUI OWNER')" class="w-full red-gradient text-white py-4 rounded-2xl font-black text-[10px] mt-4 uppercase shadow-lg">Setujui Owner</button>`;
-        
-        const badge = st.includes('SETUJU') ? 'bg-green-100 text-green-700' : (st.includes('PERIKSA') ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500');
-        return `<div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100">
-            <div class="flex justify-between items-center mb-4"><span class="${badge} px-3 py-1 rounded-full text-[8px] font-black">${st}</span><span class="text-[9px] text-gray-300 font-bold">${i[1]}</span></div>
-            <h4 class="text-sm font-black text-slate-800 uppercase">${i[4]}</h4>
-            <p class="text-[10px] text-gray-400 mt-2 font-bold">${i[6]} | ${i[9]}</p>
-            <p class="mt-3 text-[10px] text-gray-400 italic">"${i[5]}"</p>${btn}
-        </div>`;
+    async function updateStatus(id, s) {
+        toast("Updating...");
+        await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'changeStatus', id: id, s: s }) });
+        refreshData();
     }
 
-    async function update(id, s) { toast("Memproses..."); await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'changeStatus', id: id, s: s }) }); refreshData(); }
-    function doLogout() { if(confirm("Logout?")) { localStorage.clear(); location.reload(); } }
+    function doLogout() { localStorage.clear(); location.reload(); }
 </script>
 </body>
 </html>
