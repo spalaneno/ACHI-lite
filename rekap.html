@@ -3,90 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rekap - CV Efendy Jaya Abadi</title>
+    <title>Rekap & PDF - CV EJA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         body { background: #030303; color: white; font-family: 'Inter', sans-serif; }
-        .nav-top { background: linear-gradient(to bottom, #1a0000, #030303); border-bottom: 1px solid #222; }
         .glass-card { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1.5rem; }
+        .input-date { background: #111; border: 1px solid #333; color: white; border-radius: 10px; padding: 10px; font-size: 11px; width: 100%; }
+        
+        /* ATURAN CETAK PDF / PRINT */
+        @media print {
+            @page { size: portrait; margin: 1cm; }
+            body { background: white !important; color: black !important; }
+            .no-print { display: none !important; }
+            .glass-card { 
+                background: white !important; 
+                color: black !important; 
+                border: 1px solid #ddd !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+            }
+            .text-white { color: black !important; }
+            .text-gray-500, .text-gray-600 { color: #333 !important; }
+            .print-only { display: block !important; }
+            .laporan-title { font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 5px; }
+            .container-data { margin-top: 20px; }
+            .row-item { border-bottom: 1px solid #eee !important; padding: 10px 0 !important; }
+        }
+        .print-only { display: none; }
     </style>
 </head>
-<body class="pb-20">
+<body class="pb-10">
 
-    <div class="nav-top p-6 flex justify-between items-center sticky top-0 z-20">
-        <button onclick="location.href='dashboard.html'" class="flex items-center gap-2 text-gray-400 hover:text-white transition">
-            <i class="fas fa-chevron-left"></i>
-            <span class="text-[10px] font-black uppercase tracking-widest">Dashboard</span>
+    <div class="no-print p-5 flex justify-between items-center bg-[#0a0000] border-b border-gray-900 sticky top-0 z-20">
+        <button onclick="location.href='dashboard.html'" class="flex items-center gap-2 text-gray-400">
+            <i class="fas fa-arrow-left"></i>
+            <span class="text-[9px] font-black uppercase tracking-widest text-white">Dashboard</span>
         </button>
-        <img src="logo.png" class="h-8">
-        <button onclick="logout()" class="text-red-600">
-            <i class="fas fa-power-off"></i>
+        <img src="logo.png" class="h-6">
+        <button onclick="logout()" class="text-red-600"><i class="fas fa-power-off"></i></button>
+    </div>
+
+    <div class="no-print p-6 bg-[#050505] border-b border-gray-900">
+        <div class="grid grid-cols-2 gap-3 mb-3">
+            <div>
+                <label class="text-[7px] text-gray-500 font-black uppercase">Dari Tanggal</label>
+                <input type="date" id="start-date" class="input-date">
+            </div>
+            <div>
+                <label class="text-[7px] text-gray-500 font-black uppercase">Sampai Tanggal</label>
+                <input type="date" id="end-date" class="input-date">
+            </div>
+        </div>
+        <select id="f-kapal" class="input-date mb-4 font-bold text-red-500 uppercase">
+            <option value="SEMUA">SELURUH ARMADA</option>
+            <option value="KM. NABAWI 09">KM. NABAWI 09</option>
+            <option value="KM. LASTIKA STAR">KM. LASTIKA STAR</option>
+            <option value="KM. SRIKANDI 01">KM. SRIKANDI 01</option>
+        </select>
+        <button onclick="loadRekap()" class="w-full bg-red-800 p-4 rounded-xl font-black text-[10px] uppercase shadow-lg shadow-red-900/40">
+            Tampilkan Data
         </button>
     </div>
 
-    <div class="p-6">
-        <h2 class="text-xl font-black italic uppercase tracking-tighter mb-6">Rekap Finansial</h2>
-        
-        <div class="grid grid-cols-2 gap-3 mb-6">
-            <select id="kpl" onchange="loadRekap()" class="bg-[#111] border border-[#333] p-3 rounded-xl text-[10px] text-white">
-                <option value="SEMUA">SEMUA KAPAL</option>
-                <option value="KM. NABAWI 09">KM. NABAWI 09</option>
-                <option value="KM. LASTIKA STAR">KM. LASTIKA STAR</option>
-                <option value="KM. SRIKANDI 01">KM. SRIKANDI 01</option>
-            </select>
-            <select id="prd" onchange="loadRekap()" class="bg-[#111] border border-[#333] p-3 rounded-xl text-[10px] text-white">
-                <option value="BULAN">BULAN INI</option>
-                <option value="TRIP">PER TRIP</option>
-            </select>
-        </div>
+    <div class="print-only p-5 border-b-4 border-black mb-6">
+        <h1 class="laporan-title text-black">CV. EFENDY JAYA ABADI</h1>
+        <p class="text-center text-[10px] text-black">Laporan Rekapitulasi Keuangan Operasional Kapal</p>
+        <p id="p-tgl" class="text-center text-[9px] mt-2 italic text-black font-bold"></p>
+    </div>
 
-        <div class="glass-card p-6 mb-8 border-l-4 border-red-700 shadow-xl">
+    <div class="px-6 py-6 container-data">
+        <div class="glass-card p-6 border-l-4 border-red-700 shadow-2xl">
             <div class="grid grid-cols-2 gap-4 border-b border-gray-900 pb-4 mb-4">
-                <div><p class="text-[7px] text-gray-500 uppercase font-black mb-1">Total Masuk</p><p id="sum-in" class="text-green-500 font-bold text-sm">Rp 0</p></div>
-                <div><p class="text-[7px] text-gray-500 uppercase font-black mb-1">Total Keluar</p><p id="sum-out" class="text-red-500 font-bold text-sm">Rp 0</p></div>
+                <div>
+                    <p class="text-[7px] text-gray-500 uppercase font-black mb-1">Total Pendapatan</p>
+                    <p id="sum-in" class="text-green-500 font-black text-sm">Rp 0</p>
+                </div>
+                <div>
+                    <p class="text-[7px] text-gray-500 uppercase font-black mb-1">Total Pengeluaran</p>
+                    <p id="sum-out" class="text-red-500 font-black text-sm">Rp 0</p>
+                </div>
             </div>
             <div class="text-center">
-                <p class="text-[7px] text-gray-400 uppercase font-black mb-1">Laba Bersih Armada</p>
-                <h1 id="sum-net" class="text-2xl font-black italic tracking-tighter">Rp 0</h1>
+                <p class="text-[7px] text-gray-400 uppercase font-black mb-1 no-print">Laba Bersih</p>
+                <h1 id="sum-net" class="text-2xl font-black italic tracking-tighter text-white">Rp 0</h1>
             </div>
-        </div>
-
-        <div id="list-data" class="space-y-3">
-            <p class="text-center text-[10px] text-gray-600 animate-pulse italic">Menarik data dari server...</p>
         </div>
     </div>
 
-    <script>
-        const API = "https://script.google.com/macros/s/AKfycbzGj3Da5QLTDacu_yvrv6UmAx5DUph1ccFnQHnc-AH1a1S4z7_3-5vkkvtLTeBcV9dN/exec"; // BOSS: MASUKKAN URL EXEC DISINI
+    <div id="list-data" class="px-6 space-y-3">
+        </div>
 
-        async function loadRekap() {
-            const kapal = document.getElementById('kpl').value;
-            const periode = document.getElementById('prd').value;
-            try {
-                const r = await fetch(`${API}?action=getRekapGabungan&kapal=${kapal}&periode=${periode}`);
-                const res = await r.json();
-                
-                document.getElementById('sum-in').innerText = `Rp ${res.summary.total_in.toLocaleString('id-ID')}`;
-                document.getElementById('sum-out').innerText = `Rp ${res.summary.total_out.toLocaleString('id-ID')}`;
-                document.getElementById('sum-net').innerText = `Rp ${res.summary.net.toLocaleString('id-ID')}`;
-                
-                document.getElementById('list-data').innerHTML = res.data.map(i => `
-                    <div class="glass-card p-4 flex justify-between items-center">
-                        <div>
-                            <p class="text-[10px] font-black uppercase tracking-tighter">${i.item}</p>
-                            <p class="text-[7px] text-gray-500">${i.tanggal} | ${i.kapal}</p>
-                        </div>
-                        <p class="text-[10px] font-black ${i.tipe==='IN'?'text-green-500':'text-red-500'} italic">
-                            ${i.tipe==='IN'?'+':'-'} Rp ${i.total.toLocaleString('id-ID')}
-                        </p>
+    <div id="od-action" class="no-print p-6 hidden">
+        <button onclick="window.print()" class="w-full bg-white text-black p-4 rounded-xl font-black text-[10px] uppercase flex items-center justify-center gap-3">
+            <i class="fas fa-file-pdf"></i> Simpan / Cetak Laporan PDF
+        </button>
+    </div>
+
+    <div class="print-only mt-12 grid grid-cols-2 gap-10 px-10 text-black">
+        <div class="text-center">
+            <p class="text-[10px] font-bold uppercase mb-20 italic">Dibuat Oleh (Admin/OD),</p>
+            <p class="text-[10px] border-t border-black pt-1 font-black">( ............................ )</p>
+        </div>
+        <div class="text-center">
+            <p class="text-[10px] font-bold uppercase mb-20 italic">Disetujui Oleh (Owner),</p>
+            <p class="text-[10px] border-t border-black pt-1 font-black">Efendy</p>
+        </div>
+    </div>
+
+<script>
+    const USER = JSON.parse(localStorage.getItem('achi_session'));
+    const API = "URL_WEB_APP_BOSS_DI_SINI"; // Ganti dengan URL script Boss
+
+    if(!USER) window.location.href = "index.html";
+    
+    // Tampilkan tombol PDF jika bukan Owner (atau sesuai keinginan Boss jika Owner juga mau cetak)
+    if(USER.level != 1) {
+        document.getElementById('od-action').classList.remove('hidden');
+    }
+
+    async function loadRekap() {
+        const start = document.getElementById('start-date').value;
+        const end = document.getElementById('end-date').value;
+        const kapal = document.getElementById('f-kapal').value;
+        document.getElementById('p-tgl').innerText = `PERIODE: ${start} S/D ${end} | ARMADA: ${kapal}`;
+
+        try {
+            const r = await fetch(`${API}?action=getRekapTanggal&start=${start}&end=${end}&kapal=${kapal}`);
+            const res = await r.json();
+
+            document.getElementById('sum-in').innerText = `Rp ${res.summary.total_in.toLocaleString('id-ID')}`;
+            document.getElementById('sum-out').innerText = `Rp ${res.summary.total_out.toLocaleString('id-ID')}`;
+            document.getElementById('sum-net').innerText = `Rp ${res.summary.net.toLocaleString('id-ID')}`;
+
+            document.getElementById('list-data').innerHTML = res.data.map(i => `
+                <div class="glass-card p-4 flex justify-between items-center row-item">
+                    <div>
+                        <p class="text-[10px] font-black uppercase text-white">${i.item}</p>
+                        <p class="text-[7px] text-gray-500 font-bold uppercase">${i.tDisplay} | ${i.kapal}</p>
                     </div>
-                `).join('');
-            } catch(e) { console.log("Error Load"); }
-        }
-
-        loadRekap();
-        function logout() { localStorage.clear(); window.location.href="index.html"; }
-    </script>
+                    <p class="text-[10px] font-black ${i.tipe==='IN'?'text-green-500':'text-red-500'} italic">
+                        ${i.tipe==='IN'?'+':'-'} ${i.total.toLocaleString('id-ID')}
+                    </p>
+                </div>
+            `).join('');
+        } catch(e) { }
+    }
+    
+    function logout() { localStorage.clear(); window.location.href="index.html"; }
+</script>
 </body>
 </html>
