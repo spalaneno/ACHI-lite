@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permintaan Pembelian - CV EJA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #030303; color: white; font-family: 'Inter', sans-serif; }
+        .input-dark { background: #111; border: 1px solid #333; color: white; border-radius: 1rem; padding: 12px; width: 100%; font-size: 13px; outline: none; }
+        .input-dark:focus { border-color: #b31d1d; }
+        .btn-submit { background: linear-gradient(135deg, #b31d1d, #7a1212); font-weight: 900; width: 100%; padding: 15px; border-radius: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+    </style>
+</head>
+<body class="pb-10">
+
+    <div class="p-5 flex justify-between items-center bg-black border-b border-white/5 sticky top-0 z-20">
+        <button onclick="location.href='dashboard.html'" class="text-gray-400 flex items-center gap-2">
+            <i class="fas fa-arrow-left"></i> <span class="text-[9px] font-black uppercase">Dashboard</span>
+        </button>
+        <p class="text-[10px] font-black uppercase italic tracking-widest text-red-500">Form Permintaan (Anfrakan)</p>
+        <button onclick="logout()" class="text-red-600"><i class="fas fa-power-off"></i></button>
+    </div>
+
+    <div class="p-6">
+        <div class="mb-6">
+            <h2 class="text-xl font-black italic tracking-tighter uppercase leading-none">Input Permintaan</h2>
+            <p class="text-[8px] text-gray-500 font-black uppercase tracking-widest mt-1">Lengkapi detail kebutuhan armada</p>
+        </div>
+
+        <form id="form-request" class="space-y-4">
+            <div>
+                <label class="text-[9px] font-black text-gray-500 uppercase ml-1">Nama Armada Kapal</label>
+                <select id="kpl" class="input-dark mt-1" required>
+                    <option value="KM. NABAWI 09">KM. NABAWI 09</option>
+                    <option value="KM. LASTIKA STAR">KM. LASTIKA STAR</option>
+                    <option value="KM. SRIKANDI 01">KM. SRIKANDI 01</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="text-[9px] font-black text-gray-500 uppercase ml-1">Kategori Anfrakan</label>
+                <select id="kat" class="input-dark mt-1" required onchange="cekKategori()">
+                    <option value="Harian">Harian</option>
+                    <option value="Dek">Dek</option>
+                    <option value="Dapur">Dapur</option>
+                    <option value="Kamar Mesin">Kamar Mesin</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="text-[9px] font-black text-gray-500 uppercase ml-1">Nama Barang / Deskripsi</label>
+                <input type="text" id="itm" class="input-dark mt-1" placeholder="Contoh: Oli Mesin, Beras, dll" required>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="text-[9px] font-black text-gray-500 uppercase ml-1">Jumlah (Qty)</label>
+                    <input type="number" id="qty" class="input-dark mt-1" placeholder="0" required>
+                </div>
+                <div>
+                    <label class="text-[9px] font-black text-gray-500 uppercase ml-1">Satuan</label>
+                    <input type="text" id="sat" class="input-dark mt-1" placeholder="Liter/Kg/Dos" required>
+                </div>
+            </div>
+            
+            <div id="col-harga">
+                <label class="text-[9px] font-black text-yellow-600 uppercase ml-1">Estimasi Harga Satuan (Opsional)</label>
+                <input type="number" id="hrg" class="input-dark mt-1 border-yellow-900/20" placeholder="0 (Boleh kosong)">
+                <p class="text-[7px] text-gray-600 italic mt-1 ml-1">*Bagi Kapten/KKM: Harga bisa dikosongkan jika belum tahu.</p>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" id="btn-save" class="btn-submit shadow-lg shadow-red-900/20">Kirim Permintaan Ke Owner</button>
+            </div>
+        </form>
+    </div>
+
+<script>
+    const USER = JSON.parse(localStorage.getItem('achi_session'));
+    const API = "https://script.google.com/macros/s/AKfycbzk03FnZDF_z2F8MNzUDF42WM6pzxsHZMufwRNNg-ejDMb9ri86iEKeSUqQGXU81T0-/exec";
+
+    // Proteksi Halaman
+    if(!USER) {
+        window.location.href = "index.html";
+    }
+
+    // Fungsi Kirim Data
+    document.getElementById('form-request').onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('btn-save');
+        
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Mengirim...`;
+
+        const params = new URLSearchParams({
+            action: 'saveRequest',
+            kapal: document.getElementById('kpl').value,
+            kategori: document.getElementById('kat').value,
+            item: document.getElementById('itm').value,
+            qty: document.getElementById('qty').value,
+            satuan: document.getElementById('sat').value,
+            harga: document.getElementById('hrg').value || 0, // Default 0 jika kosong
+            user: USER.nama
+        });
+
+        try {
+            const r = await fetch(`${API}?${params.toString()}`);
+            const res = await r.json();
+            
+            if(res.status === "success") {
+                alert(`Permintaan berhasil dikirim, ${USER.panggilan}. Menunggu persetujuan Owner.`);
+                document.getElementById('form-request').reset();
+            } else {
+                alert("Gagal mengirim permintaan. Coba lagi.");
+            }
+        } catch(e) {
+            alert("Koneksi terputus. Pastikan internet aktif.");
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "Kirim Permintaan Ke Owner";
+        }
+    };
+
+    function logout() {
+        if(confirm(`${USER.panggilan}, yakin ingin keluar?`)) {
+            localStorage.clear();
+            window.location.href="index.html";
+        }
+    }
+
+    // Logika Otomatis: Jika Kategori 'Kamar Mesin', beri peringatan kecil
+    function cekKategori() {
+        const kat = document.getElementById('kat').value;
+        if(kat === "Kamar Mesin") {
+            console.log("Anfrakan Mesin dipilih.");
+        }
+    }
+</script>
+</body>
+</html>
