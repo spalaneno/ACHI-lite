@@ -1,0 +1,19 @@
+<div class="achi-card p-6 rounded-[2.5rem] mb-8">
+    <h3 class="text-sm font-black text-red-600 uppercase mb-4 italic">Form Permintaan (Anfrakan)</h3>
+    <div class="space-y-4">
+        <select id="f-cat" class="w-full p-4 bg-zinc-900 rounded-2xl border border-zinc-800 outline-none font-bold text-xs uppercase">
+            <option>Anfrakan Dapur</option>
+            <option>Anfrakan Mesin</option>
+            <option>Anfrakan Kapal</option>
+        </select>
+        <input id="f-item" type="text" placeholder="Nama Barang" class="w-full p-4 bg-zinc-900 rounded-2xl border border-zinc-800 outline-none">
+        <div class="flex gap-4">
+            <input id="f-qty" type="number" placeholder="Jumlah" class="w-full p-4 bg-zinc-900 rounded-2xl border border-zinc-800 outline-none flex-[2]">
+            <input id="f-sat" type="text" placeholder="Satuan" class="w-full p-4 bg-zinc-900 rounded-2xl border border-zinc-800 outline-none flex-[1]">
+        </div>
+        <button onclick="kirimAnfrakan()" class="w-full p-4 bg-red-600 rounded-2xl font-black uppercase text-xs shadow-lg shadow-red-900/40">Kirim Permintaan</button>
+    </div>
+</div>
+
+<div id="list-container" class="space-y-4">
+    </div>
