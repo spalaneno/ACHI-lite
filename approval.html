@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persetujuan Owner - CV EJA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #030303; color: white; font-family: 'Inter', sans-serif; }
+        .glass-card { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1.5rem; }
+    </style>
+</head>
+<body class="pb-10">
+
+    <div class="p-5 flex justify-between items-center bg-black sticky top-0 z-20 border-b border-white/5">
+        <button onclick="location.href='dashboard.html'" class="text-gray-400 flex items-center gap-2">
+            <i class="fas fa-chevron-left"></i> <span class="text-[9px] font-black uppercase">Dashboard</span>
+        </button>
+        <p class="text-[10px] font-black uppercase italic tracking-widest text-red-500">Owner Authorization</p>
+        <button onclick="logout()" class="text-red-600"><i class="fas fa-power-off"></i></button>
+    </div>
+
+    <div class="p-6">
+        <h2 id="welcome-msg" class="text-xl font-black italic tracking-tighter uppercase mb-6">Persetujuan</h2>
+        
+        <div id="list-request" class="space-y-4">
+            <p class="text-center text-[10px] text-gray-600 animate-pulse py-10">Memeriksa anfrakan baru...</p>
+        </div>
+    </div>
+
+<script>
+    const USER = JSON.parse(localStorage.getItem('achi_session'));
+    const API = "https://script.google.com/macros/s/AKfycbzk03FnZDF_z2F8MNzUDF42WM6pzxsHZMufwRNNg-ejDMb9ri86iEKeSUqQGXU81T0-/exec";
+
+    // Validasi Akses: Hanya Level 1 (Hengky & Achy)
+    if(!USER || USER.level != 1) {
+        alert("Akses Terbatas untuk Owner.");
+        window.location.href = "dashboard.html";
+    }
+    
+    document.getElementById('welcome-msg').innerText = `Persetujuan ${USER.panggilan}`;
+
+    async function loadRequests() {
+        const list = document.getElementById('list-request');
+        try {
+            const r = await fetch(`${API}?action=getLogistikData&status=PENDING`);
+            const data = await r.json();
+
+            if (data.length === 0) {
+                list.innerHTML = `<div class="text-center py-20 text-[10px] text-gray-600 font-black uppercase tracking-widest">Semua permintaan sudah diproses</div>`;
+                return;
+            }
+
+            list.innerHTML = data.map(n => `
+                <div class="glass-card p-5 border-l-4 border-red-700">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <p class="text-[8px] text-red-500 font-black uppercase">${n.kat} | ${n.kapal}</p>
+                            <p class="text-xs font-black uppercase">${n.item}</p>
+                            <p class="text-[7px] text-gray-400 font-bold italic">Request by: ${n.user}</p>
+                        </div>
+                        <div class="text-right">
+                             <p class="text-[9px] font-black text-white">${n.harga > 0 ? 'Rp '+parseInt(n.harga).toLocaleString() : 'ANFRAKAN'}</p>
+                             <p class="text-[7px] text-gray-600 font-bold">${n.tgl}</p>
+                        </div>
+                    </div>
+                    <button onclick="approve(${n.row})" class="w-full bg-white text-black py-3 rounded-xl text-[9px] uppercase font-black hover:bg-red-600 hover:text-white transition-all">Setujui Sekarang</button>
+                </div>
+            `).join('');
+        } catch(e) { list.innerHTML = "Gagal memuat data."; }
+    }
+
+    async function approve(row) {
+        if(!confirm(`Setujui ini, ${USER.panggilan}?`)) return;
+        try {
+            const r = await fetch(`${API}?action=approveByOwner&row=${row}&approver=${USER.panggilan}`);
+            const res = await r.json();
+            if(res.status === "success") {
+                alert(`Data berhasil disetujui oleh ${USER.panggilan}.`);
+                loadRequests();
+            }
+        } catch(e) { alert("Gagal koneksi."); }
+    }
+
+    function logout() { localStorage.clear(); window.location.href="index.html"; }
+    loadRequests();
+</script>
+</body>
+</html>
