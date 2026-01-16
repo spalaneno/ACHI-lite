@@ -6,76 +6,51 @@
     <title>ACHI - DASHBOARD</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #0b0b0b; color: #fff; font-family: 'Inter', sans-serif; }
-        .achi-card { background: linear-gradient(145deg, #1a1a1a, #111); border: 1px solid #222; }
-        .icon-box { background: linear-gradient(135deg, #b31d1d, #7a1212); }
-    </style>
 </head>
-<body class="p-6">
-    <header class="flex justify-between items-center mb-8">
-        <div>
-            <h1 id="welcome-name" class="text-2xl font-black italic tracking-tighter uppercase">Halo, -</h1>
-            <p id="user-role" class="text-[10px] text-red-500 font-bold tracking-widest uppercase"></p>
+<body class="bg-gray-50 min-height-screen">
+    <div class="bg-[#b31d1d] p-8 rounded-b-[3rem] shadow-xl mb-8">
+        <div class="flex justify-between items-center text-white mb-6">
+            <h2 class="font-black italic text-xl uppercase tracking-tighter">ACHI Mobile</h2>
+            <button onclick="logout()"><i class="fas fa-power-off"></i></button>
         </div>
-        <button onclick="logout()" class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-red-500">
-            <i class="fas fa-power-off"></i>
-        </button>
-    </header>
-
-    <div id="saldo-box" class="achi-card p-6 rounded-[2.5rem] mb-8 shadow-2xl border-t-2 border-red-600">
-        <div class="flex justify-between items-center">
-            <div>
-                <p class="text-[10px] text-gray-500 font-bold uppercase mb-1">Saldo/Hutang Anda</p>
-                <h2 id="u-saldo" class="text-2xl font-black italic tracking-tight">Rp 0</h2>
-            </div>
-            <i class="fas fa-wallet text-3xl text-white/10"></i>
+        <div class="bg-white/10 p-4 rounded-2xl backdrop-blur-sm border border-white/20">
+            <p id="u-nama" class="font-black text-white text-lg uppercase italic">-</p>
+            <p id="u-role" class="text-[10px] text-white/70 font-bold uppercase">-</p>
         </div>
     </div>
 
-    <div id="menu-grid" class="grid grid-cols-2 gap-4">
+    <div id="menu-grid" class="p-6 grid grid-cols-2 gap-4">
         </div>
 
 <script>
     const USER = JSON.parse(localStorage.getItem('achi_session'));
-    if(!USER) window.location.href = 'index.html';
+    if(!USER) window.location.href = "index.html";
 
-    document.getElementById('welcome-name').innerText = "Halo, " + USER.nama;
-    document.getElementById('user-role').innerText = USER.jabatan + " | " + USER.kapal;
-    document.getElementById('u-saldo').innerText = "Rp " + parseInt(USER.hutang || 0).toLocaleString();
+    document.getElementById('u-nama').innerText = USER.nama;
+    document.getElementById('u-role').innerText = USER.jabatan + " | " + USER.kapal;
 
-    function renderMenu() {
-        const grid = document.getElementById('menu-grid');
-        let m = [];
+    const grid = document.getElementById('menu-grid');
+    let menus = [];
 
-        // Menu Level 4 (Kapten/KKM)
-        if(USER.level == 4) {
-            m.push({n: "Anfrakan", i: "fa-ship", l: "logistik.html"});
-            m.push({n: "Lapor BBM", i: "fa-gas-pump", l: "bbm.html"});
-        }
-        // Menu Level 1 & 2 (Owner & Admin)
-        if(USER.level <= 2) {
-            m.push({n: "Bongkar Trip", i: "fa-anchor", l: "trip.html"});
-            m.push({n: "Verifikasi", i: "fa-check-double", l: "logistik.html"});
-            m.push({n: "Data Hutang", i: "fa-users", l: "kru-list.html"});
-        }
-        // Menu Level 3 (Purchasing)
-        if(USER.level == 3 || USER.level <= 2) {
-            m.push({n: "Daftar Beli", i: "fa-shopping-cart", l: "purchasing.html"});
-        }
-
-        grid.innerHTML = m.map(item => `
-            <div onclick="location.href='${item.l}'" class="achi-card p-6 rounded-[2rem] text-center active:scale-95 transition-all shadow-lg">
-                <div class="icon-box w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-red-900/20">
-                    <i class="fas ${item.i} text-white"></i>
-                </div>
-                <span class="text-[10px] font-black uppercase tracking-wider text-gray-300">${item.n}</span>
-            </div>
-        `).join('');
+    if(USER.level <= 2) {
+        menus.push({n: "BONGKAR TRIP", i: "fa-anchor", l: "trip.html"});
+        menus.push({n: "HUTANG KRU", i: "fa-users-cog", l: "kru-list.html"});
+        menus.push({n: "BELANJA", i: "fa-shopping-cart", l: "purchasing.html"});
+    }
+    if(USER.level == 4) {
+        menus.push({n: "ANFRAKAN", i: "fa-clipboard-list", l: "logistik.html"});
     }
 
-    function logout() { localStorage.clear(); window.location.href = 'index.html'; }
-    renderMenu();
+    grid.innerHTML = menus.map(m => `
+        <div onclick="location.href='${m.l}'" class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 text-center active:scale-95 transition-all">
+            <div class="w-12 h-12 bg-red-50 text-[#b31d1d] rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <i class="fas ${m.i} text-xl"></i>
+            </div>
+            <p class="text-[10px] font-black text-gray-800 uppercase">${m.n}</p>
+        </div>
+    `).join('');
+
+    function logout() { localStorage.clear(); window.location.href = "index.html"; }
 </script>
 </body>
 </html>
