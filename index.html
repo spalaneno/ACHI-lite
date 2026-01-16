@@ -3,54 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ACHI MOBILE v4.0</title>
+    <title>ACHI SYSTEM - EFENDY JAYA ABADI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root { --main-red: #b31d1d; --deep-navy: #0a192f; }
-        body { background: #fdfdfd; font-family: 'Inter', sans-serif; }
+        body { background: #fdfdfd; font-family: 'Inter', sans-serif; overflow-x: hidden; }
         .red-gradient { background: linear-gradient(135deg, var(--main-red) 0%, #7a1212 100%); }
         .navy-gradient { background: linear-gradient(135deg, var(--deep-navy) 0%, #112240 100%); }
-        .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 2.5rem; border: 1px solid #eee; }
+        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 2.5rem; border: 1px solid #eee; }
         .menu-btn { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.2s; }
         .menu-btn:active { transform: scale(0.9); }
-        .icon-box { width: 65px; height: 65px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 10px 20px rgba(179,29,29,0.15); }
+        .icon-box { width: 65px; height: 65px; border-radius: 22px; display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 10px 20px rgba(179,29,29,0.12); }
         .view-section { display: none; animation: fadeIn 0.4s ease; }
         .view-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         #toast { visibility: hidden; position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); background: var(--deep-navy); color: white; padding: 12px 30px; border-radius: 50px; font-size: 13px; z-index: 9999; }
         #toast.show { visibility: visible; }
+        .logo-container { width: 90px; height: 90px; background: white; border-radius: 30px; padding: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
 
 <div id="toast">Notifikasi</div>
 
-<div id="login-page" class="fixed inset-0 z-[1000] red-gradient flex flex-col items-center justify-center p-10">
-    <div class="w-24 h-24 bg-white rounded-[30px] flex items-center justify-center mb-6 shadow-2xl">
-        <i class="fas fa-ship text-5xl text-[#b31d1d]"></i>
+<div id="login-page" class="fixed inset-0 z-[1000] red-gradient flex flex-col items-center justify-center p-10 text-center">
+    <div class="logo-container mb-6 flex items-center justify-center">
+        <img src="logo.png" alt="Logo" class="w-full h-full object-contain" onerror="this.innerHTML='<i class=\'fas fa-ship text-4xl text-red-700\'></i>'">
     </div>
-    <h1 class="text-white font-black text-3xl tracking-tighter italic">ACHI MOBILE</h1>
-    <p class="text-white/60 text-[9px] font-bold tracking-[0.3em] uppercase mb-12">PT EFENDY JAYA ABADI</p>
+    <h1 class="text-white font-black text-3xl tracking-tighter italic uppercase">ACHI Mobile</h1>
+    <p class="text-white/70 text-[10px] font-bold tracking-[0.3em] uppercase mb-12">PT Efendy Jaya Abadi</p>
     
     <div class="w-full max-w-xs space-y-4">
         <input id="u" type="text" placeholder="USER ID" class="w-full p-4 rounded-2xl bg-white border-none text-gray-800 font-bold text-center outline-none shadow-xl uppercase">
         <input id="p" type="password" placeholder="KODE AKSES" class="w-full p-4 rounded-2xl bg-white border-none text-gray-800 font-bold text-center outline-none shadow-xl">
-        <button onclick="doLogin()" id="btn-login" class="w-full bg-[#0a192f] text-white p-4 rounded-2xl font-black uppercase shadow-2xl active:scale-95 transition-all">Connect</button>
+        <button onclick="doLogin()" id="btn-login" class="w-full navy-gradient text-white p-4 rounded-2xl font-black uppercase shadow-2xl active:scale-95 transition-all">Authorize Access</button>
     </div>
 </div>
 
 <div id="app" class="hidden min-h-screen">
-    <header class="red-gradient pt-14 pb-24 px-8 flex justify-between items-start text-white rounded-b-[3.5rem] shadow-2xl">
+    <header class="red-gradient pt-14 pb-24 px-8 flex justify-between items-start text-white rounded-b-[3.5rem] shadow-2xl relative">
         <div>
-            <p class="text-[10px] font-bold opacity-70 tracking-widest uppercase">Operator Terminal</p>
+            <p class="text-[10px] font-bold opacity-70 tracking-widest uppercase">Maritime Terminal</p>
             <h2 id="user-n" class="text-2xl font-black tracking-tight uppercase leading-none mt-1">-</h2>
             <div id="user-r" class="mt-3 inline-block px-3 py-1 bg-black/20 rounded-full text-[9px] font-black uppercase border border-white/10 text-yellow-400"></div>
         </div>
-        <button onclick="doLogout()" class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-md"><i class="fas fa-power-off"></i></button>
+        <div class="flex flex-col items-end gap-3">
+            <button onclick="doLogout()" class="w-11 h-11 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/10"><i class="fas fa-power-off"></i></button>
+            <img src="logo.png" class="w-10 h-10 object-contain brightness-0 invert opacity-50" alt="">
+        </div>
     </header>
 
-    <main class="px-6 -mt-14">
+    <main class="px-6 -mt-14 relative z-10">
         <section id="view-home" class="view-section active">
             <div class="glass-panel p-8 shadow-2xl">
                 <div id="menu-grid" class="grid grid-cols-3 gap-y-10 gap-x-6"></div>
@@ -64,21 +68,21 @@
         <section id="view-form" class="view-section">
             <div class="bg-white rounded-[3rem] p-8 shadow-2xl border border-gray-100">
                 <div class="flex justify-between items-center mb-8">
-                    <h3 id="form-title" class="font-black text-[#b31d1d] text-xl tracking-tighter uppercase italic">INPUT</h3>
+                    <h3 id="form-title" class="font-black text-[#b31d1d] text-xl tracking-tighter uppercase italic">Input Task</h3>
                     <button onclick="openView('home')" class="text-gray-300 text-3xl"><i class="fas fa-times-circle"></i></button>
                 </div>
                 <div class="space-y-4">
-                    <select id="f-cat" class="w-full p-4 bg-gray-50 rounded-2xl font-bold border-2 border-transparent focus:border-red-500 outline-none"></select>
-                    <input id="f-ket" type="text" placeholder="Nama Barang" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-red-500">
-                    <input id="f-qty" type="text" placeholder="Jumlah" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-red-500">
-                    <textarea id="f-aln" placeholder="Alasan Pengajuan" rows="3" class="w-full p-4 bg-gray-50 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-red-500"></textarea>
+                    <select id="f-cat" class="w-full p-4 bg-gray-100 rounded-2xl font-bold border-2 border-transparent focus:border-red-500 outline-none"></select>
+                    <input id="f-ket" type="text" placeholder="Nama Barang / Sparepart" class="w-full p-4 bg-gray-100 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-red-500">
+                    <input id="f-qty" type="text" placeholder="Jumlah & Satuan" class="w-full p-4 bg-gray-100 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-red-500">
+                    <textarea id="f-aln" placeholder="Alasan Keperluan" rows="3" class="w-full p-4 bg-gray-100 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-red-500"></textarea>
                     <button id="btn-save" onclick="submitData()" class="w-full red-gradient text-white p-5 rounded-2xl font-black uppercase shadow-xl active:scale-95 transition-all">Submit Request</button>
                 </div>
             </div>
         </section>
 
         <section id="view-list" class="view-section pb-24">
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex justify-between items-center mb-6 px-2">
                 <button onclick="openView('home')" class="text-[#0a192f] font-black text-xs uppercase"><i class="fas fa-chevron-left mr-2"></i> Dashboard</button>
                 <button onclick="refreshData()" class="w-10 h-10 bg-white rounded-xl shadow-lg flex items-center justify-center text-red-600"><i id="sync-icon" class="fas fa-sync"></i></button>
             </div>
@@ -103,109 +107,8 @@
     async function doLogin() {
         const u = document.getElementById('u').value;
         const p = document.getElementById('p').value;
-        if(!u || !p) return toast("Entry Required");
+        if(!u || !p) return toast("ID & KODE WAJIB DIISI");
         const b = document.getElementById('btn-login');
-        b.innerText = "CONNECTING..."; b.disabled = true;
+        b.innerText = "AUTHENTICATING..."; b.disabled = true;
         try {
-            const r = await fetch(`${API}?action=login&u=${u}&p=${p}`);
-            const d = await r.json();
-            if(d.status === 'success') {
-                USER = d; localStorage.setItem('achi_v4_session', JSON.stringify(d)); start();
-            } else { toast("ACCESS DENIED"); b.innerText = "Connect"; b.disabled = false; }
-        } catch(e) { toast("NETWORK ERROR"); b.disabled = false; b.innerText = "Connect"; }
-    }
-
-    function start() {
-        document.getElementById('login-page').style.display = 'none';
-        document.getElementById('app').classList.remove('hidden');
-        document.getElementById('user-n').innerText = USER.nama;
-        document.getElementById('user-r').innerText = USER.jabatan + " • " + USER.kapal;
-        drawMenu();
-    }
-
-    function drawMenu() {
-        const g = document.getElementById('menu-grid');
-        let m = [];
-        const red = "bg-red-50 text-[#b31d1d]";
-        const navy = "bg-slate-50 text-[#0a192f]";
-
-        if(USER.level === 1) { // OWNER
-            m.push({id:'pp', l:'m-PP', i:'fa-file-invoice', c:red}, {id:'anf', l:'m-Anfrak', i:'fa-ship', c:red}, {id:'lis', l:'m-Status', i:'fa-chart-line', c:red}, {id:'del', l:'Delegasi', i:'fa-key', c:navy}, {id:'his', l:'History', i:'fa-clock-rotate-left', c:navy}, {id:'stk', l:'E-Stok', i:'fa-boxes-stacked', c:navy});
-        } else if(USER.level === 2 || USER.level === 3) { // ACC/ADMIN
-            m.push({id:'pp', l:'m-PP', i:'fa-file-invoice', c:red}, {id:'anf', l:'m-Anfrak', i:'fa-ship', c:red}, {id:'lis', l:'Monitoring', i:'fa-chart-line', c:red}, {id:'stk', l:'Stok Kapal', i:'fa-boxes-stacked', c:navy});
-        } else { // KAPAL
-            m.push({id:'anf', l:'Anfrakan', i:'fa-anchor', c:red}, {id:'lis', l:'Status', i:'fa-list-check', c:red}, {id:'stk', l:'Stok Saya', i:'fa-box', c:navy});
-        }
-
-        g.innerHTML = m.map(x => `
-            <div onclick="handle('${x.id}')" class="menu-btn">
-                <div class="icon-box ${x.c}"><i class="fas ${x.i}"></i></div>
-                <span class="text-[10px] font-black text-slate-800 mt-3 uppercase tracking-tighter">${x.l}</span>
-            </div>
-        `).join('');
-    }
-
-    function handle(id) {
-        if(id === 'lis' || id === 'his') openView('list');
-        else if(id === 'pp') openForm('Permintaan Pembelian');
-        else if(id === 'anf') openForm('Anfrakan');
-        else if(id === 'del') { IS_DEL = !IS_DEL; document.getElementById('del-alert').classList.toggle('hidden', !IS_DEL); toast("DELEGASI: " + (IS_DEL?"ON":"OFF")); }
-        else toast("MODUL DALAM PENGEMBANGAN");
-    }
-
-    function openView(v) {
-        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-        document.getElementById('view-'+v).classList.add('active');
-        if(v === 'list') refreshData();
-    }
-
-    function openForm(t) {
-        document.getElementById('form-title').innerText = t;
-        const s = document.getElementById('f-cat');
-        s.innerHTML = t === 'Anfrakan' ? '<option>Anfrakan Deck</option><option>Anfrakan Mesin</option>' : '<option>PP Sparepart</option><option>PP Umum</option>';
-        openView('form');
-    }
-
-    async function submitData() {
-        const k = document.getElementById('f-ket').value; const q = document.getElementById('f-qty').value;
-        if(!k || !q) return toast("Entry Required");
-        const b = document.getElementById('btn-save'); b.innerText = "SENDING..."; b.disabled = true;
-        const p = { action: 'input', tgl: new Date().toLocaleDateString('id-ID'), jam: new Date().toLocaleTimeString('id-ID'), kategori: document.getElementById('f-cat').value, keterangan: k, alasan: document.getElementById('f-aln').value, pemohon: USER.nama, kapal: USER.kapal };
-        try { await fetch(API, { method: 'POST', body: JSON.stringify(p) }); toast("SENT!"); document.getElementById('f-ket').value = ""; document.getElementById('f-qty').value = ""; document.getElementById('f-aln').value = ""; b.innerText = "Submit Request"; b.disabled = false; } catch(e) { toast("ERROR"); b.disabled = false; }
-    }
-
-    async function refreshData() {
-        const l = document.getElementById('data-list'); const ic = document.getElementById('sync-icon');
-        ic.classList.add('sync-spin'); l.innerHTML = `<div class="p-20 text-center text-gray-400 font-bold uppercase tracking-widest text-[10px]">Filtering Database...</div>`;
-        try {
-            const r = await fetch(`${API}?action=getData&level=${USER.level}&kapal=${USER.kapal}&nama=${USER.nama}&v=${Date.now()}`);
-            const d = await r.json();
-            l.innerHTML = d.transaksi.length === 0 ? `<div class="p-10 text-center text-gray-400 text-xs">NO DATA FOUND</div>` : d.transaksi.map(i => renderCard(i)).join('');
-        } catch(e) { l.innerHTML = "Sync Error"; }
-        ic.classList.remove('sync-spin');
-    }
-
-    function renderCard(i) {
-        let st = i[8]; let btn = "";
-        if([2,3].includes(USER.level) && st === 'MENUNGGU ADMIN') btn = `<button onclick="update('${i[0]}', 'TELAH DIPERIKSA')" class="w-full bg-slate-100 text-slate-700 py-4 rounded-2xl font-black text-[10px] mt-4 uppercase tracking-widest">Verify</button>`;
-        else if((USER.level === 1 || (USER.level === 2 && IS_DEL)) && st === 'TELAH DIPERIKSA') btn = `<button onclick="update('${i[0]}', 'DISETUJUI OWNER')" class="w-full red-gradient text-white py-4 rounded-2xl font-black text-[10px] mt-4 uppercase shadow-lg">Approve</button>`;
-        
-        const badge = st.includes('SETUJU') ? 'bg-green-100 text-green-700' : (st.includes('PERIKSA') ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500');
-        return `<div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100">
-            <div class="flex justify-between items-center mb-4">
-                <span class="${badge} px-3 py-1 rounded-full text-[8px] font-black uppercase">${st}</span>
-                <span class="text-[9px] text-gray-300 font-bold">${i[1]}</span>
-            </div>
-            <h4 class="text-sm font-black text-slate-800 uppercase tracking-tighter leading-tight">${i[4]}</h4>
-            <div class="mt-2 flex gap-2 text-[8px] font-bold text-gray-400 uppercase tracking-widest">
-                <span>${i[7]}</span><span>•</span><span>${i[9]}</span>
-            </div>
-            <p class="mt-3 text-[10px] text-gray-400 italic font-medium">"${i[5]}"</p>${btn}
-        </div>`;
-    }
-
-    async function update(id, s) { toast("Updating..."); await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'changeStatus', id: id, s: s }) }); refreshData(); }
-    function doLogout() { if(confirm("Disconnect Session?")) { localStorage.clear(); location.reload(); } }
-</script>
-</body>
-</html>
+            const r
