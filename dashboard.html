@@ -3,119 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - CV Efendy Jaya Abadi</title>
+    <title>Live Report - CV Efendy Jaya Abadi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         body { background-color: #030303; color: #fff; font-family: 'Inter', sans-serif; }
-        .stat-card { background: linear-gradient(145deg, #0f0f0f, #050505); border: 1px solid #1a1a1a; border-radius: 2rem; }
-        .menu-card { background: #0a0a0a; border: 1px solid #151515; border-radius: 2.2rem; transition: 0.3s; }
-        .menu-card:active { transform: scale(0.95); background: #120000; border-color: #b31d1d; }
-        .text-crimson { color: #b31d1d; }
-        .header-glow { border-bottom: 1px solid #220000; background: linear-gradient(180deg, #100000 0%, #030303 100%); }
+        .expense-card { background: linear-gradient(135deg, #1a0000 0%, #080808 100%); border: 1px solid #300; }
+        .bar-container { background: #111; border-radius: 10px; height: 8px; overflow: hidden; }
+        .bar-fill { background: #b31d1d; height: 100%; transition: width 1s ease-in-out; }
     </style>
 </head>
-<body class="pb-16">
+<body class="pb-24">
 
-    <div class="header-glow p-10 rounded-b-[4rem] mb-10 text-center shadow-2xl">
-        <img src="logo.png" alt="Logo" class="h-20 mx-auto mb-6">
-        
-        <div class="bg-white/5 border border-white/5 p-5 rounded-[2.5rem] flex items-center justify-between backdrop-blur-md">
-            <div class="flex items-center gap-4 text-left">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#b31d1d] to-[#7a1212] flex items-center justify-center shadow-xl">
-                    <i class="fas fa-user-shield text-white text-xs"></i>
+    <div class="p-8 flex flex-col items-center bg-gradient-to-b from-[#1a0000] to-transparent">
+        <img src="logo.png" class="h-16 mb-2">
+        <p class="text-[7px] font-black text-red-500 tracking-[0.4em] uppercase">Expense Live Report</p>
+    </div>
+
+    <div id="view-owner" class="px-6 mb-8 hidden">
+        <div class="expense-card p-8 rounded-[2.5rem] shadow-2xl border border-red-900/30">
+            <p class="text-[9px] text-gray-500 font-black uppercase mb-1">Total Pengeluaran Bulan Ini</p>
+            <h1 id="ex-total" class="text-3xl font-black italic text-white tracking-tighter">Rp 0</h1>
+            
+            <div class="mt-8 space-y-4">
+                <div>
+                    <div class="flex justify-between text-[8px] font-black uppercase mb-1">
+                        <span>Nabawi 09</span><span id="txt-nabawi">Rp 0</span>
+                    </div>
+                    <div class="bar-container"><div id="bar-nabawi" class="bar-fill" style="width: 0%"></div></div>
                 </div>
                 <div>
-                    <p id="u-nama" class="font-black text-white text-sm uppercase italic tracking-tighter leading-none mb-1">Loading...</p>
-                    <p id="u-role" class="text-[8px] text-red-700 font-black uppercase tracking-widest"></p>
+                    <div class="flex justify-between text-[8px] font-black uppercase mb-1">
+                        <span>Lastika Star</span><span id="txt-lastika">Rp 0</span>
+                    </div>
+                    <div class="bar-container"><div id="bar-lastika" class="bar-fill" style="width: 0%"></div></div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-[8px] font-black uppercase mb-1">
+                        <span>Srikandi 01</span><span id="txt-srikandi">Rp 0</span>
+                    </div>
+                    <div class="bar-container"><div id="bar-srikandi" class="bar-fill" style="width: 0%"></div></div>
                 </div>
             </div>
-            <button onclick="logout()" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-red-600">
-                <i class="fas fa-power-off text-xs"></i>
-            </button>
         </div>
     </div>
 
-    <div id="owner-panel" class="px-8 mb-10 hidden">
-        <div class="flex justify-between items-center mb-4 px-2">
-            <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Live Monitoring Profit</h3>
-            <span class="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
-        </div>
-
-        <div class="stat-card p-8 mb-4 border-l-4 border-red-700 shadow-2xl">
-            <p class="text-[8px] text-gray-500 font-black uppercase tracking-widest mb-2">Pemasukan Bulan Ini</p>
-            <h2 id="st-bulan" class="text-3xl font-black text-white italic tracking-tighter">Rp 0</h2>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-            <div class="stat-card p-5">
-                <p class="text-[7px] text-gray-500 font-black uppercase mb-1">Mingguan</p>
-                <p id="st-minggu" class="font-black text-sm text-gray-200 uppercase tracking-tighter">Rp 0</p>
+    <div id="view-od" class="px-6 mb-8 hidden">
+        <div class="bg-[#0a0a0a] p-6 rounded-[2rem] border border-gray-900 flex justify-between items-center">
+            <div>
+                <p class="text-[8px] text-gray-500 font-black uppercase tracking-widest">Status Accounting</p>
+                <h3 class="font-black italic text-sm">Validasi Nota Harian</h3>
             </div>
-            <div class="stat-card p-5">
-                <p class="text-[7px] text-gray-500 font-black uppercase mb-1">Hari Ini</p>
-                <p id="st-hari" class="font-black text-sm text-green-500 uppercase tracking-tighter">Rp 0</p>
+            <div class="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
+                <i class="fas fa-file-invoice"></i>
             </div>
         </div>
     </div>
 
-    <div class="px-8 grid grid-cols-2 gap-6" id="menu-grid">
-        </div>
-
-    <div class="text-center mt-16 opacity-10 italic">
-        <p class="text-[7px] font-black uppercase tracking-[0.5em]">CV EFENDY JAYA ABADI SYSTEM</p>
-    </div>
+    <div class="px-6 grid grid-cols-2 gap-4" id="menu-grid"></div>
 
 <script>
     const USER = JSON.parse(localStorage.getItem('achi_session'));
-    const API = "https://script.google.com/macros/s/AKfycbynp6pxAtHrx_JSy3scsRQ88KYlDLY0gFUqxNU5ib8vyqfhDB13wFxI2ZKAup5Wn1gX/exec"; //  URL API Guys
+    const API = "URL_WEB_APP_BOSS_DI_SINI"; 
 
-    if(!USER) {
-        window.location.href = "index.html";
+    if(!USER) window.location.href = "index.html";
+
+    if(USER.level == 1) {
+        document.getElementById('view-owner').classList.remove('hidden');
+        loadExpenseStats();
     } else {
-        document.getElementById('u-nama').innerText = USER.nama;
-        document.getElementById('u-role').innerText = `${USER.jabatan} | CV EJA`;
-        
-        // Cek Level: Jika Boss (1), tampilkan panel keuangan
-        if(USER.level == 1) {
-            document.getElementById('owner-panel').classList.remove('hidden');
-            fetchStats();
-        }
+        document.getElementById('view-od').classList.remove('hidden');
     }
 
-    async function fetchStats() {
+    async function loadExpenseStats() {
         try {
-            const r = await fetch(`${API}?action=getOwnerStats`);
+            const r = await fetch(`${API}?action=getLiveExpense`);
             const d = await r.json();
-            document.getElementById('st-hari').innerText = `Rp ${d.harian.toLocaleString('id-ID')}`;
-            document.getElementById('st-minggu').innerText = `Rp ${d.mingguan.toLocaleString('id-ID')}`;
-            document.getElementById('st-bulan').innerText = `Rp ${d.bulanan.toLocaleString('id-ID')}`;
-        } catch(e) { console.log("Stats Error"); }
+            
+            document.getElementById('ex-total').innerText = `Rp ${d.total.toLocaleString('id-ID')}`;
+            
+            // Hitung Persentase & Update UI
+            const setBar = (id, val, total) => {
+                const perc = total > 0 ? (val / total * 100) : 0;
+                document.getElementById(`bar-${id}`).style.width = perc + '%';
+                document.getElementById(`txt-${id}`).innerText = `Rp ${val.toLocaleString('id-ID')}`;
+            };
+
+            setBar('nabawi', d.nabawi, d.total);
+            setBar('lastika', d.lastika, d.total);
+            setBar('srikandi', d.srikandi, d.total);
+        } catch(e) { console.log("Report Error"); }
     }
 
-    const grid = document.getElementById('menu-grid');
-    let m = [];
+    const menuGrid = document.getElementById('menu-grid');
+    const menus = [
+        {n: "REKAP BIAYA", i: "fa-receipt", l: "rekap-biaya.html"},
+        {n: "BONGKAR TRIP", i: "fa-anchor", l: "trip.html"},
+        {n: "INPUT NOTA", i: "fa-edit", l: "logistik.html"},
+        {n: "STOK BBM", i: "fa-gas-pump", l: "bbm.html"}
+    ];
 
-    // Dashboard Menu Berdasarkan Level
-    if(USER.level <= 2) {
-        m.push({n: "REKAP FINANSIAL", i: "fa-chart-pie", l: "rekap.html"});
-        m.push({n: "BONGKAR TRIP", i: "fa-anchor", l: "trip.html"});
-        m.push({n: "HUTANG KRU", i: "fa-users-rectangle", l: "kru-list.html"});
-    }
-    
-    m.push({n: "LAPOR HARIAN", i: "fa-file-invoice-dollar", l: "logistik.html"});
-    m.push({n: "STOK BBM", i: "fa-gas-pump", l: "bbm.html"});
-
-    grid.innerHTML = m.map(x => `
-        <div onclick="location.href='${x.l}'" class="menu-card p-8 flex flex-col items-center text-center shadow-lg">
-            <div class="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-5 text-[#b31d1d] shadow-inner">
-                <i class="fas ${x.i} text-xl"></i>
-            </div>
-            <h3 class="text-[10px] font-black text-gray-200 uppercase tracking-tighter leading-none">${x.n}</h3>
+    menuGrid.innerHTML = menus.map(m => `
+        <div onclick="location.href='${m.l}'" class="bg-[#0a0a0a] p-6 rounded-3xl border border-gray-900 text-center">
+            <i class="fas ${m.i} text-[#b31d1d] mb-3 text-lg"></i>
+            <p class="text-[9px] font-black uppercase text-gray-300">${m.n}</p>
         </div>
     `).join('');
 
-    function logout() { if(confirm("Logout dari sistem, Boss?")) { localStorage.clear(); window.location.href="index.html"; } }
+    function logout() { localStorage.clear(); window.location.href="index.html"; }
 </script>
 </body>
 </html>
