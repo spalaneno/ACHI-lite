@@ -3,114 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Report - CV Efendy Jaya Abadi</title>
+    <title>Dashboard - CV Efendy Jaya Abadi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background-color: #030303; color: #fff; font-family: 'Inter', sans-serif; }
-        .expense-card { background: linear-gradient(135deg, #1a0000 0%, #080808 100%); border: 1px solid #300; }
-        .bar-container { background: #111; border-radius: 10px; height: 8px; overflow: hidden; }
-        .bar-fill { background: #b31d1d; height: 100%; transition: width 1s ease-in-out; }
+        body { background: #030303; color: white; font-family: 'Inter', sans-serif; }
+        .card-boss { background: linear-gradient(135deg, #1a0000, #080808); border: 1px solid #300; border-radius: 2rem; }
+        .menu-item { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1.5rem; transition: 0.3s; }
+        .menu-item:active { background: #1a0000; border-color: #b31d1d; transform: scale(0.95); }
+        .nav-top { background: rgba(10, 0, 0, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid #222; }
     </style>
 </head>
-<body class="pb-24">
+<body class="pb-10">
 
-    <div class="p-8 flex flex-col items-center bg-gradient-to-b from-[#1a0000] to-transparent">
-        <img src="logo.png" class="h-16 mb-2">
-        <p class="text-[7px] font-black text-red-500 tracking-[0.4em] uppercase">Expense Live Report</p>
-    </div>
-
-    <div id="view-owner" class="px-6 mb-8 hidden">
-        <div class="expense-card p-8 rounded-[2.5rem] shadow-2xl border border-red-900/30">
-            <p class="text-[9px] text-gray-500 font-black uppercase mb-1">Total Pengeluaran Bulan Ini</p>
-            <h1 id="ex-total" class="text-3xl font-black italic text-white tracking-tighter">Rp 0</h1>
-            
-            <div class="mt-8 space-y-4">
-                <div>
-                    <div class="flex justify-between text-[8px] font-black uppercase mb-1">
-                        <span>Nabawi 09</span><span id="txt-nabawi">Rp 0</span>
-                    </div>
-                    <div class="bar-container"><div id="bar-nabawi" class="bar-fill" style="width: 0%"></div></div>
-                </div>
-                <div>
-                    <div class="flex justify-between text-[8px] font-black uppercase mb-1">
-                        <span>Lastika Star</span><span id="txt-lastika">Rp 0</span>
-                    </div>
-                    <div class="bar-container"><div id="bar-lastika" class="bar-fill" style="width: 0%"></div></div>
-                </div>
-                <div>
-                    <div class="flex justify-between text-[8px] font-black uppercase mb-1">
-                        <span>Srikandi 01</span><span id="txt-srikandi">Rp 0</span>
-                    </div>
-                    <div class="bar-container"><div id="bar-srikandi" class="bar-fill" style="width: 0%"></div></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="view-od" class="px-6 mb-8 hidden">
-        <div class="bg-[#0a0a0a] p-6 rounded-[2rem] border border-gray-900 flex justify-between items-center">
+    <div class="nav-top p-5 flex justify-between items-center sticky top-0 z-20">
+        <div class="flex items-center gap-3">
+            <img src="logo.png" class="h-8">
             <div>
-                <p class="text-[8px] text-gray-500 font-black uppercase tracking-widest">Status Accounting</p>
-                <h3 class="font-black italic text-sm">Validasi Nota Harian</h3>
+                <p id="u-nama" class="text-[10px] font-black uppercase italic leading-none text-white">MEMUAT...</p>
+                <p id="u-role" class="text-[7px] text-red-500 font-bold tracking-widest uppercase">CV Efendy Jaya Abadi</p>
             </div>
-            <div class="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
-                <i class="fas fa-file-invoice"></i>
+        </div>
+        <button onclick="logout()" class="w-10 h-10 rounded-full bg-red-900/20 text-red-600 flex items-center justify-center border border-red-900/30 shadow-lg">
+            <i class="fas fa-sign-out-alt"></i>
+        </button>
+    </div>
+
+    <div class="px-6 mt-6 mb-8">
+        <div class="card-boss p-8 shadow-2xl border-l-4 border-red-600">
+            <p class="text-[9px] text-gray-500 font-black uppercase mb-1 tracking-widest">Live Pengeluaran Bulan Ini</p>
+            <h1 id="total-out" class="text-3xl font-black italic mb-6 tracking-tighter">Rp 0</h1>
+            
+            <div class="space-y-4">
+                <div>
+                    <div class="flex justify-between text-[8px] font-bold uppercase mb-1"><span>KM. Nabawi 09</span><span id="n-val">Rp 0</span></div>
+                    <div class="w-full bg-white/5 h-1.5 rounded-full overflow-hidden"><div id="n-bar" class="bg-red-600 h-full transition-all duration-1000" style="width: 0%"></div></div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-[8px] font-bold uppercase mb-1"><span>KM. Lastika Star</span><span id="l-val">Rp 0</span></div>
+                    <div class="w-full bg-white/5 h-1.5 rounded-full overflow-hidden"><div id="l-bar" class="bg-red-600 h-full transition-all duration-1000" style="width: 0%"></div></div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-[8px] font-bold uppercase mb-1"><span>KM. Srikandi 01</span><span id="s-val">Rp 0</span></div>
+                    <div class="w-full bg-white/5 h-1.5 rounded-full overflow-hidden"><div id="s-bar" class="bg-red-600 h-full transition-all duration-1000" style="width: 0%"></div></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="px-6 grid grid-cols-2 gap-4" id="menu-grid"></div>
-
-<script>
-    const USER = JSON.parse(localStorage.getItem('achi_session'));
-    const API = "URL_WEB_APP_BOSS_DI_SINI"; 
-
-    if(!USER) window.location.href = "index.html";
-
-    if(USER.level == 1) {
-        document.getElementById('view-owner').classList.remove('hidden');
-        loadExpenseStats();
-    } else {
-        document.getElementById('view-od').classList.remove('hidden');
-    }
-
-    async function loadExpenseStats() {
-        try {
-            const r = await fetch(`${API}?action=getLiveExpense`);
-            const d = await r.json();
-            
-            document.getElementById('ex-total').innerText = `Rp ${d.total.toLocaleString('id-ID')}`;
-            
-            // Hitung Persentase & Update UI
-            const setBar = (id, val, total) => {
-                const perc = total > 0 ? (val / total * 100) : 0;
-                document.getElementById(`bar-${id}`).style.width = perc + '%';
-                document.getElementById(`txt-${id}`).innerText = `Rp ${val.toLocaleString('id-ID')}`;
-            };
-
-            setBar('nabawi', d.nabawi, d.total);
-            setBar('lastika', d.lastika, d.total);
-            setBar('srikandi', d.srikandi, d.total);
-        } catch(e) { console.log("Report Error"); }
-    }
-
-    const menuGrid = document.getElementById('menu-grid');
-    const menus = [
-        {n: "REKAP BIAYA", i: "fa-receipt", l: "rekap-biaya.html"},
-        {n: "BONGKAR TRIP", i: "fa-anchor", l: "trip.html"},
-        {n: "INPUT NOTA", i: "fa-edit", l: "logistik.html"},
-        {n: "STOK BBM", i: "fa-gas-pump", l: "bbm.html"}
-    ];
-
-    menuGrid.innerHTML = menus.map(m => `
-        <div onclick="location.href='${m.l}'" class="bg-[#0a0a0a] p-6 rounded-3xl border border-gray-900 text-center">
-            <i class="fas ${m.i} text-[#b31d1d] mb-3 text-lg"></i>
-            <p class="text-[9px] font-black uppercase text-gray-300">${m.n}</p>
+    <div class="px-6 grid grid-cols-2 gap-4">
+        <div onclick="location.href='trip.html'" class="menu-item p-6 text-center shadow-lg">
+            <div class="w-10 h-10 bg-red-600/10 rounded-xl flex items-center justify-center mx-auto mb-3 text-red-600">
+                <i class="fas fa-ship text-lg"></i>
+            </div>
+            <p class="text-[10px] font-black uppercase tracking-tighter">Bongkar Trip</p>
         </div>
-    `).join('');
+        <div onclick="location.href='logistik.html'" class="menu-item p-6 text-center shadow-lg">
+            <div class="w-10 h-10 bg-red-600/10 rounded-xl flex items-center justify-center mx-auto mb-3 text-red-600">
+                <i class="fas fa-edit text-lg"></i>
+            </div>
+            <p class="text-[10px] font-black uppercase tracking-tighter">Input Nota</p>
+        </div>
+        <div onclick="location.href='rekap.html'" class="menu-item p-6 text-center shadow-lg">
+            <div class="w-10 h-10 bg-red-600/10 rounded-xl flex items-center justify-center mx-auto mb-3 text-red-600">
+                <i class="fas fa-chart-bar text-lg"></i>
+            </div>
+            <p class="text-[10px] font-black uppercase tracking-tighter text-gray-200">Rekap Biaya</p>
+        </div>
+        <div onclick="location.href='kru-list.html'" class="menu-item p-6 text-center shadow-lg">
+            <div class="w-10 h-10 bg-red-600/10 rounded-xl flex items-center justify-center mx-auto mb-3 text-red-600">
+                <i class="fas fa-users text-lg"></i>
+            </div>
+            <p class="text-[10px] font-black uppercase tracking-tighter">Hutang Kru</p>
+        </div>
+    </div>
 
-    function logout() { localStorage.clear(); window.location.href="index.html"; }
-</script>
+    <script>
+        const USER = JSON.parse(localStorage.getItem('achi_session'));
+        // BOSS: Masukkan URL Exec (Web App) di sini
+        const API = "URL_WEB_APP_BOSS_DI_SINI";
+
+        if(!USER) {
+            window.location.href = "index.html";
+        } else {
+            document.getElementById('u-nama').innerText = USER.nama;
+            document.getElementById('u-role').innerText = `${USER.jabatan} | ${USER.kapal || 'ARMADA'}`;
+        }
+
+        async function loadExpense() {
+            try {
+                const r = await fetch(`${API}?action=getLiveExpense`);
+                const d = await r.json();
+                document.getElementById('total-out').innerText = `Rp ${d.total.toLocaleString('id-ID')}`;
+                
+                const setBar = (id, val, total) => {
+                    const perc = total > 0 ? (val / total * 100) : 0;
+                    document.getElementById(`${id}-val`).innerText = `Rp ${val.toLocaleString('id-ID')}`;
+                    document.getElementById(`${id}-bar`).style.width = perc + '%';
+                };
+                setBar('n', d.nabawi, d.total);
+                setBar('l', d.lastika, d.total);
+                setBar('s', d.srikandi, d.total);
+            } catch(e) { console.error("Error Koneksi API"); }
+        }
+
+        loadExpense();
+        function logout() { if(confirm("Keluar dari Sistem CV EJA, Boss?")) { localStorage.clear(); window.location.href="index.html"; } }
+    </script>
 </body>
 </html>
