@@ -10,7 +10,6 @@
     <style>
         :root { --main-red: #b31d1d; --deep-navy: #0a192f; }
         body { background: #fdfdfd; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        
         .red-gradient { 
             background: linear-gradient(-45deg, #b31d1d, #7a1212, #911616);
             background-size: 400% 400%;
@@ -21,11 +20,9 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-
         .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 2.5rem; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeInUp 0.5s both; }
-
         .logo-container { 
             width: 140px; height: 140px; 
             background: white; border-radius: 35px; 
@@ -35,11 +32,7 @@
             border: 5px solid white;
             animation: pulseCustom 3s infinite;
         }
-        @keyframes pulseCustom {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
-        }
+        @keyframes pulseCustom { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
         .logo-container img { width: 100%; height: 100%; object-fit: contain; }
         #toast { visibility: hidden; position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); background: #000; color: white; padding: 15px 35px; border-radius: 50px; font-size: 11px; font-weight: 800; text-transform: uppercase; z-index: 10000; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
         #toast.show { visibility: visible; }
@@ -56,7 +49,7 @@
     
     <div class="animate__animated animate__fadeInUp animate__delay-1s">
         <h1 class="text-white font-black text-4xl tracking-tighter italic uppercase mb-1">ACHI Mobile</h1>
-        <p class="text-white/70 text-[11px] font-bold tracking-[0.4em] uppercase mb-12">Aplikasi Crewing & Handling Integrasi</p>
+        <p class="text-white/70 text-[11px] font-bold tracking-[0.4em] uppercase mb-12">PT Efendy Jaya Abadi</p>
     </div>
     
     <div class="w-full max-w-xs space-y-5 animate__animated animate__fadeInUp animate__delay-2s">
@@ -69,5 +62,154 @@
     </div>
 </div>
 
+<div id="app" class="hidden min-h-screen">
+    <header class="red-gradient pt-16 pb-28 px-8 flex justify-between items-start text-white rounded-b-[4rem] shadow-2xl relative overflow-hidden">
+        <div class="animate__animated animate__fadeInLeft relative z-10">
+            <p class="text-[10px] font-bold opacity-70 tracking-widest uppercase">Maritime Fleet Control</p>
+            <h2 id="user-n" class="text-3xl font-black tracking-tight uppercase leading-none mt-1">-</h2>
+            <div id="user-r" class="mt-4 inline-flex items-center gap-2 px-4 py-1.5 bg-black/30 rounded-full text-[10px] font-black uppercase border border-white/20 text-yellow-400">
+                <i class="fas fa-anchor text-[8px]"></i> <span id="user-r-text"></span>
+            </div>
+        </div>
+        <div class="flex flex-col items-end gap-4 animate__animated animate__fadeInRight relative z-10">
+            <button onclick="doLogout()" class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-xl border border-white/20"><i class="fas fa-power-off text-lg"></i></button>
+            <img src="logo.png" class="w-12 h-12 object-contain brightness-0 invert opacity-40 animate-pulse" alt="">
+        </div>
+    </header>
+
+    <main class="px-6 -mt-16 relative z-20">
+        <section id="view-home" class="view-section active">
+            <div class="glass-panel p-10 shadow-2xl">
+                <div id="menu-grid" class="grid grid-cols-3 gap-y-12 gap-x-6"></div>
+            </div>
+            <div id="del-alert" class="hidden mt-8 p-6 bg-[#0a192f] rounded-[2.5rem] text-white flex items-center gap-5 shadow-2xl">
+                <i class="fas fa-key text-xl text-yellow-400"></i>
+                <p class="text-[11px] font-black uppercase tracking-tight text-yellow-400">Delegasi Otoritas Aktif</p>
+            </div>
+        </section>
+
+        <section id="view-form" class="view-section">
+            <div class="bg-white rounded-[3.5rem] p-10 shadow-2xl border border-gray-100">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 id="form-title" class="font-black text-[#b31d1d] text-2xl uppercase italic">Input</h3>
+                    <button onclick="openView('home')" class="text-gray-300 text-3xl"><i class="fas fa-times-circle"></i></button>
+                </div>
+                <div class="space-y-4">
+                    <select id="f-cat" class="w-full p-4 bg-gray-100 rounded-2xl font-bold border-none outline-none"></select>
+                    <input id="f-ket" type="text" placeholder="Nama Barang" class="w-full p-4 bg-gray-100 rounded-2xl font-bold outline-none">
+                    <input id="f-qty" type="text" placeholder="Jumlah" class="w-full p-4 bg-gray-100 rounded-2xl font-bold outline-none">
+                    <textarea id="f-aln" placeholder="Alasan" rows="3" class="w-full p-4 bg-gray-100 rounded-2xl font-bold outline-none"></textarea>
+                    <button id="btn-save" onclick="submitData()" class="w-full red-gradient text-white p-5 rounded-3xl font-black uppercase shadow-xl active:scale-95">Kirim</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-list" class="view-section pb-24">
+            <div class="flex justify-between items-center mb-8 px-2">
+                <button onclick="openView('home')" class="text-[#0a192f] font-black text-xs uppercase">Dashboard</button>
+                <button onclick="refreshData()" class="w-12 h-12 bg-white rounded-2xl shadow-xl flex items-center justify-center text-red-600"><i id="sync-icon" class="fas fa-sync-alt"></i></button>
+            </div>
+            <div id="data-list" class="space-y-6"></div>
+        </section>
+    </main>
+</div>
+
+<script>
+    // URL API PALING BARU
+    const API = "https://script.google.com/macros/s/AKfycbxknjxmr96CRRXtgHZbj8j8lprJGBPzUZhv1o6KqxKq1wyd4Y95ZdtuIMZ9FQ4T2XFS/exec"; 
+    
+    let USER = JSON.parse(localStorage.getItem('achi_v4_session')) || null;
+    let IS_DEL = false;
+
+    window.onload = () => { if(USER) start(); };
+
+    function toast(m) {
+        const t = document.getElementById('toast');
+        t.innerText = m; t.className = "show animate__animated animate__fadeInUp";
+        setTimeout(() => { t.className = ""; }, 3000);
+    }
+
+    async function doLogin() {
+        const u = document.getElementById('u').value;
+        const p = document.getElementById('p').value;
+        if(!u || !p) return toast("ID & KODE WAJIB DIISI");
+        const b = document.getElementById('btn-login');
+        b.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; b.disabled = true;
+        try {
+            const r = await fetch(`${API}?action=login&u=${u}&p=${p}`);
+            const d = await r.json();
+            if(d.status === 'success') {
+                USER = d; localStorage.setItem('achi_v4_session', JSON.stringify(d)); 
+                start();
+            } else { toast("AKSES DITOLAK"); b.innerHTML = "MASUK"; b.disabled = false; }
+        } catch(e) { toast("KESALAHAN JARINGAN"); b.disabled = false; b.innerHTML = "MASUK"; }
+    }
+
+    function start() {
+        document.getElementById('login-page').style.display = 'none';
+        document.getElementById('app').classList.remove('hidden');
+        document.getElementById('user-n').innerText = USER.nama;
+        document.getElementById('user-r-text').innerText = USER.jabatan + " • " + USER.kapal;
+        drawMenu();
+    }
+
+    function drawMenu() {
+        const g = document.getElementById('menu-grid');
+        let m = [];
+        const red = "bg-red-50 text-[#b31d1d]";
+        const navy = "bg-slate-100 text-[#0a192f]";
+        if(USER.level === 1) { 
+            m.push({id:'pp', l:'m-PP', i:'fa-file-invoice-dollar', c:red}, {id:'anf', l:'m-Anfrak', i:'fa-ship', c:red}, {id:'lis', l:'m-Status', i:'fa-chart-pie', c:red}, {id:'del', l:'Delegasi', i:'fa-key', c:navy}, {id:'stk', l:'Stok Kapal', i:'fa-boxes-stacked', c:navy}, {id:'usr', l:'Kru Kapal', i:'fa-users-gear', c:navy});
+        } else if(USER.level === 2 || USER.level === 3) { 
+            m.push({id:'pp', l:'m-PP', i:'fa-file-invoice-dollar', c:red}, {id:'anf', l:'m-Anfrak', i:'fa-ship', c:red}, {id:'lis', l:'Monitoring', i:'fa-list-check', c:red});
+        } else { 
+            m.push({id:'anf', l:'Anfrakan', i:'fa-anchor', c:red}, {id:'lis', l:'Status Saya', i:'fa-clipboard-check', c:red});
+        }
+        g.innerHTML = m.map(x => `<div onclick="handle('${x.id}')" class="menu-btn flex flex-col items-center"><div class="icon-box ${x.c} w-[65px] h-[65px] rounded-2xl flex items-center justify-center text-2xl mb-2 shadow-sm"><i class="fas ${x.i}"></i></div><span class="text-[10px] font-black uppercase text-center">${x.l}</span></div>`).join('');
+    }
+
+    function handle(id) {
+        if(id === 'lis') openView('list');
+        else if(id === 'pp') openForm('Permintaan Pembelian');
+        else if(id === 'anf') openForm('Anfrakan');
+        else if(id === 'del') { IS_DEL = !IS_DEL; document.getElementById('del-alert').classList.toggle('hidden', !IS_DEL); toast("DELEGASI: " + (IS_DEL?"AKTIF":"MATI")); }
+        else toast("MENU BELUM AKTIF");
+    }
+
+    function openView(v) {
+        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+        document.getElementById('view-'+v).classList.add('active');
+        if(v === 'list') refreshData();
+    }
+
+    function openForm(t) {
+        document.getElementById('form-title').innerText = t;
+        const s = document.getElementById('f-cat');
+        s.innerHTML = t === 'Anfrakan' ? '<option>Anfrakan Deck</option><option>Anfrakan Mesin</option>' : '<option>PP Sparepart</option><option>PP Umum/Kantor</option>';
+        openView('form');
+    }
+
+    async function submitData() {
+        const k = document.getElementById('f-ket').value; const q = document.getElementById('f-qty').value;
+        if(!k || !q) return toast("LENGKAPI DATA!");
+        const b = document.getElementById('btn-save'); b.innerText = "..."; b.disabled = true;
+        const p = { action: 'input', tgl: new Date().toLocaleDateString('id-ID'), jam: new Date().toLocaleTimeString('id-ID'), kategori: document.getElementById('f-cat').value, keterangan: k, alasan: document.getElementById('f-aln').value, pemohon: USER.nama, kapal: USER.kapal };
+        try { await fetch(API, { method: 'POST', body: JSON.stringify(p) }); toast("TERKIRIM!"); document.getElementById('f-ket').value = ""; document.getElementById('f-qty').value = ""; openView('home'); } catch(e) { toast("GAGAL!"); }
+        b.innerText = "Kirim"; b.disabled = false;
+    }
+
+    async function refreshData() {
+        const l = document.getElementById('data-list'); const ic = document.getElementById('sync-icon');
+        ic.classList.add('fa-spin'); l.innerHTML = `<div class="p-10 text-center text-gray-400">Loading...</div>`;
+        try {
+            const r = await fetch(`${API}?action=getData&level=${USER.level}&kapal=${USER.kapal}&nama=${USER.nama}`);
+            const d = await r.json();
+            l.innerHTML = d.transaksi.length === 0 ? `<div class="p-10 text-center">Data Kosong</div>` : d.transaksi.map(i => `<div class="bg-white p-6 rounded-[2rem] shadow-lg border border-gray-100 mb-4"><div class="flex justify-between mb-2"><span class="bg-gray-100 px-3 py-1 rounded-full text-[8px] font-black">${i[8]}</span><span class="text-[9px] text-gray-400">${i[1]}</span></div><h4 class="font-black text-slate-800 uppercase">${i[4]}</h4><p class="text-[10px] text-gray-500 mt-2 italic">"${i[5]}"</p></div>`).join('');
+        } catch(e) { l.innerHTML = "Gagal Ambil Data"; }
+        ic.classList.remove('fa-spin');
+    }
+
+    function doLogout() { if(confirm("Logout?")) { localStorage.clear(); location.reload(); } }
+</script>
 </body>
 </html>
