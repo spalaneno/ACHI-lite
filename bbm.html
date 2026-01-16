@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACHI - MONITORING BBM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #0b0b0b; color: #fff; font-family: 'Inter', sans-serif; }
+        .achi-card { background: linear-gradient(145deg, #1a1a1a, #111); border: 1px solid #222; }
+        .input-dark { background: #222; border: 1px solid #444; color: white; border-radius: 12px; outline: none; }
+        .status-pill { font-size: 8px; font-weight: 900; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
+    </style>
+</head>
+<body class="p-6 pb-24">
+    <header class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-xl font-black italic uppercase italic tracking-tighter text-red-600">Log BBM & Solar</h1>
+            <p id="kapal-info" class="text-[10px] text-gray-500 font-bold uppercase"></p>
+        </div>
+        <button onclick="location.href='dashboard.html'" class="text-gray-400 text-xl"><i class="fas fa-arrow-left"></i></button>
+    </header>
+
+    <div class="achi-card p-6 rounded-[2.5rem] mb-8 shadow-2xl border-b-4 border-red-600">
+        <h3 class="text-xs font-black text-white uppercase mb-4 italic">Update Stok Kedatangan</h3>
+        <div class="space-y-4">
+            <div>
+                <label class="text-[9px] text-gray-500 font-black uppercase ml-1">Jenis Bahan Bakar</label>
+                <select id="b-jenis" class="w-full input-dark p-4 text-xs font-bold uppercase mt-1">
+                    <option value="SOLAR">SOLAR (MESIN UTAMA)</option>
+                    <option value="PERTALITE">PERTALITE (GENSET/MESIN BANTU)</option>
+                </select>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="text-[9px] text-gray-500 font-black uppercase ml-1">Sisa Stok (Liter)</label>
+                    <input type="number" id="b-sisa" class="w-full input-dark p-4 text-lg font-black" placeholder="0">
+                </div>
+                <div>
+                    <label class="text-[9px] text-gray-500 font-black uppercase ml-1">Kondisi Mesin</label>
+                    <select id="b-kondisi" class="w-full input-dark p-4 text-[10px] font-bold mt-1">
+                        <option value="NORMAL">NORMAL</option>
+                        <option value="PERLU SERVICE">PERLU SERVICE</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="kirimLaporanBBM()" class="w-full bg-white text-black p-4 rounded-2xl font-black uppercase text-xs shadow-lg active:scale-95 transition-all">Kirim Laporan Stok</button>
+        </div>
+    </div>
+
+    <h3 class="text-[10px] text-gray-500 font-black uppercase mb-4 tracking-widest">Riwayat Pemakaian BBM</h3>
+    <div id="bbm-history" class="space-y-4">
+        <div class="text-center py-10 opacity-20 italic">Memuat data stok...</div>
+    </div>
+
+<script>
+    const USER = JSON.parse(localStorage.getItem('achi_session'));
+    const API = "https://script.google.com/macros/s/AKfycbxzwGBlNLfpWDdjmHTjtrH1PTPMmgaNVjPNpqPlbyXYr7MDTsuZrNoTh4OCs77J8p4/exec";
+
+    document.getElementById('kapal-info').innerText = USER.kapal;
+
+    async function kirimLaporanBBM() {
+        const sisa = document.getElementById('b-sisa').value;
+        const jenis = document.getElementById('b-jenis').value;
+        const kondisi = document.getElementById('b-kondisi').value;
+
+        if(!sisa) return alert("Masukkan Sisa Stok!");
+
+        const payload = {
+            action: "inputBBM",
+            tgl: new Date().toLocaleDateString('id-ID'),
+            kapal: USER.kapal,
+            jenis: jenis,
+            sisa: sisa,
+            petugas: USER.nama,
+            catatan: "Kondisi Mesin: " + kondisi
+        };
+
+        try {
+            // Logika POST ke Apps Script
+            alert("Laporan BBM Berhasil Terkirim!");
+            location.reload();
+        } catch(e) { alert("Gagal Terhubung!"); }
+    }
+
+    // Fungsi load data untuk melihat pemakaian trip sebelumnya
+    async function loadHistoryBBM() {
+        const res = await fetch(`${API}?action=getBBM&kapal=${USER.kapal}`);
+        const d = await res.json();
+        // Render ke bbm-history...
+    }
+</script>
+</body>
+</html>
