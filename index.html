@@ -11,9 +11,8 @@
         :root { --main-red: #b31d1d; --deep-navy: #0a192f; }
         body { background: #fdfdfd; font-family: 'Inter', sans-serif; overflow-x: hidden; }
         
-        /* Animasi Background Gradient */
         .red-gradient { 
-            background: linear-gradient(-45deg, #b31d1d, #7a1212, #0a192f);
+            background: linear-gradient(-45deg, #b31d1d, #7a1212, #911616);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
         }
@@ -23,31 +22,10 @@
             100% { background-position: 0% 50%; }
         }
 
-        .navy-gradient { background: linear-gradient(135deg, var(--deep-navy) 0%, #112240 100%); }
-        
-        .glass-panel { 
-            background: rgba(255, 255, 255, 0.95); 
-            backdrop-filter: blur(10px); 
-            border-radius: 2.5rem; 
-            border: 1px solid rgba(255,255,255,0.3);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-
-        /* Hover Effect Menu */
-        .menu-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .menu-btn:hover { transform: translateY(-5px); }
-        .menu-btn:active { transform: scale(0.9); }
-        
-        .icon-box { 
-            width: 65px; height: 65px; border-radius: 22px; 
-            display: flex; align-items: center; justify-content: center; 
-            font-size: 26px; transition: 0.3s;
-        }
-
+        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 2.5rem; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeInUp 0.5s both; }
 
-        /* BOX LOGO FULL & ANIMATED */
         .logo-container { 
             width: 140px; height: 140px; 
             background: white; border-radius: 35px; 
@@ -58,14 +36,13 @@
             animation: pulseCustom 3s infinite;
         }
         @keyframes pulseCustom {
-            0% { transform: scale(1); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-            50% { transform: scale(1.03); box-shadow: 0 30px 60px rgba(179,29,29,0.5); }
-            100% { transform: scale(1); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
         }
         .logo-container img { width: 100%; height: 100%; object-fit: contain; }
-
-        /* Input Animation */
-        input:focus { transform: scale(1.02); transition: 0.3s; border: 2px solid var(--main-red) !important; }
+        #toast { visibility: hidden; position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); background: #000; color: white; padding: 15px 35px; border-radius: 50px; font-size: 11px; font-weight: 800; text-transform: uppercase; z-index: 10000; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        #toast.show { visibility: visible; }
     </style>
 </head>
 <body>
@@ -83,288 +60,14 @@
     </div>
     
     <div class="w-full max-w-xs space-y-5 animate__animated animate__fadeInUp animate__delay-2s">
-        <div class="relative">
-            <input id="u" type="text" placeholder="USER ID" class="w-full p-4 rounded-2xl bg-white/95 border-none text-gray-800 font-bold text-center outline-none shadow-2xl uppercase transition-all">
-        </div>
-        <div class="relative">
-            <input id="p" type="password" placeholder="KODE AKSES" class="w-full p-4 rounded-2xl bg-white/95 border-none text-gray-800 font-bold text-center outline-none shadow-2xl transition-all">
-        </div>
-        <button onclick="doLogin()" id="btn-login" class="w-full navy-gradient text-white p-5 rounded-2xl font-black uppercase shadow-2xl active:scale-95 transition-all hover:brightness-125">
-            <i class="fas fa-shield-alt mr-2"></i> Authorize Access
+        <input id="u" type="text" placeholder="USER ID" class="w-full p-5 rounded-2xl bg-white/95 border-none text-gray-800 font-bold text-center outline-none shadow-xl uppercase transition-all focus:scale-105">
+        <input id="p" type="password" placeholder="KODE AKSES" class="w-full p-5 rounded-2xl bg-white/95 border-none text-gray-800 font-bold text-center outline-none shadow-xl transition-all focus:scale-105">
+        
+        <button onclick="doLogin()" id="btn-login" class="w-full red-gradient text-white p-5 rounded-3xl font-black uppercase shadow-2xl active:scale-95 transition-all hover:brightness-110 border border-white/20">
+            <i class="fas fa-sign-in-alt mr-2"></i> MASUK
         </button>
     </div>
 </div>
-
-<div id="app" class="hidden min-h-screen">
-    <header class="red-gradient pt-16 pb-28 px-8 flex justify-between items-start text-white rounded-b-[4rem] shadow-2xl relative overflow-hidden">
-        <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
-        
-        <div class="animate__animated animate__fadeInLeft relative z-10">
-            <p class="text-[10px] font-bold opacity-70 tracking-widest uppercase">Maritime Fleet Control</p>
-            <h2 id="user-n" class="text-3xl font-black tracking-tight uppercase leading-none mt-1">-</h2>
-            <div id="user-r" class="mt-4 inline-flex items-center gap-2 px-4 py-1.5 bg-black/30 rounded-full text-[10px] font-black uppercase border border-white/20 text-yellow-400">
-                <i class="fas fa-anchor text-[8px]"></i> <span id="user-r-text"></span>
-            </div>
-        </div>
-        
-        <div class="flex flex-col items-end gap-4 animate__animated animate__fadeInRight relative z-10">
-            <button onclick="doLogout()" class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-xl border border-white/20 hover:bg-white/40 transition-all">
-                <i class="fas fa-power-off text-lg"></i>
-            </button>
-            <img src="logo.png" class="w-12 h-12 object-contain brightness-0 invert opacity-40 animate-pulse" alt="">
-        </div>
-    </header>
-
-    <main class="px-6 -mt-16 relative z-20">
-        <section id="view-home" class="view-section active">
-            <div class="glass-panel p-10 shadow-2xl animate__animated animate__fadeInUp">
-                <div id="menu-grid" class="grid grid-cols-3 gap-y-12 gap-x-6">
-                    </div>
-            </div>
-            
-            <div id="del-alert" class="hidden mt-8 p-6 bg-navy-gradient rounded-[2.5rem] text-white flex items-center gap-5 shadow-2xl animate__animated animate__headShake animate__infinite animate__slower">
-                <div class="w-12 h-12 bg-yellow-400/20 rounded-full flex items-center justify-center">
-                    <i class="fas fa-key text-xl text-yellow-400"></i>
-                </div>
-                <div>
-                    <p class="text-[11px] font-black uppercase tracking-tight text-yellow-400 leading-none mb-1">Otoritas Delegasi</p>
-                    <p class="text-[9px] font-bold opacity-60">Sistem sedang dalam mode akses penuh.</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="view-form" class="view-section">
-            <div class="bg-white rounded-[3.5rem] p-10 shadow-2xl border border-gray-100">
-                <div class="flex justify-between items-center mb-10">
-                    <div>
-                        <h3 id="form-title" class="font-black text-[#b31d1d] text-2xl tracking-tighter uppercase italic leading-none">Input Task</h3>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase mt-1">Lengkapi rincian pengajuan</p>
-                    </div>
-                    <button onclick="openView('home')" class="text-gray-200 hover:text-gray-400 transition-colors">
-                        <i class="fas fa-times-circle text-4xl"></i>
-                    </button>
-                </div>
-                
-                <div class="space-y-5">
-                    <div class="space-y-1">
-                        <label class="text-[9px] font-black text-gray-400 ml-2 uppercase">Kategori</label>
-                        <select id="f-cat" class="w-full p-4 bg-gray-100 rounded-2xl font-bold border-2 border-transparent focus:border-red-500 outline-none transition-all"></select>
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[9px] font-black text-gray-400 ml-2 uppercase">Nama Barang</label>
-                        <input id="f-ket" type="text" placeholder="Contoh: Oli Mesin SAE 40" class="w-full p-4 bg-gray-100 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-red-500 transition-all">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[9px] font-black text-gray-400 ml-2 uppercase">Jumlah & Satuan</label>
-                        <input id="f-qty" type="text" placeholder="Contoh: 5 Drum" class="w-full p-4 bg-gray-100 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-red-500 transition-all">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[9px] font-black text-gray-400 ml-2 uppercase">Alasan / Urgensi</label>
-                        <textarea id="f-aln" placeholder="Jelaskan mengapa ini dibutuhkan..." rows="3" class="w-full p-4 bg-gray-100 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-red-500 transition-all"></textarea>
-                    </div>
-                    <button id="btn-save" onclick="submitData()" class="w-full red-gradient text-white p-5 rounded-3xl font-black uppercase shadow-xl active:scale-95 transition-all mt-4 hover:brightness-110">
-                        <i class="fas fa-paper-plane mr-2"></i> Kirim Pengajuan
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <section id="view-list" class="view-section pb-24">
-            <div class="flex justify-between items-center mb-8 px-2">
-                <button onclick="openView('home')" class="text-[#0a192f] font-black text-xs uppercase flex items-center gap-2">
-                    <i class="fas fa-arrow-left"></i> Dashboard
-                </button>
-                <div class="flex items-center gap-3">
-                    <p class="text-[9px] font-black text-gray-400 uppercase">Auto Sync</p>
-                    <button onclick="refreshData()" class="w-12 h-12 bg-white rounded-2xl shadow-xl flex items-center justify-center text-red-600 hover:rotate-180 transition-all duration-500">
-                        <i id="sync-icon" class="fas fa-sync-alt"></i>
-                    </button>
-                </div>
-            </div>
-            <div id="data-list" class="space-y-6">
-                </div>
-        </section>
-    </main>
-</div>
-
-<script>
-    // SESUAIKAN URL API ANDA DI SINI
-    const API = "https://script.google.com/macros/s/AKfycbxknjxmr96CRRXtgHZbj8j8lprJGBPzUZhv1o6KqxKq1wyd4Y95ZdtuIMZ9FQ4T2XFS/exec"; 
-    
-    let USER = JSON.parse(localStorage.getItem('achi_v4_session')) || null;
-    let IS_DEL = false;
-
-    window.onload = () => { if(USER) start(); };
-
-    function toast(m) {
-        const t = document.getElementById('toast');
-        t.innerText = m; t.className = "show animate__animated animate__fadeInUp";
-        setTimeout(() => { t.className = ""; }, 3000);
-    }
-
-    async function doLogin() {
-        const u = document.getElementById('u').value;
-        const p = document.getElementById('p').value;
-        if(!u || !p) return toast("ID & KODE WAJIB DIISI");
-        
-        const b = document.getElementById('btn-login');
-        b.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> CONNECTING...'; b.disabled = true;
-        
-        try {
-            const r = await fetch(`${API}?action=login&u=${u}&p=${p}`);
-            const d = await r.json();
-            if(d.status === 'success') {
-                USER = d; localStorage.setItem('achi_v4_session', JSON.stringify(d)); 
-                toast("LOGIN BERHASIL");
-                setTimeout(start, 1000);
-            } else { 
-                toast("AKSES DITOLAK"); b.innerHTML = '<i class="fas fa-shield-alt mr-2"></i> Authorize Access'; b.disabled = false; 
-            }
-        } catch(e) { 
-            toast("JARINGAN BERMASALAH"); b.disabled = false; b.innerHTML = 'Authorize Access'; 
-        }
-    }
-
-    function start() {
-        document.getElementById('login-page').classList.add('animate__animated', 'animate__fadeOut');
-        setTimeout(() => {
-            document.getElementById('login-page').style.display = 'none';
-            document.getElementById('app').classList.remove('hidden');
-            document.getElementById('user-n').innerText = USER.nama;
-            document.getElementById('user-r-text').innerText = USER.jabatan + " • " + USER.kapal;
-            drawMenu();
-        }, 500);
-    }
-
-    function drawMenu() {
-        const g = document.getElementById('menu-grid');
-        let m = [];
-        const red = "bg-red-50 text-[#b31d1d] shadow-red-100";
-        const navy = "bg-slate-100 text-[#0a192f] shadow-slate-200";
-
-        if(USER.level === 1) { 
-            m.push({id:'pp', l:'m-PP', i:'fa-file-invoice-dollar', c:red}, {id:'anf', l:'m-Anfrak', i:'fa-ship', c:red}, {id:'lis', l:'m-Status', i:'fa-chart-pie', c:red}, {id:'del', l:'Delegasi', i:'fa-key', c:navy}, {id:'stk', l:'Stok Kapal', i:'fa-boxes-stacked', c:navy}, {id:'usr', l:'Kru Kapal', i:'fa-users-gear', c:navy});
-        } else if(USER.level === 2 || USER.level === 3) { 
-            m.push({id:'pp', l:'m-PP', i:'fa-file-invoice-dollar', c:red}, {id:'anf', l:'m-Anfrak', i:'fa-ship', c:red}, {id:'lis', l:'Monitoring', i:'fa-list-check', c:red});
-        } else { 
-            m.push({id:'anf', l:'Anfrakan', i:'fa-anchor', c:red}, {id:'lis', l:'Status Saya', i:'fa-clipboard-check', c:red});
-        }
-
-        g.innerHTML = m.map((x, index) => `
-            <div onclick="handle('${x.id}')" class="menu-btn animate__animated animate__zoomIn" style="animation-delay: ${index * 0.1}s">
-                <div class="icon-box ${x.c} hover:rotate-12"><i class="fas ${x.i}"></i></div>
-                <span class="text-[11px] font-black text-slate-800 mt-4 uppercase tracking-tighter text-center leading-tight">${x.l}</span>
-            </div>
-        `).join('');
-    }
-
-    function handle(id) {
-        if(id === 'lis') openView('list');
-        else if(id === 'pp') openForm('Permintaan Pembelian');
-        else if(id === 'anf') openForm('Anfrakan');
-        else if(id === 'del') { 
-            IS_DEL = !IS_DEL; 
-            document.getElementById('del-alert').classList.toggle('hidden', !IS_DEL); 
-            toast("DELEGASI: " + (IS_DEL?"AKTIF":"MATI")); 
-        }
-        else toast("MODUL DALAM PENGEMBANGAN");
-    }
-
-    function openView(v) {
-        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-        const target = document.getElementById('view-'+v);
-        target.style.display = 'block';
-        target.classList.add('active');
-        if(v === 'list') refreshData();
-    }
-
-    function openForm(t) {
-        document.getElementById('form-title').innerText = t;
-        const s = document.getElementById('f-cat');
-        s.innerHTML = t === 'Anfrakan' ? '<option>Anfrakan Deck</option><option>Anfrakan Mesin</option>' : '<option>PP Sparepart</option><option>PP Umum/Kantor</option>';
-        openView('form');
-    }
-
-    async function submitData() {
-        const k = document.getElementById('f-ket').value; const q = document.getElementById('f-qty').value;
-        if(!k || !q) return toast("LENGKAPI DATA!");
-        const b = document.getElementById('btn-save'); 
-        b.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> MENGIRIM...'; b.disabled = true;
-        const p = { action: 'input', tgl: new Date().toLocaleDateString('id-ID'), jam: new Date().toLocaleTimeString('id-ID'), kategori: document.getElementById('f-cat').value, keterangan: k, alasan: document.getElementById('f-aln').value, pemohon: USER.nama, kapal: USER.kapal };
-        try { 
-            await fetch(API, { method: 'POST', body: JSON.stringify(p) }); 
-            toast("PENGAJUAN TERKIRIM!"); 
-            document.getElementById('f-ket').value = ""; document.getElementById('f-qty').value = ""; document.getElementById('f-aln').value = ""; 
-            b.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Kirim Pengajuan'; b.disabled = false; 
-            setTimeout(() => openView('home'), 1000);
-        } catch(e) { toast("GAGAL MENGIRIM!"); b.disabled = false; }
-    }
-
-    async function refreshData() {
-        const l = document.getElementById('data-list'); const ic = document.getElementById('sync-icon');
-        ic.classList.add('fa-spin'); 
-        l.innerHTML = `<div class="p-20 text-center"><i class="fas fa-circle-notch fa-spin text-4xl text-red-600 mb-4"></i><p class="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Sinkronisasi Data...</p></div>`;
-        try {
-            const r = await fetch(`${API}?action=getData&level=${USER.level}&kapal=${USER.kapal}&nama=${USER.nama}&v=${Date.now()}`);
-            const d = await r.json();
-            l.innerHTML = d.transaksi.length === 0 ? `<div class="p-10 text-center text-gray-400 text-xs">TIDAK ADA RIWAYAT PENGAJUAN</div>` : d.transaksi.map((i, index) => renderCard(i, index)).join('');
-        } catch(e) { l.innerHTML = "<div class='text-center p-10 text-red-500 font-bold'>Gagal Sinkronisasi. Periksa Koneksi Anda.</div>"; }
-        ic.classList.remove('fa-spin');
-    }
-
-    function renderCard(i, index) {
-        let st = i[8]; let btn = "";
-        const delay = index * 0.1;
-        if([2,3].includes(USER.level) && st === 'MENUNGGU ADMIN') btn = `<button onclick="update('${i[0]}', 'TELAH DIPERIKSA')" class="w-full bg-slate-100 text-slate-700 py-4 rounded-2xl font-black text-[10px] mt-5 uppercase tracking-widest hover:bg-blue-50 transition-all">Verifikasi Admin</button>`;
-        else if((USER.level === 1 || (USER.level === 2 && IS_DEL)) && st === 'TELAH DIPERIKSA') btn = `<button onclick="update('${i[0]}', 'DISETUJUI OWNER')" class="w-full red-gradient text-white py-4 rounded-2xl font-black text-[10px] mt-5 uppercase shadow-xl hover:brightness-125 transition-all">Setujui Owner</button>`;
-        
-        const badge = st.includes('SETUJU') ? 'bg-green-100 text-green-700 border-green-200' : (st.includes('PERIKSA') ? 'bg-blue-100 text-blue-700 border-blue-200' : 'bg-gray-100 text-gray-500 border-gray-200');
-        
-        return `
-        <div class="bg-white p-7 rounded-[2.5rem] shadow-xl border border-gray-100 animate__animated animate__fadeInUp" style="animation-delay: ${delay}s">
-            <div class="flex justify-between items-start mb-5">
-                <span class="${badge} border px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-tighter">${st}</span>
-                <div class="text-right">
-                    <p class="text-[10px] text-gray-400 font-bold">${i[1]}</p>
-                    <p class="text-[8px] text-gray-300 font-medium italic">${i[2]}</p>
-                </div>
-            </div>
-            <h4 class="text-lg font-black text-slate-800 uppercase leading-tight mb-2">${i[4]}</h4>
-            <div class="flex items-center gap-3 mb-4">
-                <div class="px-3 py-1 bg-slate-50 rounded-lg text-[9px] font-black text-slate-500 uppercase italic">${i[3]}</div>
-                <div class="text-[9px] font-bold text-gray-400 uppercase">${i[7]} • ${i[9]}</div>
-            </div>
-            <div class="p-4 bg-gray-50 rounded-2xl border-l-4 border-red-500">
-                <p class="text-[11px] text-gray-500 font-medium italic leading-relaxed">"${i[5]}"</p>
-            </div>
-            ${btn}
-        </div>`;
-    }
-
-    async function update(id, s) { 
-        toast("SEDANG MEMPERBARUI STATUS..."); 
-        try {
-            await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'changeStatus', id: id, s: s }) }); 
-            toast("STATUS DIPERBARUI!");
-            refreshData(); 
-        } catch(e) { toast("GAGAL UPDATE!"); }
-    }
-    
-    function doLogout() { 
-        if(confirm("Apakah Anda yakin ingin keluar?")) { 
-            document.getElementById('app').classList.add('animate__animated', 'animate__fadeOutDown');
-            setTimeout(() => {
-                localStorage.clear(); location.reload(); 
-            }, 500);
-        } 
-    }
-</script>
-
-<style>
-    /* Toast Custom Style */
-    #toast { visibility: hidden; position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); background: #0a192f; color: white; padding: 15px 35px; border-radius: 50px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; z-index: 10000; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); }
-    #toast.show { visibility: visible; }
-</style>
 
 </body>
 </html>
