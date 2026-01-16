@@ -1,1 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekap - CV Efendy Jaya Abadi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #030303; color: white; font-family: 'Inter', sans-serif; }
+        .summary-box { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1.5rem; padding: 20px; }
+        select { background: #111; color: white; border: 1px solid #333; padding: 8px; border-radius: 10px; width: 100%; font-size: 11px; }
+        .item-list { background: #080808; border-bottom: 1px solid #111; padding: 15px; }
+    </style>
+</head>
+<body class="pb-10">
+    <div class="p-6 flex items-center gap-4 bg-gradient-to-b from-[#1a0000] to-transparent">
+        <button onclick="location.href='dashboard.html'"><i class="fas fa-arrow-left"></i></button>
+        <h2 class="font-black italic uppercase tracking-tighter">Rekap Finansial</h2>
+    </div>
 
+    <div class="px-6 mb-6 grid grid-cols-2 gap-4">
+        <select id="kpl" onchange="loadRekap()">
+            <option value="SEMUA">SEMUA KAPAL</option>
+            <option value="KM. NABAWI 09">KM. NABAWI 09</option>
+            <option value="KM. LASTIKA STAR">KM. LASTIKA STAR</option>
+            <option value="KM. SRIKANDI 01">KM. SRIKANDI 01</option>
+        </select>
+        <select id="prd" onchange="loadRekap()">
+            <option value="BULAN">BULAN INI</option>
+            <option value="TRIP">PER TRIP</option>
+        </select>
+    </div>
+
+    <div class="px-6 mb-8">
+        <div class="summary-box border-l-4 border-red-600">
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div><p class="text-[8px] text-gray-500 uppercase font-black">Pendapatan</p><p id="sum-in" class="text-green-500 font-bold text-xs">Rp 0</p></div>
+                <div><p class="text-[8px] text-gray-500 uppercase font-black">Pengeluaran</p><p id="sum-out" class="text-red-500 font-bold text-xs">Rp 0</p></div>
+            </div>
+            <div class="border-t border-gray-900 pt-4 text-center">
+                <p class="text-[8px] text-gray-400 uppercase font-black">Laba Bersih</p>
+                <h1 id="sum-net" class="text-xl font-black italic">Rp 0</h1>
+            </div>
+        </div>
+    </div>
+
+    <div id="list-data" class="px-6 space-y-2">
+        <p class="text-center text-[10px] text-gray-600">Memuat data...</p>
+    </div>
+
+    <script>
+        async function loadRekap() {
+            const kapal = document.getElementById('kpl').value;
+            const periode = document.getElementById('prd').value;
+            const API = "https://script.google.com/macros/s/AKfycbxMAlYzvmHl8hmSMF6c6vVZvl-_U3aMuXZzY7cwXuN1JtHkhTXmP_JrUG0gYkeBZcO0/exec";
+            try {
+                const r = await fetch(`${API}?action=getRekapGabungan&kapal=${kapal}&periode=${periode}`);
+                const res = await r.json();
+                document.getElementById('sum-in').innerText = `Rp ${res.summary.total_in.toLocaleString()}`;
+                document.getElementById('sum-out').innerText = `Rp ${res.summary.total_out.toLocaleString()}`;
+                document.getElementById('sum-net').innerText = `Rp ${res.summary.net.toLocaleString()}`;
+                
+                document.getElementById('list-data').innerHTML = res.data.map(i => `
+                    <div class="item-list">
+                        <div class="flex justify-between items-start">
+                            <div><p class="text-[10px] font-black uppercase">${i.item}</p><p class="text-[7px] text-gray-500">${i.tanggal} | ${i.kapal}</p></div>
+                            <p class="text-[10px] font-black ${i.tipe==='IN'?'text-green-500':'text-red-500'} italic">${i.tipe==='IN'?'+':'-'} Rp ${i.total.toLocaleString()}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } catch(e) {}
+        }
+        loadRekap();
+    </script>
+</body>
+</html>
