@@ -1,19 +1,123 @@
-<div class="achi-card p-6 rounded-[2.5rem] mb-8">
-    <h3 class="text-sm font-black text-red-600 uppercase mb-4 italic">Form Permintaan (Anfrakan)</h3>
-    <div class="space-y-4">
-        <select id="f-cat" class="w-full p-4 bg-zinc-900 rounded-2xl border border-zinc-800 outline-none font-bold text-xs uppercase">
-            <option>Anfrakan Dapur</option>
-            <option>Anfrakan Mesin</option>
-            <option>Anfrakan Kapal</option>
-        </select>
-        <input id="f-item" type="text" placeholder="Nama Barang" class="w-full p-4 bg-zinc-900 rounded-2xl border border-zinc-800 outline-none">
-        <div class="flex gap-4">
-            <input id="f-qty" type="number" placeholder="Jumlah" class="w-full p-4 bg-zinc-900 rounded-2xl border border-zinc-800 outline-none flex-[2]">
-            <input id="f-sat" type="text" placeholder="Satuan" class="w-full p-4 bg-zinc-900 rounded-2xl border border-zinc-800 outline-none flex-[1]">
-        </div>
-        <button onclick="kirimAnfrakan()" class="w-full p-4 bg-red-600 rounded-2xl font-black uppercase text-xs shadow-lg shadow-red-900/40">Kirim Permintaan</button>
-    </div>
-</div>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Logistik - CV EJA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #030303; color: white; font-family: 'Inter', sans-serif; }
+        .input-dark { background: #111; border: 1px solid #333; color: white; border-radius: 1rem; padding: 12px 15px; width: 100%; font-size: 13px; outline: none; }
+        .input-dark:focus { border-color: #b31d1d; }
+        .btn-save { background: linear-gradient(135deg, #b31d1d, #7a1212); color: white; font-weight: 900; width: 100%; padding: 15px; border-radius: 1rem; text-transform: uppercase; margin-top: 10px; }
+    </style>
+</head>
+<body class="pb-10">
 
-<div id="list-container" class="space-y-4">
+    <div class="p-5 flex justify-between items-center bg-[#0a0000] border-b border-gray-900 sticky top-0 z-20">
+        <button onclick="location.href='dashboard.html'" class="flex items-center gap-2 text-gray-400">
+            <i class="fas fa-arrow-left"></i>
+            <span class="text-[9px] font-black uppercase tracking-widest text-white">Dashboard</span>
+        </button>
+        <img src="logo.png" class="h-6">
+        <button onclick="logout()" class="text-red-600"><i class="fas fa-power-off"></i></button>
     </div>
+
+    <div class="p-6">
+        <div class="mb-6">
+            <h2 class="text-xl font-black italic tracking-tighter uppercase">Input Nota Pengeluaran</h2>
+            <p class="text-[8px] text-gray-500 font-black uppercase tracking-widest">CV Efendy Jaya Abadi</p>
+        </div>
+
+        <form id="form-nota" class="space-y-4">
+            <div>
+                <label class="text-[9px] font-black text-gray-400 uppercase ml-1">Pilih Armada</label>
+                <select id="kpl" class="input-dark mt-1" required>
+                    <option value="">-- PILIH KAPAL --</option>
+                    <option value="KM. NABAWI 09">KM. NABAWI 09</option>
+                    <option value="KM. LASTIKA STAR">KM. LASTIKA STAR</option>
+                    <option value="KM. SRIKANDI 01">KM. SRIKANDI 01</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="text-[9px] font-black text-gray-400 uppercase ml-1">Kategori Biaya</label>
+                <select id="kat" class="input-dark mt-1" required>
+                    <option value="BBM">BBM (Solar)</option>
+                    <option value="LOGISTIK">Logistik / Ransum</option>
+                    <option value="ES">Pembelian Es</option>
+                    <option value="MAINTENANCE">Perbaikan / Sparepart</option>
+                    <option value="LAINNYA">Lain-lain</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="text-[9px] font-black text-gray-400 uppercase ml-1">Nama Barang / Deskripsi Nota</label>
+                <input type="text" id="itm" class="input-dark mt-1" placeholder="Contoh: Solar 200 Liter" required>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="text-[9px] font-black text-gray-400 uppercase ml-1">Qty</label>
+                    <input type="number" id="qty" class="input-dark mt-1" placeholder="0" required>
+                </div>
+                <div>
+                    <label class="text-[9px] font-black text-gray-400 uppercase ml-1">Satuan</label>
+                    <input type="text" id="sat" class="input-dark mt-1" placeholder="Liter/Kg/Pcs">
+                </div>
+            </div>
+
+            <div>
+                <label class="text-[9px] font-black text-gray-400 uppercase ml-1">Total Nominal Nota (Rp)</label>
+                <input type="number" id="nom" class="input-dark mt-1 text-red-500 font-black text-lg" placeholder="0" required>
+            </div>
+
+            <button type="submit" id="btn-submit" class="btn-save shadow-lg shadow-red-900/20">
+                <i class="fas fa-paper-plane mr-2"></i> Kirim Ke Boss
+            </button>
+        </form>
+    </div>
+
+    <script>
+        const USER = JSON.parse(localStorage.getItem('achi_session'));
+        const API = "https://script.google.com/macros/s/AKfycbz818qMSCCTFHq7Xb7m46zjQms21xAO2WGoiHfs5-w9TD3tlSiIODU-RdCgd-pJ1zaR/exec"; //  Tempel URL Web App
+
+        if(!USER) window.location.href = "index.html";
+
+        document.getElementById('form-nota').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit');
+            btn.disabled = true;
+            btn.innerHTML = "Memproses...";
+
+            const params = new URLSearchParams({
+                action: 'saveLogistik',
+                kapal: document.getElementById('kpl').value,
+                kategori: document.getElementById('kat').value,
+                item: document.getElementById('itm').value,
+                qty: document.getElementById('qty').value,
+                satuan: document.getElementById('sat').value,
+                total: document.getElementById('nom').value,
+                user: USER.nama
+            });
+
+            try {
+                const r = await fetch(`${API}?${params.toString()}`);
+                const res = await r.json();
+                if(res.status === "success") {
+                    alert("Nota Berhasil Dikirim! Menunggu Persetujuan Boss.");
+                    document.getElementById('form-nota').reset();
+                }
+            } catch(e) {
+                alert("Gagal koneksi ke server.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Kirim Ke Boss';
+            }
+        };
+
+        function logout() { localStorage.clear(); window.location.href="index.html"; }
+    </script>
+</body>
+</html>
