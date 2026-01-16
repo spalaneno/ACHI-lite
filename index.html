@@ -3,137 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACHI v5.0 - LOGIN</title>
+    <title>Dashboard - PT Efendy Jaya Abadi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        
         body {
             font-family: 'Inter', sans-serif;
-            margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
             background: linear-gradient(-45deg, #b31d1d, #7a1212, #d32f2f, #9a0007);
             background-size: 400% 400%;
-            animation: gradientMove 10s ease infinite;
-            overflow: hidden;
+            animation: gradientMove 15s ease infinite;
+            min-height: 100vh;
         }
-
         @keyframes gradientMove {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 3rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        .glass-header { background: rgba(0, 0, 0, 0.2); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .menu-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 2rem;
+            transition: 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
-
-        .input-group input {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-            transition: all 0.3s ease;
-        }
-
-        .input-group input:focus {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.5);
-            outline: none;
-            box-shadow: 0 0 15px rgba(255,255,255,0.1);
-        }
-
-        .btn-premium {
-            background: white;
-            color: #b31d1d;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-weight: 900;
-        }
-
-        .btn-premium:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
-        .btn-premium:active {
-            transform: translateY(0);
-        }
-
-        ::placeholder { color: rgba(255,255,255,0.4); font-size: 0.8rem; letter-spacing: 0.1em; }
+        .menu-card:active { transform: scale(0.95); }
+        .icon-box { background: linear-gradient(135deg, #b31d1d, #7a1212); }
     </style>
 </head>
-<body class="p-6">
+<body class="pb-10">
 
-    <div class="glass-panel p-10 w-full max-w-sm animate__animated animate__fadeInUp">
-        <div class="mb-10 text-center">
-            <div class="w-20 h-20 bg-white rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-2xl">
-                <i class="fas fa-anchor text-[#b31d1d] text-4xl"></i>
-            </div>
-            <h1 class="text-3xl font-black italic text-white tracking-tighter uppercase leading-none">ACHI</h1>
-            <div class="h-1 w-12 bg-white/30 mx-auto my-3 rounded-full"></div>
-            <p class="text-[9px] font-bold text-white/60 tracking-[0.4em] uppercase">Aplikasi Crewing & Handling Integrasi</p>
-        </div>
-
-        <div class="input-group space-y-4">
-            <div class="relative">
-                <i class="fas fa-user absolute left-4 top-4 text-white/30 text-sm"></i>
-                <input type="text" id="u" placeholder="USERNAME" class="w-full pl-12 pr-4 py-4 rounded-2xl font-bold">
-            </div>
-            <div class="relative">
-                <i class="fas fa-lock absolute left-4 top-4 text-white/30 text-sm"></i>
-                <input type="password" id="p" placeholder="PASSWORD" class="w-full pl-12 pr-4 py-4 rounded-2xl font-bold">
-            </div>
+    <div class="glass-header p-8 rounded-b-[3.5rem] mb-6 shadow-2xl">
+        <div class="flex flex-col items-center">
+            <img src="https://i.ibb.co/6P0qXFf/LOGO.png" alt="PT Efendy Jaya Abadi" class="h-24 mb-4 drop-shadow-lg">
             
-            <button onclick="doLogin()" id="btn" class="btn-premium w-full py-4 rounded-2xl shadow-2xl mt-4 uppercase italic tracking-widest text-sm">
-                Login Dashboard
-            </button>
-        </div>
-
-        <p id="msg" class="mt-6 text-[10px] font-black text-white/40 uppercase italic text-center tracking-widest"></p>
-        
-        <div class="mt-8 pt-8 border-t border-white/10 text-center">
-            <p class="text-[8px] text-white/20 font-bold tracking-widest uppercase">&copy; 2026 Achindo Maritime Solution</p>
+            <div class="bg-white/10 px-6 py-3 rounded-2xl backdrop-blur-md border border-white/20 w-full mt-4">
+                <p id="u-nama" class="font-black text-white text-center uppercase tracking-tighter">Memuat Nama...</p>
+                <div class="flex justify-center gap-2 items-center opacity-70">
+                   <p id="u-role" class="text-[8px] text-white font-bold uppercase tracking-widest italic"></p>
+                </div>
+            </div>
         </div>
     </div>
 
+    <div class="px-6">
+        <div id="menu-grid" class="grid grid-cols-2 gap-5">
+            </div>
+    </div>
+
+    <div class="px-6 mt-8">
+        <button onclick="logout()" class="w-full bg-white/10 border border-white/20 p-4 rounded-2xl text-white font-black uppercase text-[10px] tracking-[0.3em] backdrop-blur-sm italic">
+            <i class="fas fa-power-off mr-2"></i> Log Out
+        </button>
+    </div>
+
 <script>
-    const API = "https://script.google.com/macros/s/AKfycbybxx3aQDtmyJ2xGsGYdVu3pyt6TpEv4T04IPrIs64T_qwTTlRRY1tVszEfzn5pTu5v/exec";
+    const USER = JSON.parse(localStorage.getItem('achi_session'));
+    
+    if(!USER) {
+        window.location.href = "index.html";
+    } else {
+        document.getElementById('u-nama').innerText = USER.nama;
+        document.getElementById('u-role').innerText = `${USER.jabatan} | ${USER.kapal}`;
+    }
 
-    async function doLogin() {
-        const u = document.getElementById('u').value.trim();
-        const p = document.getElementById('p').value.trim();
-        const msg = document.getElementById('msg');
-        const btn = document.getElementById('btn');
+    const grid = document.getElementById('menu-grid');
+    let menus = [];
 
-        if(!u || !p) {
-            msg.innerText = "Lengkapi data akses!";
-            return;
-        }
+    // Semua level sekarang bisa melihat menu utama sesuai fungsinya
+    
+    // Menu Khusus Owner & Admin (Level 1 & 2)
+    if(USER.level <= 2) {
+        menus.push({n: "BONGKAR TRIP", i: "fa-ship", l: "trip.html", desc: "Bagi Hasil Pajeko"});
+        menus.push({n: "HUTANG KRU", i: "fa-users-cog", l: "kru-list.html", desc: "Kas & Pinjaman"});
+        menus.push({n: "PURCHASING", i: "fa-shopping-cart", l: "purchasing.html", desc: "Belanja & Nota"});
+    }
+    
+    // MENU LAPORAN HARIAN (Tampil untuk SEMUA atau Level Kapten 4)
+    // Saya pastikan muncul di dashboard
+    menus.push({n: "LAPOR HARIAN", i: "fa-file-invoice", l: "logistik.html", desc: "Anfrakan & Stok"});
+    
+    // Menu BBM (Owner, Admin, Kapten)
+    if(USER.level <= 2 || USER.level == 4) {
+        menus.push({n: "MONITOR BBM", i: "fa-gas-pump", l: "bbm.html", desc: "Sisa Stok Solar"});
+    }
 
-        btn.innerText = "AUTHENTICATING...";
-        btn.disabled = true;
+    grid.innerHTML = menus.map(m => `
+        <div onclick="location.href='${m.l}'" class="menu-card p-6 flex flex-col items-center text-center">
+            <div class="icon-box w-14 h-14 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+                <i class="fas ${m.i} text-white text-xl"></i>
+            </div>
+            <h3 class="text-[11px] font-black text-gray-800 uppercase tracking-tighter leading-none mb-1">${m.n}</h3>
+            <p class="text-[7px] text-gray-400 font-bold uppercase tracking-widest">${m.desc}</p>
+        </div>
+    `).join('');
 
-        try {
-            const r = await fetch(`${API}?action=login&u=${u}&p=${p}`);
-            const res = await r.json();
-            
-            if(res.status === "success") {
-                localStorage.setItem('achi_session', JSON.stringify(res.data));
-                msg.innerText = "LOGIN BERHASIL...";
-                setTimeout(() => { window.location.href = "dashboard.html"; }, 500);
-            } else {
-                msg.innerText = "AKSES DITOLAK: CEK KEMBALI DATA ANDA";
-                btn.innerText = "LOGIN DASHBOARD";
-                btn.disabled = false;
-            }
-        } catch(e) {
-            msg.innerText = "SERVER TIDAK MERESPON";
-            btn.innerText = "LOGIN DASHBOARD";
-            btn.disabled = false;
+    function logout() {
+        if(confirm("Keluar dari Sistem?")) {
+            localStorage.clear();
+            window.location.href = "index.html";
         }
     }
 </script>
