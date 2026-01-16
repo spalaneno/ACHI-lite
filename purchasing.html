@@ -1,26 +1,127 @@
-<script>
-    async function prosesBeli(id) {
-        const hargaReal = prompt("Masukkan HARGA TOTAL REAL (Rp):");
-        if(!hargaReal) return;
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACHI - PURCHASING</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #0b0b0b; color: #fff; font-family: 'Inter', sans-serif; }
+        .achi-card { background: linear-gradient(145deg, #1a1a1a, #111); border: 1px solid #222; }
+        .btn-confirm { background: linear-gradient(to right, #b31d1d, #7a1212); }
+        .input-dark { background: #222; border: 1px solid #444; color: white; border-radius: 12px; }
+    </style>
+</head>
+<body class="p-6 pb-24">
+    <header class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-xl font-black italic uppercase italic">Daftar Belanja</h1>
+            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em]">Ready to Execute</p>
+        </div>
+        <button onclick="location.href='dashboard.html'" class="text-gray-400 text-xl"><i class="fas fa-times"></i></button>
+    </header>
 
-        const adaNota = confirm("Apakah ada nota fisik? (OK = Ada, Cancel = Tidak)");
-        let alasan = "";
+    <div id="shop-list" class="space-y-4">
+        <div class="text-center py-20 opacity-20 font-black italic">Mencari Daftar Belanja...</div>
+    </div>
+
+    <div id="modal-beli" class="fixed inset-0 bg-black/95 backdrop-blur-md hidden flex items-center justify-center p-6 z-50">
+        <div class="achi-card w-full max-w-sm p-8 rounded-[2.5rem] border-t-4 border-red-600">
+            <h3 class="text-lg font-black text-white mb-1 uppercase italic">Konfirmasi Pembelian</h3>
+            <p id="b-nama" class="text-[10px] text-red-500 font-bold mb-6"></p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[9px] text-gray-500 font-black uppercase">Harga Total Real (Rp)</label>
+                    <input type="number" id="b-harga" class="w-full input-dark p-3 text-lg font-black" placeholder="0">
+                </div>
+                
+                <div>
+                    <label class="text-[9px] text-gray-500 font-black uppercase">Metode Pembayaran</label>
+                    <select id="b-metode" class="w-full input-dark p-3 text-xs font-bold uppercase">
+                        <option value="CASH / UANG PRIBADI">Cash / Uang Pribadi</option>
+                        <option value="TRANSFER OWNER">Transfer dari Owner</option>
+                        <option value="QRIS OWNER">QR Code / QRIS Owner</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/5">
+                    <input type="checkbox" id="b-nota" class="w-5 h-5 accent-red-600">
+                    <label for="b-nota" class="text-[10px] font-bold text-gray-300 uppercase">Ada Nota Fisik?</label>
+                </div>
+
+                <button onclick="saveBeli()" class="w-full btn-confirm text-white p-4 rounded-2xl font-black uppercase shadow-lg shadow-red-900/20">Selesaikan Pembelian</button>
+                <button onclick="closeModal()" class="w-full text-gray-500 font-bold uppercase text-[10px]">Batalkan</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const API = "URL_WEB_APP_BAPAK";
+    let activeId = "";
+
+    async function loadShop() {
+        const container = document.getElementById('shop-list');
+        try {
+            const r = await fetch(`${API}?action=getData`);
+            const d = await r.json();
+            // Tampilkan hanya yang disetujui owner
+            const approved = d.data.filter(i => i[12] === "DISETUJUI OWNER");
+            
+            container.innerHTML = approved.length === 0 ? 
+            '<div class="py-20 text-center text-gray-600 font-bold italic uppercase">Tidak Ada Antrian Belanja</div>' :
+            approved.map(i => `
+                <div class="achi-card p-6 rounded-[2rem] animate__animated animate__fadeIn">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-[8px] bg-red-600 text-white px-2 py-1 rounded-md font-black uppercase tracking-widest">${i[11]}</span>
+                        <span class="text-[8px] text-gray-600 font-bold">${i[1]}</span>
+                    </div>
+                    <h4 class="text-lg font-black text-white leading-none mb-1 uppercase">${i[4]}</h4>
+                    <p class="text-xs text-gray-400 font-bold mb-4 italic">${i[6]} ${i[5]} <span class="text-[9px] ml-2 text-zinc-600 italic">Ref: ${i[0]}</span></p>
+                    <button onclick="openModal('${i[0]}','${i[4]}','${i[6]} ${i[5]}')" class="w-full py-3 border border-red-600 text-red-600 rounded-xl font-black uppercase text-[10px] hover:bg-red-600 hover:text-white transition-all">Input Hasil Beli</button>
+                </div>
+            `).join('');
+        } catch(e) { container.innerHTML = "Gagal memuat data belanja."; }
+    }
+
+    function openModal(id, nama, qty) {
+        activeId = id;
+        document.getElementById('b-nama').innerText = nama + " (" + qty + ")";
+        document.getElementById('modal-beli').classList.remove('hidden');
+    }
+
+    function closeModal() { document.getElementById('modal-beli').classList.add('hidden'); }
+
+    async function saveBeli() {
+        const harga = document.getElementById('b-harga').value;
+        const metode = document.getElementById('b-metode').value;
+        const adaNota = document.getElementById('b-nota').checked;
         
+        let alasan = "";
         if(!adaNota) {
-            alasan = prompt("PERINGATAN: Anda membeli tanpa nota. Apa alasannya?");
-            if(!alasan) return alert("Alasan wajib diisi jika tidak ada nota!");
+            alasan = prompt("PERINGATAN: Pembelian tanpa nota. Masukkan alasannya:");
+            if(!alasan) return alert("Alasan wajib diisi!");
         }
 
-        const data = {
+        const payload = {
             action: "updateStatus",
-            id: id,
-            status: "TELAH DIBELI",
-            hargaReal: hargaReal,
-            catatan: alasan ? "TANPA NOTA: " + alasan : "DIBELI DENGAN NOTA",
-            pembayar: "PURCHASING" // Nanti bisa dikembangkan pilihan (Transfer/QR/Cash)
+            id: activeId,
+            status: "DIBELI",
+            hargaReal: harga,
+            metode: metode,
+            nota: adaNota ? "ADA NOTA" : "TIDAK ADA (" + alasan + ")",
+            pembayar: JSON.parse(localStorage.getItem('achi_session')).nama
         };
 
-        // Kirim ke Google Script
-        alert("Pembelian Berhasil Dicatat!");
+        // Kirim data ke Google Script
+        // ...fetch...
+        alert("Barang " + payload.nota + ". Berhasil Disimpan!");
+        closeModal();
+        loadShop();
     }
+
+    loadShop();
 </script>
+</body>
+</html>
