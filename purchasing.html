@@ -1,0 +1,26 @@
+<script>
+    async function prosesBeli(id) {
+        const hargaReal = prompt("Masukkan HARGA TOTAL REAL (Rp):");
+        if(!hargaReal) return;
+
+        const adaNota = confirm("Apakah ada nota fisik? (OK = Ada, Cancel = Tidak)");
+        let alasan = "";
+        
+        if(!adaNota) {
+            alasan = prompt("PERINGATAN: Anda membeli tanpa nota. Apa alasannya?");
+            if(!alasan) return alert("Alasan wajib diisi jika tidak ada nota!");
+        }
+
+        const data = {
+            action: "updateStatus",
+            id: id,
+            status: "TELAH DIBELI",
+            hargaReal: hargaReal,
+            catatan: alasan ? "TANPA NOTA: " + alasan : "DIBELI DENGAN NOTA",
+            pembayar: "PURCHASING" // Nanti bisa dikembangkan pilihan (Transfer/QR/Cash)
+        };
+
+        // Kirim ke Google Script
+        alert("Pembelian Berhasil Dicatat!");
+    }
+</script>
