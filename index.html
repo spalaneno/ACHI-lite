@@ -6,47 +6,56 @@
     <title>ACHI v5.0 - LOGIN</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #0b0b0b; height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; font-family: sans-serif; }
-        .card { background: #1a1a1a; padding: 2rem; border-radius: 2rem; width: 100%; max-width: 320px; border: 1px solid #333; text-align: center; }
-        input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #444; background: #222; color: white; outline: none; }
-        button { width: 100%; padding: 12px; border-radius: 12px; background: #b31d1d; color: white; font-weight: bold; border: none; cursor: pointer; text-transform: uppercase; }
+        body {
+            margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(45deg, #b31d1d, #7a1212, #ff4d4d, #b31d1d);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 2.5rem; }
+        input { border: 2px solid #f0f0f0; transition: 0.3s; }
+        input:focus { border-color: #b31d1d; outline: none; }
     </style>
 </head>
-<body>
-    <div class="card">
-        <h1 class="text-white text-3xl font-black italic mb-1">ACHI</h1>
-        <p class="text-red-600 text-[10px] font-bold tracking-widest mb-8 uppercase">Efendy Jaya Abadi</p>
-        
-        <input type="text" id="user" placeholder="USERNAME">
-        <input type="password" id="pass" placeholder="PASSWORD">
-        <button onclick="login()">Masuk Sistem</button>
-        <p id="msg" class="text-red-500 text-[10px] mt-4 font-bold"></p>
+<body class="p-6">
+    <div class="glass p-10 w-full max-w-sm shadow-2xl text-center">
+        <img src="https://i.ibb.co/logo.png" alt="Logo ACHI" class="w-32 mx-auto mb-6">
+        <h1 class="text-2xl font-black italic text-gray-800 uppercase tracking-tighter">ACHI SYSTEM</h1>
+        <p class="text-[10px] font-bold text-red-600 mb-8 tracking-[0.3em] uppercase">PT Efendy Jaya Abadi</p>
+
+        <div class="space-y-4">
+            <input type="text" id="u" placeholder="USERNAME" class="w-full p-4 rounded-2xl font-bold">
+            <input type="password" id="p" placeholder="PASSWORD" class="w-full p-4 rounded-2xl font-bold">
+            <button onclick="doLogin()" id="btn" class="w-full bg-[#b31d1d] text-white p-4 rounded-2xl font-black shadow-xl active:scale-95 transition-all uppercase italic">Masuk Sistem</button>
+        </div>
+        <p id="msg" class="mt-4 text-[10px] font-black text-gray-400 uppercase italic"></p>
     </div>
 
 <script>
-    // URL baru sekelong
-    const API = "https://script.google.com/macros/s/AKfycbxM9pv6qDrUI2hWO2IiEHaJntlWoN2X5LbTSOLqaMSJt1tpUwEGY8oX6uf9dtBNxnkz/exec"; 
+    const API = "https://script.google.com/macros/s/AKfycbybxx3aQDtmyJ2xGsGYdVu3pyt6TpEv4T04IPrIs64T_qwTTlRRY1tVszEfzn5pTu5v/exec";
 
-    async function login() {
-        const u = document.getElementById('user').value;
-        const p = document.getElementById('pass').value;
+    async function doLogin() {
+        const u = document.getElementById('u').value;
+        const p = document.getElementById('p').value;
         const msg = document.getElementById('msg');
-        
-        msg.innerText = "MENGECEK AKSES...";
-        
+        if(!u || !p) return;
+
+        msg.innerText = "SEDANG MENGHUBUNGKAN...";
         try {
             const r = await fetch(`${API}?action=login&u=${u}&p=${p}`);
             const res = await r.json();
-            
             if(res.status === "success") {
                 localStorage.setItem('achi_session', JSON.stringify(res.data));
-                window.location.href = "dashboard.html"; // Pindah ke Dashboard
+                window.location.href = "dashboard.html";
             } else {
                 msg.innerText = "USER ATAU PASSWORD SALAH!";
             }
-        } catch(e) {
-            msg.innerText = "GAGAL TERHUBUNG KE SERVER";
-        }
+        } catch(e) { msg.innerText = "KONEKSI BERMASALAH!"; }
     }
 </script>
 </body>
