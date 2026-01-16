@@ -3,54 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACHI - DASHBOARD</title>
+    <title>ACHI v5.0 - DASHBOARD</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0; min-height: 100vh;
+            background: linear-gradient(-45deg, #b31d1d, #7a1212, #d32f2f, #9a0007);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .header-glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .menu-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 2rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .menu-card:active {
+            transform: scale(0.92);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .icon-circle {
+            background: linear-gradient(135deg, #b31d1d, #7a1212);
+            box-shadow: 0 10px 20px rgba(179, 29, 29, 0.3);
+        }
+
+        .status-bar {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+    </style>
 </head>
-<body class="bg-gray-50 min-height-screen">
-    <div class="bg-[#b31d1d] p-8 rounded-b-[3rem] shadow-xl mb-8">
-        <div class="flex justify-between items-center text-white mb-6">
-            <h2 class="font-black italic text-xl uppercase tracking-tighter">ACHI Mobile</h2>
-            <button onclick="logout()"><i class="fas fa-power-off"></i></button>
+<body class="pb-10">
+
+    <div class="header-glass p-8 rounded-b-[3.5rem] mb-6 shadow-2xl">
+        <div class="flex justify-between items-center text-white mb-8">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-anchor text-[#b31d1d] text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="font-black italic text-lg uppercase tracking-tighter leading-none">ACHI SYSTEM</h2>
+                    <p class="text-[7px] font-bold tracking-[0.3em] opacity-60 uppercase">Management Dashboard</p>
+                </div>
+            </div>
+            <button onclick="logout()" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
+                <i class="fas fa-power-off text-sm"></i>
+            </button>
         </div>
-        <div class="bg-white/10 p-4 rounded-2xl backdrop-blur-sm border border-white/20">
-            <p id="u-nama" class="font-black text-white text-lg uppercase italic">-</p>
-            <p id="u-role" class="text-[10px] text-white/70 font-bold uppercase">-</p>
+
+        <div class="status-bar p-5 rounded-3xl border border-white/10 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl overflow-hidden bg-gray-200 border-2 border-white/20">
+                <img src="https://ui-avatars.com/api/?name=User&background=fff&color=b31d1d" id="u-avatar" alt="User">
+            </div>
+            <div>
+                <p id="u-nama" class="font-black text-white text-base uppercase italic leading-none mb-1">Loading...</p>
+                <p id="u-role" class="text-[9px] text-white/60 font-black uppercase tracking-widest italic"></p>
+            </div>
         </div>
     </div>
 
-    <div id="menu-grid" class="p-6 grid grid-cols-2 gap-4">
-        </div>
+    <div class="px-6">
+        <div id="menu-grid" class="grid grid-cols-2 gap-5">
+            </div>
+    </div>
+
+    <div class="text-center mt-12 opacity-30">
+        <p class="text-[8px] text-white font-bold uppercase tracking-[0.4em]">&copy; 2026 PT Efendy Jaya Abadi</p>
+    </div>
 
 <script>
     const USER = JSON.parse(localStorage.getItem('achi_session'));
-    if(!USER) window.location.href = "index.html";
-
-    document.getElementById('u-nama').innerText = USER.nama;
-    document.getElementById('u-role').innerText = USER.jabatan + " | " + USER.kapal;
+    
+    if(!USER) {
+        window.location.href = "index.html";
+    } else {
+        document.getElementById('u-nama').innerText = USER.nama;
+        document.getElementById('u-role').innerText = USER.jabatan + " | " + USER.kapal;
+        document.getElementById('u-avatar').src = `https://ui-avatars.com/api/?name=${USER.nama}&background=fff&color=b31d1d&bold=true`;
+    }
 
     const grid = document.getElementById('menu-grid');
     let menus = [];
 
+    // LEVEL 1 (OWNER) & LEVEL 2 (ADMIN)
     if(USER.level <= 2) {
-        menus.push({n: "BONGKAR TRIP", i: "fa-anchor", l: "trip.html"});
-        menus.push({n: "HUTANG KRU", i: "fa-users-cog", l: "kru-list.html"});
-        menus.push({n: "BELANJA", i: "fa-shopping-cart", l: "purchasing.html"});
+        menus.push({n: "BONGKAR TRIP", i: "fa-ship", l: "trip.html", c: "Hasil Ikan & Bagi Hasil"});
+        menus.push({n: "HUTANG KRU", i: "fa-wallet", l: "kru-list.html", c: "Manajemen Kas & Piutang"});
+        menus.push({n: "PURCHASING", i: "fa-shopping-cart", l: "purchasing.html", c: "Belanja & Nota"});
+        menus.push({n: "STOK BBM", i: "fa-gas-pump", l: "bbm.html", c: "Monitoring Solar"});
     }
+    
+    // LEVEL 4 (KAPTEN / KKM)
     if(USER.level == 4) {
-        menus.push({n: "ANFRAKAN", i: "fa-clipboard-list", l: "logistik.html"});
+        menus.push({n: "ANFRAKAN", i: "fa-file-invoice", l: "logistik.html", c: "Permintaan Barang"});
+        menus.push({n: "LAPOR BBM", i: "fa-gas-pump", l: "bbm.html", c: "Sisa Stok Solar"});
     }
 
     grid.innerHTML = menus.map(m => `
-        <div onclick="location.href='${m.l}'" class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 text-center active:scale-95 transition-all">
-            <div class="w-12 h-12 bg-red-50 text-[#b31d1d] rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <i class="fas ${m.i} text-xl"></i>
+        <div onclick="location.href='${m.l}'" class="menu-card p-6 shadow-xl flex flex-col items-center text-center">
+            <div class="icon-circle w-14 h-14 rounded-2xl flex items-center justify-center mb-4">
+                <i class="fas ${m.i} text-white text-xl"></i>
             </div>
-            <p class="text-[10px] font-black text-gray-800 uppercase">${m.n}</p>
+            <h3 class="text-[11px] font-black text-gray-800 uppercase tracking-tighter mb-1">${m.n}</h3>
+            <p class="text-[7px] text-gray-400 font-bold uppercase tracking-widest">${m.c}</p>
         </div>
     `).join('');
 
-    function logout() { localStorage.clear(); window.location.href = "index.html"; }
+    function logout() {
+        if(confirm("Apakah Anda ingin keluar sistem?")) {
+            localStorage.clear();
+            window.location.href = "index.html";
+        }
+    }
 </script>
 </body>
 </html>
