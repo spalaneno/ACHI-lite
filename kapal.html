@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACHI - KAPAL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .red-gradient { background: linear-gradient(-45deg, #b31d1d, #7a1212); }
+        .input-field { width: 100%; padding: 1rem; background: #f3f4f6; border-radius: 1rem; font-weight: bold; outline: none; border: 2px solid transparent; }
+        .input-field:focus { border-color: #b31d1d; background: white; }
+    </style>
+</head>
+<body class="bg-gray-50 pb-20">
+    <header class="red-gradient p-8 text-white rounded-b-[3rem] shadow-lg mb-6">
+        <div class="flex justify-between items-center">
+            <div>
+                <p id="kapal-name" class="text-[10px] font-bold opacity-70 uppercase tracking-widest"></p>
+                <h2 id="user-n" class="text-2xl font-black uppercase"></h2>
+            </div>
+            <button onclick="logout()" class="text-xl opacity-50"><i class="fas fa-power-off"></i></button>
+        </div>
+    </header>
+
+    <main class="px-6 space-y-6">
+        <div class="bg-white p-8 rounded-[2rem] shadow-xl">
+            <h3 class="text-xl font-black text-[#b31d1d] italic mb-6 uppercase">FORM ANFRAKAN</h3>
+            <div class="space-y-4">
+                <select id="f-cat" class="input-field">
+                    <option>Anfrakan Deck</option>
+                    <option>Anfrakan Mesin</option>
+                </select>
+                <input id="f-ket" type="text" placeholder="Nama Barang (Contoh: Beras)" class="input-field">
+                <div class="flex gap-3">
+                    <input id="f-qty" type="number" placeholder="Jumlah" class="input-field flex-[2]">
+                    <input id="f-sat" type="text" placeholder="Satuan" class="input-field flex-[1]">
+                </div>
+                <button id="btn-save" onclick="kirim()" class="w-full red-gradient text-white p-4 rounded-2xl font-black uppercase shadow-lg">KIRIM SEKARANG</button>
+            </div>
+        </div>
+
+        <h4 class="font-black text-gray-400 text-xs uppercase px-2">Status Pengajuan Terakhir</h4>
+        <div id="data-list" class="space-y-4"></div>
+    </main>
+
+<script>
+    const API = "https://script.google.com/macros/s/AKfycbxknjxmr96CRRXtgHZbj8j8lprJGBPzUZhv1o6KqxKq1wyd4Y95ZdtuIMZ9FQ4T2XFS/exec";
+    const USER = JSON.parse(localStorage.getItem('achi_session'));
+
+    if(!USER) window.location.href = "index.html";
+
+    document.getElementById('user-n').innerText = USER.nama;
+    document.getElementById('kapal-name').innerText = USER.kapal;
+
+    async function kirim() {
+        const k = document.getElementById('f-ket').value, q = document.getElementById('f-qty').value, s = document.getElementById('f-sat').value;
+        if(!k || !q || !s) return alert("Lengkapi Form!");
+        const btn = document.getElementById('btn-save'); btn.disabled = true; btn.innerText = "MENGIRIM...";
+
+        const data = {
+            action: 'input',
+            tgl: new Date().toLocaleDateString('id-ID'),
+            jam: new Date().toLocaleTimeString('id-ID'),
+            kategori: document.getElementById('f-cat').value,
+            keterangan: k,
+            satuan: s,
+            qty: q,
+            pemohon: USER.nama,
+            kapal: USER.kapal
+        };
+
+        try {
+            await fetch(API, { method: 'POST', body: JSON.stringify(data) });
+            alert("Berhasil!");
+            location.reload();
+        } catch(e) { alert("Gagal Kirim!"); btn.disabled = false; btn.innerText = "KIRIM SEKARANG"; }
+    }
+
+    async function refreshData() {
+        const l = document.getElementById('data-list');
+        try {
+            const r = await fetch(`${API}?action=getData&level=${USER.level}&kapal=${USER.kapal}`);
+            const d = await r.json();
+            l.innerHTML = d.transaksi.slice(0, 10).map(i => `
+                <div class="bg-white p-5 rounded-3xl shadow-sm border-l-4 ${i[8] === 'DISETUJUI OWNER' ? 'border-green-500' : 'border-red-500'}">
+                    <div class="flex justify-between mb-2"><span class="text-[8px] font-black uppercase text-gray-400">${i[8]}</span><span class="text-[8px] text-gray-300">${i[1]}</span></div>
+                    <h5 class="text-xs font-black uppercase text-gray-700">${i[4]}</h5>
+                    <p class="text-xs text-red-600 font-bold">${i[6]} ${i[5]}</p>
+                </div>
+            `).join('');
+        } catch(e) { l.innerHTML = "Gagal memuat riwayat"; }
+    }
+
+    function logout() { localStorage.clear(); window.location.href = "index.html"; }
+    refreshData();
+</script>
+</body>
+</html>
