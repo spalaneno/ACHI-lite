@@ -3,137 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACHI v5.0 - DASHBOARD</title>
+    <title>Dashboard - CV Efendy Jaya Abadi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0; min-height: 100vh;
-            background: linear-gradient(-45deg, #b31d1d, #7a1212, #d32f2f, #9a0007);
-            background-size: 400% 400%;
-            animation: gradientMove 15s ease infinite;
-        }
-
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .header-glass {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .menu-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 2rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .menu-card:active {
-            transform: scale(0.92);
-            background: rgba(255, 255, 255, 1);
-        }
-
-        .icon-circle {
-            background: linear-gradient(135deg, #b31d1d, #7a1212);
-            box-shadow: 0 10px 20px rgba(179, 29, 29, 0.3);
-        }
-
-        .status-bar {
-            background: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-        }
+        body { background-color: #030303; color: #fff; font-family: 'Inter', sans-serif; }
+        .stat-card { background: linear-gradient(145deg, #0f0f0f, #050505); border: 1px solid #1a1a1a; border-radius: 2rem; }
+        .menu-card { background: #0a0a0a; border: 1px solid #151515; border-radius: 2.2rem; transition: 0.3s; }
+        .menu-card:active { transform: scale(0.95); background: #120000; border-color: #b31d1d; }
+        .text-crimson { color: #b31d1d; }
+        .header-glow { border-bottom: 1px solid #220000; background: linear-gradient(180deg, #100000 0%, #030303 100%); }
     </style>
 </head>
-<body class="pb-10">
+<body class="pb-16">
 
-    <div class="header-glass p-8 rounded-b-[3.5rem] mb-6 shadow-2xl">
-        <div class="flex justify-between items-center text-white mb-8">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
-                    <i class="fas fa-anchor text-[#b31d1d] text-lg"></i>
+    <div class="header-glow p-10 rounded-b-[4rem] mb-10 text-center shadow-2xl">
+        <img src="logo.png" alt="Logo" class="h-20 mx-auto mb-6">
+        
+        <div class="bg-white/5 border border-white/5 p-5 rounded-[2.5rem] flex items-center justify-between backdrop-blur-md">
+            <div class="flex items-center gap-4 text-left">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#b31d1d] to-[#7a1212] flex items-center justify-center shadow-xl">
+                    <i class="fas fa-user-shield text-white text-xs"></i>
                 </div>
                 <div>
-                    <h2 class="font-black italic text-lg uppercase tracking-tighter leading-none">ACHI SYSTEM</h2>
-                    <p class="text-[7px] font-bold tracking-[0.3em] opacity-60 uppercase">Management Dashboard</p>
+                    <p id="u-nama" class="font-black text-white text-sm uppercase italic tracking-tighter leading-none mb-1">Loading...</p>
+                    <p id="u-role" class="text-[8px] text-red-700 font-black uppercase tracking-widest"></p>
                 </div>
             </div>
-            <button onclick="logout()" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
-                <i class="fas fa-power-off text-sm"></i>
+            <button onclick="logout()" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-red-600">
+                <i class="fas fa-power-off text-xs"></i>
             </button>
         </div>
+    </div>
 
-        <div class="status-bar p-5 rounded-3xl border border-white/10 flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl overflow-hidden bg-gray-200 border-2 border-white/20">
-                <img src="https://ui-avatars.com/api/?name=User&background=fff&color=b31d1d" id="u-avatar" alt="User">
+    <div id="owner-panel" class="px-8 mb-10 hidden">
+        <div class="flex justify-between items-center mb-4 px-2">
+            <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Live Monitoring Profit</h3>
+            <span class="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+        </div>
+
+        <div class="stat-card p-8 mb-4 border-l-4 border-red-700 shadow-2xl">
+            <p class="text-[8px] text-gray-500 font-black uppercase tracking-widest mb-2">Pemasukan Bulan Ini</p>
+            <h2 id="st-bulan" class="text-3xl font-black text-white italic tracking-tighter">Rp 0</h2>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div class="stat-card p-5">
+                <p class="text-[7px] text-gray-500 font-black uppercase mb-1">Mingguan</p>
+                <p id="st-minggu" class="font-black text-sm text-gray-200 uppercase tracking-tighter">Rp 0</p>
             </div>
-            <div>
-                <p id="u-nama" class="font-black text-white text-base uppercase italic leading-none mb-1">Loading...</p>
-                <p id="u-role" class="text-[9px] text-white/60 font-black uppercase tracking-widest italic"></p>
+            <div class="stat-card p-5">
+                <p class="text-[7px] text-gray-500 font-black uppercase mb-1">Hari Ini</p>
+                <p id="st-hari" class="font-black text-sm text-green-500 uppercase tracking-tighter">Rp 0</p>
             </div>
         </div>
     </div>
 
-    <div class="px-6">
-        <div id="menu-grid" class="grid grid-cols-2 gap-5">
-            </div>
-    </div>
+    <div class="px-8 grid grid-cols-2 gap-6" id="menu-grid">
+        </div>
 
-    <div class="text-center mt-12 opacity-30">
-        <p class="text-[8px] text-white font-bold uppercase tracking-[0.4em]">&copy; 2026 PT Efendy Jaya Abadi</p>
+    <div class="text-center mt-16 opacity-10 italic">
+        <p class="text-[7px] font-black uppercase tracking-[0.5em]">CV EFENDY JAYA ABADI SYSTEM</p>
     </div>
 
 <script>
     const USER = JSON.parse(localStorage.getItem('achi_session'));
-    
+    const API = "https://script.google.com/macros/s/AKfycbynp6pxAtHrx_JSy3scsRQ88KYlDLY0gFUqxNU5ib8vyqfhDB13wFxI2ZKAup5Wn1gX/exec"; //  URL API Guys
+
     if(!USER) {
         window.location.href = "index.html";
     } else {
         document.getElementById('u-nama').innerText = USER.nama;
-        document.getElementById('u-role').innerText = USER.jabatan + " | " + USER.kapal;
-        document.getElementById('u-avatar').src = `https://ui-avatars.com/api/?name=${USER.nama}&background=fff&color=b31d1d&bold=true`;
+        document.getElementById('u-role').innerText = `${USER.jabatan} | CV EJA`;
+        
+        // Cek Level: Jika Boss (1), tampilkan panel keuangan
+        if(USER.level == 1) {
+            document.getElementById('owner-panel').classList.remove('hidden');
+            fetchStats();
+        }
+    }
+
+    async function fetchStats() {
+        try {
+            const r = await fetch(`${API}?action=getOwnerStats`);
+            const d = await r.json();
+            document.getElementById('st-hari').innerText = `Rp ${d.harian.toLocaleString('id-ID')}`;
+            document.getElementById('st-minggu').innerText = `Rp ${d.mingguan.toLocaleString('id-ID')}`;
+            document.getElementById('st-bulan').innerText = `Rp ${d.bulanan.toLocaleString('id-ID')}`;
+        } catch(e) { console.log("Stats Error"); }
     }
 
     const grid = document.getElementById('menu-grid');
-    let menus = [];
+    let m = [];
 
-    // LEVEL 1 (OWNER) & LEVEL 2 (ADMIN)
+    // Dashboard Menu Berdasarkan Level
     if(USER.level <= 2) {
-        menus.push({n: "BONGKAR TRIP", i: "fa-ship", l: "trip.html", c: "Hasil Ikan & Bagi Hasil"});
-        menus.push({n: "HUTANG KRU", i: "fa-wallet", l: "kru-list.html", c: "Manajemen Kas & Piutang"});
-        menus.push({n: "PURCHASING", i: "fa-shopping-cart", l: "purchasing.html", c: "Belanja & Nota"});
-        menus.push({n: "STOK BBM", i: "fa-gas-pump", l: "bbm.html", c: "Monitoring Solar"});
+        m.push({n: "REKAP FINANSIAL", i: "fa-chart-pie", l: "rekap.html"});
+        m.push({n: "BONGKAR TRIP", i: "fa-anchor", l: "trip.html"});
+        m.push({n: "HUTANG KRU", i: "fa-users-rectangle", l: "kru-list.html"});
     }
     
-    // LEVEL 4 (KAPTEN / KKM)
-    if(USER.level == 4) {
-        menus.push({n: "ANFRAKAN", i: "fa-file-invoice", l: "logistik.html", c: "Permintaan Barang"});
-        menus.push({n: "LAPOR BBM", i: "fa-gas-pump", l: "bbm.html", c: "Sisa Stok Solar"});
-    }
+    m.push({n: "LAPOR HARIAN", i: "fa-file-invoice-dollar", l: "logistik.html"});
+    m.push({n: "STOK BBM", i: "fa-gas-pump", l: "bbm.html"});
 
-    grid.innerHTML = menus.map(m => `
-        <div onclick="location.href='${m.l}'" class="menu-card p-6 shadow-xl flex flex-col items-center text-center">
-            <div class="icon-circle w-14 h-14 rounded-2xl flex items-center justify-center mb-4">
-                <i class="fas ${m.i} text-white text-xl"></i>
+    grid.innerHTML = m.map(x => `
+        <div onclick="location.href='${x.l}'" class="menu-card p-8 flex flex-col items-center text-center shadow-lg">
+            <div class="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-5 text-[#b31d1d] shadow-inner">
+                <i class="fas ${x.i} text-xl"></i>
             </div>
-            <h3 class="text-[11px] font-black text-gray-800 uppercase tracking-tighter mb-1">${m.n}</h3>
-            <p class="text-[7px] text-gray-400 font-bold uppercase tracking-widest">${m.c}</p>
+            <h3 class="text-[10px] font-black text-gray-200 uppercase tracking-tighter leading-none">${x.n}</h3>
         </div>
     `).join('');
 
-    function logout() {
-        if(confirm("Apakah Anda ingin keluar sistem?")) {
-            localStorage.clear();
-            window.location.href = "index.html";
-        }
-    }
+    function logout() { if(confirm("Logout dari sistem, Boss?")) { localStorage.clear(); window.location.href="index.html"; } }
 </script>
 </body>
 </html>
