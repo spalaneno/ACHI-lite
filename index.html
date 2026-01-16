@@ -13,57 +13,56 @@
             height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0;
             overflow: hidden;
         }
-        /* Animasi cahaya merah di latar belakang */
         .bg-glow {
-            position: absolute; width: 300px; height: 300px;
-            background: #b31d1d; filter: blur(150px);
-            border-radius: 50%; opacity: 0.2; animation: move 10s infinite alternate;
+            position: absolute; width: 400px; height: 400px;
+            background: #b31d1d; filter: blur(180px);
+            border-radius: 50%; opacity: 0.15; animation: move 12s infinite alternate;
         }
-        @keyframes move { from { transform: translate(-50%, -50%); } to { transform: translate(50%, 50%); } }
+        @keyframes move { from { transform: translate(-30%, -30%); } to { transform: translate(30%, 30%); } }
         
         .login-card {
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(179, 29, 29, 0.3);
-            border-radius: 2.5rem;
-            width: 100%; max-width: 360px;
+            background: rgba(15, 15, 15, 0.85);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(179, 29, 29, 0.2);
+            border-radius: 3rem;
+            width: 100%; max-width: 350px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
         }
-        .input-dark {
-            background: rgba(40, 40, 40, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white; transition: 0.3s;
+        .input-premium {
+            background: rgba(30, 30, 30, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: white; transition: 0.4s;
         }
-        .input-dark:focus { border-color: #b31d1d; background: rgba(60, 60, 60, 0.8); outline: none; }
-        .btn-crimson {
-            background: linear-gradient(to right, #b31d1d, #7a1212);
-            color: white; font-weight: 900; transition: 0.3s;
+        .input-premium:focus { border-color: #b31d1d; background: rgba(50, 50, 50, 0.9); outline: none; box-shadow: 0 0 20px rgba(179, 29, 29, 0.1); }
+        .btn-boss {
+            background: linear-gradient(135deg, #b31d1d 0%, #7a1212 100%);
+            color: white; font-weight: 900; transition: 0.3s; letter-spacing: 0.1em;
         }
-        .btn-crimson:active { transform: scale(0.95); }
+        .btn-boss:active { transform: scale(0.96); opacity: 0.9; }
     </style>
 </head>
 <body>
     <div class="bg-glow"></div>
     
-    <div class="login-card p-10 shadow-2xl z-10">
+    <div class="login-card p-10 z-10 animate__animated animate__fadeIn">
         <div class="text-center mb-10">
-            <img src="https://i.ibb.co/6P0qXFf/LOGO-BAPAK.png" alt="Logo" class="h-28 mx-auto mb-2 drop-shadow-[0_0_15px_rgba(179,29,29,0.5)]">
-            <div class="h-[2px] w-12 bg-[#b31d1d] mx-auto rounded-full"></div>
+            <img src="logo.png" alt="PT Efendy Jaya Abadi" class="h-32 mx-auto drop-shadow-[0_0_20px_rgba(179,29,29,0.4)]">
         </div>
 
         <div class="space-y-4">
             <div class="relative">
-                <i class="fas fa-user absolute left-4 top-4 text-gray-500"></i>
-                <input type="text" id="u" placeholder="USERNAME" class="input-dark w-full pl-12 pr-4 py-4 rounded-2xl font-bold text-sm">
+                <i class="fas fa-user absolute left-5 top-5 text-gray-600 text-xs"></i>
+                <input type="text" id="u" placeholder="USERNAME" class="input-premium w-full pl-12 pr-5 py-5 rounded-[1.5rem] font-bold text-xs uppercase tracking-widest">
             </div>
             <div class="relative">
-                <i class="fas fa-lock absolute left-4 top-4 text-gray-500"></i>
-                <input type="password" id="p" placeholder="PASSWORD" class="input-dark w-full pl-12 pr-4 py-4 rounded-2xl font-bold text-sm">
+                <i class="fas fa-lock absolute left-5 top-5 text-gray-600 text-xs"></i>
+                <input type="password" id="p" placeholder="PASSWORD" class="input-premium w-full pl-12 pr-5 py-5 rounded-[1.5rem] font-bold text-xs tracking-widest">
             </div>
-            <button onclick="doLogin()" id="btn" class="btn-crimson w-full py-4 rounded-2xl shadow-lg mt-4 uppercase italic tracking-widest text-xs">
-                Authentifikasi
+            <button onclick="doLogin()" id="btn" class="btn-boss w-full py-5 rounded-[1.5rem] shadow-2xl mt-4 uppercase italic text-[11px]">
+                Masuk Sistem
             </button>
         </div>
-        <p id="msg" class="mt-6 text-[9px] font-black text-red-500 text-center uppercase italic tracking-widest"></p>
+        <p id="msg" class="mt-8 text-[9px] font-black text-red-600 text-center uppercase italic tracking-widest opacity-80"></p>
     </div>
 
 <script>
@@ -73,15 +72,15 @@
         const p = document.getElementById('p').value.trim();
         const msg = document.getElementById('msg');
         if(!u || !p) return;
-        msg.innerText = "Mengecek Akses...";
+        msg.innerText = "Authenticating...";
         try {
             const r = await fetch(`${API}?action=login&u=${u}&p=${p}`);
             const res = await r.json();
             if(res.status === "success") {
                 localStorage.setItem('achi_session', JSON.stringify(res.data));
                 window.location.href = "dashboard.html";
-            } else { msg.innerText = "Akses Ditolak!"; }
-        } catch(e) { msg.innerText = "Kesalahan Server!"; }
+            } else { msg.innerText = "Akses Ditolak: Data Tidak Cocok"; }
+        } catch(e) { msg.innerText = "Server Error: Cek Koneksi Boss"; }
     }
 </script>
 </body>
