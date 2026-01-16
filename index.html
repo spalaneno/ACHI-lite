@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - PT Efendy Jaya Abadi</title>
+    <title>Login - CV Efendy Jaya Abadi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -24,7 +24,7 @@
             background: rgba(15, 15, 15, 0.85);
             backdrop-filter: blur(25px);
             border: 1px solid rgba(179, 29, 29, 0.2);
-            border-radius: 3rem;
+            border-radius: 3.5rem;
             width: 100%; max-width: 350px;
             box-shadow: 0 40px 100px rgba(0,0,0,0.8);
         }
@@ -33,7 +33,8 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
             color: white; transition: 0.4s;
         }
-        .input-premium:focus { border-color: #b31d1d; background: rgba(50, 50, 50, 0.9); outline: none; box-shadow: 0 0 20px rgba(179, 29, 29, 0.1); }
+        .input-premium:focus { border-color: #b31d1d; background: rgba(50, 50, 50, 0.9); outline: none; }
+        
         .btn-boss {
             background: linear-gradient(135deg, #b31d1d 0%, #7a1212 100%);
             color: white; font-weight: 900; transition: 0.3s; letter-spacing: 0.1em;
@@ -44,43 +45,51 @@
 <body>
     <div class="bg-glow"></div>
     
-    <div class="login-card p-10 z-10 animate__animated animate__fadeIn">
+    <div class="login-card p-12 z-10 animate__animated animate__fadeIn">
         <div class="text-center mb-10">
-            <img src="logo.png" alt="PT Efendy Jaya Abadi" class="h-32 mx-auto drop-shadow-[0_0_20px_rgba(179,29,29,0.4)]">
+            <img src="logo.png" alt="CV Efendy Jaya Abadi" class="h-32 mx-auto drop-shadow-[0_0_25px_rgba(179,29,29,0.4)]">
+            <p class="text-[9px] font-black text-white/30 tracking-[0.4em] uppercase mt-6">CV Efendy Jaya Abadi</p>
         </div>
 
         <div class="space-y-4">
             <div class="relative">
-                <i class="fas fa-user absolute left-5 top-5 text-gray-600 text-xs"></i>
-                <input type="text" id="u" placeholder="USERNAME" class="input-premium w-full pl-12 pr-5 py-5 rounded-[1.5rem] font-bold text-xs uppercase tracking-widest">
+                <i class="fas fa-user absolute left-5 top-5 text-gray-600 text-[10px]"></i>
+                <input type="text" id="u" placeholder="USERNAME" class="input-premium w-full pl-12 pr-5 py-5 rounded-[1.8rem] font-bold text-xs uppercase tracking-widest">
             </div>
             <div class="relative">
-                <i class="fas fa-lock absolute left-5 top-5 text-gray-600 text-xs"></i>
-                <input type="password" id="p" placeholder="PASSWORD" class="input-premium w-full pl-12 pr-5 py-5 rounded-[1.5rem] font-bold text-xs tracking-widest">
+                <i class="fas fa-lock absolute left-5 top-5 text-gray-600 text-[10px]"></i>
+                <input type="password" id="p" placeholder="PASSWORD" class="input-premium w-full pl-12 pr-5 py-5 rounded-[1.8rem] font-bold text-xs tracking-widest">
             </div>
-            <button onclick="doLogin()" id="btn" class="btn-boss w-full py-5 rounded-[1.5rem] shadow-2xl mt-4 uppercase italic text-[11px]">
-                Masuk Sistem
+            <button onclick="doLogin()" id="btn" class="btn-boss w-full py-5 rounded-[1.8rem] shadow-2xl mt-4 uppercase italic text-[11px]">
+                Authentifikasi
             </button>
         </div>
         <p id="msg" class="mt-8 text-[9px] font-black text-red-600 text-center uppercase italic tracking-widest opacity-80"></p>
     </div>
 
 <script>
-    const API = "https://script.google.com/macros/s/AKfycbwfWHNuSdfpw8UoQ0XrWxvU7yfQwnw366KwdzOFLvwApqjPgpiWS0PwMyGwg0C9SCIS/exec";
+    // GANTI DENGAN URL WEB APP GOOGLE SCRIPT BOSS
+    const API = "https://script.google.com/macros/s/AKfycbynp6pxAtHrx_JSy3scsRQ88KYlDLY0gFUqxNU5ib8vyqfhDB13wFxI2ZKAup5Wn1gX/exec";
+
     async function doLogin() {
         const u = document.getElementById('u').value.trim();
         const p = document.getElementById('p').value.trim();
         const msg = document.getElementById('msg');
         if(!u || !p) return;
-        msg.innerText = "Authenticating...";
+        
+        msg.innerText = "MENGECEK AKSES BOSS...";
         try {
             const r = await fetch(`${API}?action=login&u=${u}&p=${p}`);
             const res = await r.json();
             if(res.status === "success") {
                 localStorage.setItem('achi_session', JSON.stringify(res.data));
                 window.location.href = "dashboard.html";
-            } else { msg.innerText = "Akses Ditolak: Data Tidak Cocok"; }
-        } catch(e) { msg.innerText = "Server Error: Cek Koneksi Boss"; }
+            } else { 
+                msg.innerText = "AKSES DITOLAK!"; 
+            }
+        } catch(e) { 
+            msg.innerText = "SERVER ERROR!"; 
+        }
     }
 </script>
 </body>
