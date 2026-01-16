@@ -3,152 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACHI - INPUT TRIP</title>
+    <title>Bongkar Trip - CV EJA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background-color: #0f0f0f; color: #e0e0e0; font-family: 'Inter', sans-serif; }
-        .achi-card { background: linear-gradient(145deg, #1a1a1a, #121212); border: 1px solid #333; }
-        .input-premium { background: #262626; border: 1px solid #444; color: white; padding: 12px; border-radius: 12px; width: 100%; outline: none; transition: 0.3s; }
-        .input-premium:focus { border-color: #b31d1d; box-shadow: 0 0 10px rgba(179, 29, 29, 0.3); }
-        .label-silver { color: #a0a0a0; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; display: block; }
-        .btn-calculate { background: linear-gradient(to right, #b31d1d, #7a1212); }
+        body { background: #030303; color: white; font-family: 'Inter', sans-serif; }
+        .input-dark { background: #111; border: 1px solid #333; color: white; border-radius: 1rem; padding: 12px; width: 100%; font-size: 13px; }
+        .btn-primary { background: linear-gradient(135deg, #1e40af, #1e3a8a); color: white; font-weight: 900; width: 100%; padding: 15px; border-radius: 1rem; text-transform: uppercase; }
     </style>
 </head>
-<body class="p-4 pb-20">
+<body class="pb-10">
 
-    <div class="flex justify-between items-center mb-6">
-        <button onclick="location.href='dashboard.html'" class="text-gray-400"><i class="fas fa-arrow-left text-xl"></i></button>
-        <h2 class="text-xl font-black italic tracking-tighter uppercase text-white">Bongkaran Kapal</h2>
-        <div class="w-6"></div>
+    <div class="p-5 flex justify-between items-center bg-[#0a0000] border-b border-gray-900 sticky top-0 z-20">
+        <button onclick="location.href='dashboard.html'" class="text-gray-400 flex items-center gap-2">
+            <i class="fas fa-arrow-left"></i> <span class="text-[9px] font-black uppercase">Dashboard</span>
+        </button>
+        <p class="text-[10px] font-black uppercase italic tracking-widest">Input Bongkar Trip</p>
+        <button onclick="logout()" class="text-red-600"><i class="fas fa-power-off"></i></button>
     </div>
 
-    <div class="achi-card p-6 rounded-[2.5rem] mb-6 shadow-2xl">
-        <div class="space-y-4">
+    <div class="p-6">
+        <form id="form-trip" class="space-y-4">
             <div>
-                <label class="label-silver">Nama Kapal</label>
-                <select id="t-kapal" class="input-premium">
-                    <option>KM. PAJEKO 01</option>
-                    <option>KM. PAJEKO 02</option>
+                <label class="text-[9px] font-black text-gray-500 uppercase ml-1">Tanggal Bongkar</label>
+                <input type="date" id="tgl" class="input-dark mt-1" required>
+            </div>
+            <div>
+                <label class="text-[9px] font-black text-gray-500 uppercase ml-1">Armada Kapal</label>
+                <select id="kpl" class="input-dark mt-1" required>
+                    <option value="KM. NABAWI 09">KM. NABAWI 09</option>
+                    <option value="KM. LASTIKA STAR">KM. LASTIKA STAR</option>
+                    <option value="KM. SRIKANDI 01">KM. SRIKANDI 01</option>
                 </select>
             </div>
-            
+            <div>
+                <label class="text-[9px] font-black text-gray-500 uppercase ml-1">Jenis Ikan</label>
+                <input type="text" id="ikan" class="input-dark mt-1" placeholder="Cakalang / Deho / dll" required>
+            </div>
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="label-silver">Total Berat (Kg)</label>
-                    <input id="t-berat" type="number" placeholder="Contoh: 10000" class="input-premium" oninput="liveCalc()">
+                    <label class="text-[9px] font-black text-gray-500 uppercase ml-1">Berat (Kg)</label>
+                    <input type="number" id="berat" oninput="hitung()" class="input-dark mt-1" placeholder="0" required>
                 </div>
                 <div>
-                    <label class="label-silver">Harga Jual/Kg (Rp)</label>
-                    <input id="t-harga" type="number" placeholder="Contoh: 12000" class="input-premium" oninput="liveCalc()">
+                    <label class="text-[9px] font-black text-gray-500 uppercase ml-1">Harga / Kg</label>
+                    <input type="number" id="harga" oninput="hitung()" class="input-dark mt-1" placeholder="0" required>
                 </div>
             </div>
-
-            <div>
-                <label class="label-silver">Total Operasional (Solar/Es/Makan)</label>
-                <input id="t-ops" type="number" placeholder="Masukkan Total Biaya" class="input-premium" oninput="liveCalc()">
+            <div class="p-4 bg-blue-900/10 border border-blue-900/30 rounded-2xl">
+                <p class="text-[8px] font-black text-blue-500 uppercase">Estimasi Hasil Bruto</p>
+                <h2 id="display-gross" class="text-2xl font-black italic text-white tracking-tighter">Rp 0</h2>
             </div>
-
-            <div class="border-t border-gray-800 pt-4 my-2">
-                <p class="text-[9px] text-red-500 font-black mb-4 uppercase italic">* Parameter Fleksibel (Bisa Diubah)</p>
-                <div class="grid grid-cols-3 gap-2">
-                    <div>
-                        <label class="label-silver">Biaya Rakit</label>
-                        <input id="t-rakit" type="number" value="2500" class="input-premium text-xs" oninput="liveCalc()">
-                    </div>
-                    <div>
-                        <label class="label-silver">% Rawat</label>
-                        <input id="t-rawat" type="number" value="10" class="input-premium text-xs" oninput="liveCalc()">
-                    </div>
-                    <div>
-                        <label class="label-silver">Premi/Kg</label>
-                        <input id="t-premi" type="number" value="500" class="input-premium text-xs" oninput="liveCalc()">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="result-card" class="achi-card p-6 rounded-[2.5rem] border-t-4 border-red-600 hidden animate__animated animate__fadeInUp">
-        <h3 class="text-center text-[10px] font-black silver-text mb-6 tracking-[0.3em] uppercase">Estimasi Bagi Hasil</h3>
-        
-        <div class="space-y-3">
-            <div class="flex justify-between border-b border-gray-800 pb-2">
-                <span class="text-xs silver-text">Hasil Kotor</span>
-                <span id="res-kotor" class="font-bold text-white">Rp 0</span>
-            </div>
-            <div class="flex justify-between border-b border-gray-800 pb-2">
-                <span class="text-xs silver-text">Potongan Rakit</span>
-                <span id="res-rakit" class="font-bold text-red-400">-Rp 0</span>
-            </div>
-            <div class="flex justify-between border-b border-gray-800 pb-2">
-                <span class="text-xs silver-text">Simpanan Perawatan (10%)</span>
-                <span id="res-rawat" class="font-bold text-red-400">-Rp 0</span>
-            </div>
-            <div class="flex justify-between border-b border-gray-800 pb-2">
-                <span class="text-xs silver-text">Premi Perwira</span>
-                <span id="res-premi" class="font-bold text-red-400">-Rp 0</span>
-            </div>
-            <div class="flex justify-between pt-2">
-                <span class="text-sm font-black text-white italic uppercase tracking-tighter">Laba Bersih</span>
-                <span id="res-bersih" class="text-lg font-black text-green-500 italic">Rp 0</span>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4 mt-8">
-            <div class="bg-black/30 p-4 rounded-2xl text-center border border-gray-800">
-                <p class="text-[9px] silver-text uppercase mb-1">Jatah Owner (50%)</p>
-                <p id="res-owner" class="text-sm font-black text-white">Rp 0</p>
-            </div>
-            <div class="bg-black/30 p-4 rounded-2xl text-center border border-gray-800">
-                <p class="text-[9px] silver-text uppercase mb-1">Jatah ABK (50%)</p>
-                <p id="res-abk" class="text-sm font-black text-white">Rp 0</p>
-            </div>
-        </div>
-
-        <button onclick="simpanTrip()" class="w-full btn-calculate text-white p-4 rounded-2xl font-black uppercase mt-8 shadow-xl active:scale-95 transition-all">Simpan Laporan Trip</button>
+            <button type="submit" id="btn-submit" class="btn-primary shadow-lg shadow-blue-900/20">Simpan Data Trip</button>
+        </form>
     </div>
 
     <script>
-        function liveCalc() {
-            const berat = parseFloat(document.getElementById('t-berat').value) || 0;
-            const harga = parseFloat(document.getElementById('t-harga').value) || 0;
-            const ops = parseFloat(document.getElementById('t-ops').value) || 0;
-            const rakitPerKg = parseFloat(document.getElementById('t-rakit').value) || 0;
-            const rawatPersen = parseFloat(document.getElementById('t-rawat').value) || 0;
-            const premiPerKg = parseFloat(document.getElementById('t-premi').value) || 0;
+        const USER = JSON.parse(localStorage.getItem('achi_session'));
+        const API = "https://script.google.com/macros/s/AKfycbzk03FnZDF_z2F8MNzUDF42WM6pzxsHZMufwRNNg-ejDMb9ri86iEKeSUqQGXU81T0-/exec"; // URL LANGSUNG TEMPEL DI SINI
 
-            if(berat > 0 && harga > 0) {
-                document.getElementById('result-card').classList.remove('hidden');
-                
-                const kotor = berat * harga;
-                const sisa1 = kotor - ops;
-                const totalRakit = berat * rakitPerKg;
-                const sisa2 = sisa1 - totalRakit;
-                const totalRawat = sisa2 * (rawatPersen / 100);
-                const sisa3 = sisa2 - totalRawat;
-                const totalPremi = berat * premiPerKg;
-                const bersih = sisa3 - totalPremi;
+        if(!USER) window.location.href = "index.html";
+        document.getElementById('tgl').valueAsDate = new Date();
 
-                document.getElementById('res-kotor').innerText = formatRupiah(kotor);
-                document.getElementById('res-rakit').innerText = "- " + formatRupiah(totalRakit);
-                document.getElementById('res-rawat').innerText = "- " + formatRupiah(totalRawat);
-                document.getElementById('res-premi').innerText = "- " + formatRupiah(totalPremi);
-                document.getElementById('res-bersih').innerText = formatRupiah(bersih);
-                document.getElementById('res-owner').innerText = formatRupiah(bersih / 2);
-                document.getElementById('res-abk').innerText = formatRupiah(bersih / 2);
-            }
+        function hitung() {
+            const b = document.getElementById('berat').value || 0;
+            const h = document.getElementById('harga').value || 0;
+            document.getElementById('display-gross').innerText = `Rp ${(b * h).toLocaleString('id-ID')}`;
         }
 
-        function formatRupiah(angka) {
-            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
-        }
+        document.getElementById('form-trip').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit');
+            btn.disabled = true; btn.innerHTML = "Menyimpan...";
 
-        async function simpanTrip() {
-            if(!confirm("Apakah hitungan sudah benar? Data akan masuk ke laporan keuangan.")) return;
-            // Panggil API Google Script action: 'simpanTrip'
-            alert("Laporan Berhasil Disimpan & WA Terkirim ke Owner!");
-        }
+            const params = new URLSearchParams({
+                action: 'saveTrip',
+                tgl: document.getElementById('tgl').value,
+                kapal: document.getElementById('kpl').value,
+                ikan: document.getElementById('ikan').value,
+                berat: document.getElementById('berat').value,
+                harga: document.getElementById('harga').value,
+                gross: document.getElementById('berat').value * document.getElementById('harga').value,
+                user: USER.nama
+            });
+
+            try {
+                const r = await fetch(`${API}?${params.toString()}`);
+                const res = await r.json();
+                if(res.status === "success") {
+                    alert(`Data Trip Berhasil Disimpan, ${USER.panggilan}!`);
+                    document.getElementById('form-trip').reset();
+                    hitung();
+                }
+            } catch(e) { alert("Gagal Simpan."); }
+            finally { btn.disabled = false; btn.innerHTML = "Simpan Data Trip"; }
+        };
+
+        function logout() { localStorage.clear(); window.location.href="index.html"; }
     </script>
 </body>
 </html>
