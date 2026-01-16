@@ -3,125 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACHI - PURCHASING</title>
+    <title>Purchasing List - CV EJA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background-color: #0b0b0b; color: #fff; font-family: 'Inter', sans-serif; }
-        .achi-card { background: linear-gradient(145deg, #1a1a1a, #111); border: 1px solid #222; }
-        .btn-confirm { background: linear-gradient(to right, #b31d1d, #7a1212); }
-        .input-dark { background: #222; border: 1px solid #444; color: white; border-radius: 12px; }
+        body { background: #030303; color: white; font-family: 'Inter', sans-serif; }
+        .glass-card { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1.5rem; margin-bottom: 1rem; }
+        .input-edit { background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 0.5rem; padding: 5px 10px; font-size: 12px; width: 100%; }
+        .btn-finalize { background: linear-gradient(135deg, #059669, #064e3b); color: white; font-weight: 900; text-transform: uppercase; font-size: 10px; padding: 12px; border-radius: 1rem; width: 100%; }
     </style>
 </head>
-<body class="p-6 pb-24">
-    <header class="flex justify-between items-center mb-8">
-        <div>
-            <h1 class="text-xl font-black italic uppercase italic">Daftar Belanja</h1>
-            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em]">Ready to Execute</p>
-        </div>
-        <button onclick="location.href='dashboard.html'" class="text-gray-400 text-xl"><i class="fas fa-times"></i></button>
-    </header>
+<body class="pb-20">
 
-    <div id="shop-list" class="space-y-4">
-        <div class="text-center py-20 opacity-20 font-black italic">Mencari Daftar Belanja...</div>
+    <div class="p-5 flex justify-between items-center bg-black border-b border-white/5 sticky top-0 z-20">
+        <button onclick="location.href='dashboard.html'" class="text-gray-400 flex items-center gap-2">
+            <i class="fas fa-chevron-left"></i> <span class="text-[9px] font-black uppercase">Dashboard</span>
+        </button>
+        <p class="text-[10px] font-black uppercase italic tracking-widest text-green-500">Purchasing List</p>
+        <button onclick="logout()" class="text-red-600"><i class="fas fa-power-off"></i></button>
     </div>
 
-    <div id="modal-beli" class="fixed inset-0 bg-black/95 backdrop-blur-md hidden flex items-center justify-center p-6 z-50">
-        <div class="achi-card w-full max-w-sm p-8 rounded-[2.5rem] border-t-4 border-red-600">
-            <h3 class="text-lg font-black text-white mb-1 uppercase italic">Konfirmasi Pembelian</h3>
-            <p id="b-nama" class="text-[10px] text-red-500 font-bold mb-6"></p>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="text-[9px] text-gray-500 font-black uppercase">Harga Total Real (Rp)</label>
-                    <input type="number" id="b-harga" class="w-full input-dark p-3 text-lg font-black" placeholder="0">
-                </div>
-                
-                <div>
-                    <label class="text-[9px] text-gray-500 font-black uppercase">Metode Pembayaran</label>
-                    <select id="b-metode" class="w-full input-dark p-3 text-xs font-bold uppercase">
-                        <option value="CASH / UANG PRIBADI">Cash / Uang Pribadi</option>
-                        <option value="TRANSFER OWNER">Transfer dari Owner</option>
-                        <option value="QRIS OWNER">QR Code / QRIS Owner</option>
-                    </select>
-                </div>
+    <div class="p-6">
+        <div class="mb-6">
+            <h2 class="text-xl font-black italic tracking-tighter uppercase">Daftar Belanja</h2>
+            <p class="text-[8px] text-gray-500 font-black uppercase tracking-widest">Lengkapi harga & qty untuk transaksi final</p>
+        </div>
 
-                <div class="flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/5">
-                    <input type="checkbox" id="b-nota" class="w-5 h-5 accent-red-600">
-                    <label for="b-nota" class="text-[10px] font-bold text-gray-300 uppercase">Ada Nota Fisik?</label>
-                </div>
-
-                <button onclick="saveBeli()" class="w-full btn-confirm text-white p-4 rounded-2xl font-black uppercase shadow-lg shadow-red-900/20">Selesaikan Pembelian</button>
-                <button onclick="closeModal()" class="w-full text-gray-500 font-bold uppercase text-[10px]">Batalkan</button>
-            </div>
+        <div id="list-purchasing" class="space-y-4">
+            <p class="text-center text-[10px] text-gray-600 animate-pulse py-10">Memuat daftar belanja yang disetujui...</p>
         </div>
     </div>
 
 <script>
-    const API = "https://script.google.com/macros/s/AKfycbxzwGBlNLfpWDdjmHTjtrH1PTPMmgaNVjPNpqPlbyXYr7MDTsuZrNoTh4OCs77J8p4/exec";
-    let activeId = "";
+    const USER = JSON.parse(localStorage.getItem('achi_session'));
+    const API = "https://script.google.com/macros/s/AKfycbzk03FnZDF_z2F8MNzUDF42WM6pzxsHZMufwRNNg-ejDMb9ri86iEKeSUqQGXU81T0-/exec";
 
-    async function loadShop() {
-        const container = document.getElementById('shop-list');
+    if(!USER || USER.level > 3) {
+        alert("Akses Khusus Admin & Staf");
+        window.location.href = "dashboard.html";
+    }
+
+    async function loadPurchasing() {
+        const list = document.getElementById('list-purchasing');
         try {
-            const r = await fetch(`${API}?action=getData`);
-            const d = await r.json();
-            // Tampilkan hanya yang disetujui owner
-            const approved = d.data.filter(i => i[12] === "DISETUJUI OWNER");
-            
-            container.innerHTML = approved.length === 0 ? 
-            '<div class="py-20 text-center text-gray-600 font-bold italic uppercase">Tidak Ada Antrian Belanja</div>' :
-            approved.map(i => `
-                <div class="achi-card p-6 rounded-[2rem] animate__animated animate__fadeIn">
-                    <div class="flex justify-between items-start mb-3">
-                        <span class="text-[8px] bg-red-600 text-white px-2 py-1 rounded-md font-black uppercase tracking-widest">${i[11]}</span>
-                        <span class="text-[8px] text-gray-600 font-bold">${i[1]}</span>
+            // Mengambil data dengan status 'APPROVED' (artinya sudah di-acc Owner)
+            const r = await fetch(`${API}?action=getLogistikData&status=APPROVED`);
+            const data = await r.json();
+
+            if (data.length === 0) {
+                list.innerHTML = `<div class="text-center py-20 text-[10px] text-gray-600 font-black uppercase tracking-widest">Belum ada daftar belanja baru</div>`;
+                return;
+            }
+
+            list.innerHTML = data.map(n => `
+                <div class="glass-card p-5 border-l-4 border-green-600">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <p class="text-[8px] text-green-500 font-black uppercase">${n.kat} | ${n.kapal}</p>
+                            <p class="text-sm font-black uppercase italic">${n.item}</p>
+                            <p class="text-[8px] text-gray-500 font-bold uppercase italic">Diminta oleh: ${n.user}</p>
+                        </div>
                     </div>
-                    <h4 class="text-lg font-black text-white leading-none mb-1 uppercase">${i[4]}</h4>
-                    <p class="text-xs text-gray-400 font-bold mb-4 italic">${i[6]} ${i[5]} <span class="text-[9px] ml-2 text-zinc-600 italic">Ref: ${i[0]}</span></p>
-                    <button onclick="openModal('${i[0]}','${i[4]}','${i[6]} ${i[5]}')" class="w-full py-3 border border-red-600 text-red-600 rounded-xl font-black uppercase text-[10px] hover:bg-red-600 hover:text-white transition-all">Input Hasil Beli</button>
+                    
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <div>
+                            <label class="text-[7px] font-black text-gray-600 uppercase">Qty</label>
+                            <input type="number" id="qty-${n.row}" value="${n.qty}" class="input-edit">
+                        </div>
+                        <div>
+                            <label class="text-[7px] font-black text-gray-600 uppercase">Satuan</label>
+                            <input type="text" id="sat-${n.row}" value="${n.sat}" class="input-edit">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="text-[7px] font-black text-yellow-600 uppercase">Harga Satuan (Final)</label>
+                            <input type="number" id="hrg-${n.row}" value="${n.harga}" class="input-edit border-yellow-900/30" placeholder="Input harga beli...">
+                        </div>
+                    </div>
+
+                    <button onclick="selesaikanTransaksi(${n.row})" class="btn-finalize">Selesaikan & Simpan Nota</button>
                 </div>
             `).join('');
-        } catch(e) { container.innerHTML = "Gagal memuat data belanja."; }
+        } catch(e) { list.innerHTML = "Gagal memuat data belanja."; }
     }
 
-    function openModal(id, nama, qty) {
-        activeId = id;
-        document.getElementById('b-nama').innerText = nama + " (" + qty + ")";
-        document.getElementById('modal-beli').classList.remove('hidden');
-    }
+    async function selesaikanTransaksi(row) {
+        const qty = document.getElementById(`qty-${row}`).value;
+        const sat = document.getElementById(`sat-${row}`).value;
+        const hrg = document.getElementById(`hrg-${row}`).value;
 
-    function closeModal() { document.getElementById('modal-beli').classList.add('hidden'); }
-
-    async function saveBeli() {
-        const harga = document.getElementById('b-harga').value;
-        const metode = document.getElementById('b-metode').value;
-        const adaNota = document.getElementById('b-nota').checked;
-        
-        let alasan = "";
-        if(!adaNota) {
-            alasan = prompt("PERINGATAN: Pembelian tanpa nota. Masukkan alasannya:");
-            if(!alasan) return alert("Alasan wajib diisi!");
+        if(!hrg || hrg <= 0) {
+            alert("Mohon lengkapi harga terlebih dahulu.");
+            return;
         }
 
-        const payload = {
-            action: "updateStatus",
-            id: activeId,
-            status: "DIBELI",
-            hargaReal: harga,
-            metode: metode,
-            nota: adaNota ? "ADA NOTA" : "TIDAK ADA (" + alasan + ")",
-            pembayar: JSON.parse(localStorage.getItem('achi_session')).nama
-        };
+        if(!confirm(`Simpan transaksi final ini?`)) return;
 
-        // Kirim data ke Google Script
-        // ...fetch...
-        alert("Barang " + payload.nota + ". Berhasil Disimpan!");
-        closeModal();
-        loadShop();
+        try {
+            const params = new URLSearchParams({
+                action: 'finalizePurchasing',
+                row: row,
+                qty: qty,
+                satuan: sat,
+                harga: hrg
+            });
+
+            const r = await fetch(`${API}?${params.toString()}`);
+            const res = await r.json();
+            
+            if(res.status === "success") {
+                alert(`Transaksi Selesai. Data telah masuk ke laporan keuangan.`);
+                loadPurchasing();
+            }
+        } catch(e) { alert("Gagal menyimpan transaksi."); }
     }
 
-    loadShop();
+    function logout() { localStorage.clear(); window.location.href="index.html"; }
+    loadPurchasing();
 </script>
 </body>
 </html>
