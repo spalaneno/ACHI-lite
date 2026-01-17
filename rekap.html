@@ -3,29 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACHI SYSTEM - Executive Rekap</title>
+    <title>ACHI SYSTEM - Executive Control</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        
-        body { background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
         .card-exec { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1rem; }
         .input-exec { background: #111; border: 1px solid #222; color: #fff; border-radius: 0.75rem; padding: 12px; width: 100%; font-size: 13px; }
+        .tab-active { border-bottom: 2px solid #3b82f6; color: #3b82f6; font-weight: 800; }
         
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; color: #000 !important; padding: 1cm; }
             .print-header { display: block !important; text-align: center; border-bottom: 3px double #000; margin-bottom: 20px; padding-bottom: 10px; }
             .summary-print { display: flex !important; justify-content: space-around; border: 1px solid #000; padding: 15px; margin-bottom: 25px; background: #f9f9f9 !important; -webkit-print-color-adjust: exact; }
-            .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-            .data-table th { background: #f2f2f2 !important; border: 1px solid #000; padding: 8px; font-size: 10px; text-transform: uppercase; -webkit-print-color-adjust: exact; }
-            .data-table td { border: 1px solid #ccc; padding: 8px; font-size: 10px; color: #000 !important; }
-            .sign-section { display: grid !important; grid-template-cols: 1fr 1fr; margin-top: 50px; text-align: center; font-size: 11px; }
-            .sign-space { height: 70px; }
-            .print-footer { display: block !important; text-align: center; margin-top: 40px; font-weight: bold; font-size: 12px; border-top: 1px solid #eee; padding-top: 10px; }
+            .data-table { width: 100%; border-collapse: collapse; }
+            .data-table th, .data-table td { border: 1px solid #ccc; padding: 8px; font-size: 10px; color: black !important; }
+            .sign-section { display: grid !important; grid-template-cols: 1fr 1fr; margin-top: 50px; text-align: center; }
         }
-        .print-header, .summary-print, .sign-section, .print-footer { display: none; }
+        .print-header, .summary-print, .sign-section { display: none; }
     </style>
 </head>
 <body class="p-5">
@@ -36,195 +33,217 @@
         </button>
         <div class="text-right">
             <h1 class="text-lg font-black italic uppercase tracking-tighter">ACHI SYSTEM</h1>
-            <p class="text-[8px] text-blue-500 font-bold tracking-widest uppercase italic">Financial Management Control</p>
+            <p class="text-[8px] text-blue-500 font-bold tracking-widest uppercase italic">Executive Control Panel</p>
         </div>
     </div>
 
     <div class="grid grid-cols-3 gap-2 mb-6 no-print text-center">
         <div class="card-exec p-3 border-b-2 border-blue-600">
             <p class="text-[7px] font-bold text-gray-500 uppercase">Hari Ini</p>
-            <p id="out-today" class="text-[10px] font-extrabold mt-1 text-blue-400">Rp 0</p>
+            <p id="out-today" class="text-[10px] font-extrabold mt-1 text-blue-400">---</p>
         </div>
         <div class="card-exec p-3 border-b-2 border-purple-600">
             <p class="text-[7px] font-bold text-gray-500 uppercase">Minggu Ini</p>
-            <p id="out-week" class="text-[10px] font-extrabold mt-1 text-purple-400">Rp 0</p>
+            <p id="out-week" class="text-[10px] font-extrabold mt-1 text-purple-400">---</p>
         </div>
         <div class="card-exec p-3 border-b-2 border-orange-600">
             <p class="text-[7px] font-bold text-gray-500 uppercase">Bulan Ini</p>
-            <p id="out-month" class="text-[10px] font-extrabold mt-1 text-orange-400">Rp 0</p>
+            <p id="out-month" class="text-[10px] font-extrabold mt-1 text-orange-400">---</p>
         </div>
     </div>
 
-    <div class="card-exec p-5 mb-8 no-print shadow-xl">
-        <div class="grid grid-cols-2 gap-3 mb-4">
-            <div>
-                <label class="text-[9px] font-bold text-gray-500 uppercase ml-1">Dari</label>
-                <input type="date" id="start-date" class="input-exec mt-1">
-            </div>
-            <div>
-                <label class="text-[9px] font-bold text-gray-500 uppercase ml-1">Sampai</label>
-                <input type="date" id="end-date" class="input-exec mt-1">
-            </div>
-        </div>
-        
-        <div class="grid grid-cols-2 gap-3 mb-5">
-            <select id="filter-kapal" class="input-exec font-bold text-gray-300">
-                <option value="SEMUA">SELURUH ARMADA</option>
-                <option value="KM. NABAWI 09">KM. NABAWI 09</option>
-                <option value="KM. LASTIKA STAR">KM. LASTIKA STAR</option>
-                <option value="KM. SRIKANDI 01">KM. SRIKANDI 01</option>
-            </select>
-            <select id="filter-tipe" class="input-exec font-bold text-blue-400">
-                <option value="SEMUA">GABUNGAN</option>
-                <option value="IN">PEMASUKAN</option>
-                <option value="OUT">PENGELUARAN</option>
-            </select>
-        </div>
+    <div class="flex space-x-4 mb-6 no-print border-b border-gray-900 pb-2 overflow-x-auto">
+        <button onclick="switchTab('rekap')" id="tab-rekap" class="tab-active text-[10px] uppercase tracking-wider pb-2">Rekap Keuangan</button>
+        <button onclick="switchTab('anfrakan')" id="tab-anfrakan" class="text-[10px] uppercase tracking-wider pb-2 text-gray-500">Persetujuan Anfrakan</button>
+    </div>
 
-        <div class="flex gap-2">
-            <button id="btn-tampilkan" class="flex-[3] bg-blue-600 py-4 rounded-xl font-black uppercase text-[11px] tracking-widest active:scale-95 transition shadow-lg shadow-blue-900/40">Generate Report</button>
-            <button onclick="window.print()" id="btn-print" class="hidden flex-1 bg-gray-800 py-4 rounded-xl text-white active:scale-95 transition"><i class="fas fa-print"></i></button>
+    <div id="section-rekap" class="no-print">
+        <div class="card-exec p-5 mb-8 shadow-xl">
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <input type="date" id="start-date" class="input-exec">
+                <input type="date" id="end-date" class="input-exec">
+            </div>
+            <div class="grid grid-cols-2 gap-3 mb-5">
+                <select id="filter-kapal" class="input-exec font-bold text-gray-300">
+                    <option value="SEMUA">SEMUA ARMADA</option>
+                    <option value="KM. NABAWI 09">KM. NABAWI 09</option>
+                    <option value="KM. LASTIKA STAR">KM. LASTIKA STAR</option>
+                    <option value="KM. SRIKANDI 01">KM. SRIKANDI 01</option>
+                </select>
+                <select id="filter-tipe" class="input-exec font-bold text-blue-400">
+                    <option value="SEMUA">GABUNGAN</option>
+                    <option value="IN">PEMASUKAN</option>
+                    <option value="OUT">PENGELUARAN</option>
+                </select>
+            </div>
+            <div class="flex gap-2">
+                <button id="btn-tampilkan" class="flex-[3] bg-blue-600 py-4 rounded-xl font-black uppercase text-[11px] tracking-widest active:scale-95 transition">Tampilkan</button>
+                <button onclick="window.print()" id="btn-print" class="hidden flex-1 bg-gray-800 py-4 rounded-xl text-white"><i class="fas fa-print"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="section-anfrakan" class="hidden no-print">
+        <div class="mb-4">
+            <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-4">Permintaan Perlu Persetujuan</p>
+            <div id="anfrakan-list" class="space-y-3">
+                <p class="text-center text-[9px] text-gray-600 py-10 uppercase font-bold tracking-widest">Memuat Permintaan...</p>
+            </div>
         </div>
     </div>
 
     <div class="print-header">
         <h1 class="text-xl font-black">LAPORAN REKAPITULASI ACHI SYSTEM</h1>
-        <h2 class="text-lg font-bold tracking-widest">CV. EFENDY JAYA ABADI</h2>
-        <p id="print-info" class="text-xs mt-2 italic text-gray-600 font-bold uppercase"></p>
+        <h2 class="text-lg font-bold tracking-widest uppercase text-gray-600">CV. EFENDY JAYA ABADI</h2>
+        <p id="print-info" class="text-xs mt-2 italic font-bold"></p>
     </div>
 
     <div id="summary-print" class="summary-print">
-        <div><p class="text-[9px] font-bold uppercase">Total Pemasukan</p><p id="p-in" class="text-sm font-black text-green-700"></p></div>
-        <div><p class="text-[9px] font-bold uppercase">Total Pengeluaran</p><p id="p-out" class="text-sm font-black text-red-700"></p></div>
-        <div><p class="text-[9px] font-bold uppercase">Laba Bersih (Net)</p><p id="p-net" class="text-sm font-black text-blue-700"></p></div>
+        <div><p class="text-[9px] font-bold uppercase">Masuk</p><p id="p-in" class="text-sm font-black"></p></div>
+        <div><p class="text-[9px] font-bold uppercase">Keluar</p><p id="p-out" class="text-sm font-black"></p></div>
+        <div><p class="text-[9px] font-bold uppercase">Net</p><p id="p-net" class="text-sm font-black"></p></div>
     </div>
 
     <div id="list-container">
-        <div id="msg" class="text-center py-10 text-gray-700 font-bold uppercase text-[9px] tracking-widest no-print">Tentukan Periode Laporan</div>
+        <div id="msg" class="text-center py-10 text-gray-700 font-bold uppercase text-[9px] tracking-widest no-print">Sistem Siap</div>
         <div id="app-list" class="space-y-3 no-print"></div>
         <table id="print-table" class="data-table hidden print:table">
             <thead>
-                <tr><th>Tgl</th><th>Kapal</th><th>Keterangan</th><th>Tipe</th><th>Nilai (IDR)</th></tr>
+                <tr><th>Tgl</th><th>Kapal</th><th>Item</th><th>Tipe</th><th>Nilai</th></tr>
             </thead>
             <tbody id="print-body"></tbody>
         </table>
     </div>
 
     <div class="sign-section">
-        <div>
-            <p>Accounting,</p>
-            <div class="sign-space"></div>
-            <p class="font-bold underline uppercase">Oktavianus David</p>
-        </div>
-        <div>
-            <p>Menyetujui,</p>
-            <div class="sign-space"></div>
-            <p class="font-bold underline uppercase">Pak CEO Hengky / Ibu CEO Achy</p>
-        </div>
-    </div>
-
-    <div class="print-footer italic">
-        CV. EFENDY JAYA ABADI
+        <div><p>Accounting,</p><div class="sign-space"></div><p class="font-bold underline uppercase">Oktavianus David</p></div>
+        <div><p>Menyetujui,</p><div class="sign-space"></div><p class="font-bold underline uppercase">Pak CEO Hengky / Ibu CEO Achy</p></div>
     </div>
 
 <script>
-    // URL API BOSS SUDAH TERPASANG
-    const API_URL = "https://script.google.com/macros/s/AKfycby-WfRG8NX0DCs3rLG5MQGgtsvCETHpSC7dbnICqNY4FHKdB3dG2W7eRsR0VZ_-dvsm/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycby-WfRG8NX0DCs3rLG5MQGgtsvCETHpSC7dbnICqNY4FHKdB3dG2W7eRsR0VZ_-dvsm/exec";
 
-    // LIVE STATS OTOMATIS JALAN
+    // --- LOGIC: TABS ---
+    function switchTab(target) {
+        document.getElementById('section-rekap').classList.add('hidden');
+        document.getElementById('section-anfrakan').classList.add('hidden');
+        document.getElementById('tab-rekap').classList.remove('tab-active');
+        document.getElementById('tab-anfrakan').classList.remove('tab-active');
+        
+        if(target === 'rekap') {
+            document.getElementById('section-rekap').classList.remove('hidden');
+            document.getElementById('tab-rekap').classList.add('tab-active');
+        } else {
+            document.getElementById('section-anfrakan').classList.remove('hidden');
+            document.getElementById('tab-anfrakan').classList.add('tab-active');
+            loadAnfrakan();
+        }
+    }
+
+    // --- LOGIC: LIVE STATS (FIXED) ---
     async function loadStats() {
         try {
-            const r = await fetch(`${API_URL}?action=getRekapGlobal&start=01/01/2025&end=31/12/2026&kapal=SEMUA`);
+            const r = await fetch(`${API_URL}?action=getRekapGlobal&start=01/01/2026&end=31/12/2026&kapal=SEMUA`);
             const res = await r.json();
             
             const now = new Date();
-            const hariIni = new Date(now.setHours(0,0,0,0)).getTime();
+            const todayStr = now.toISOString().split('T')[0]; // YYYY-MM-DD
             
-            const curr = new Date();
-            const first = curr.getDate() - curr.getDay() + (curr.getDay() === 0 ? -6 : 1);
-            const awalMinggu = new Date(new Date(curr.setDate(first)).setHours(0,0,0,0)).getTime();
-            const awalBulan = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+            let d = 0, w = 0, m = 0;
+            const oneWeekAgo = now.getTime() - (7 * 24 * 60 * 60 * 1000);
+            const thisMonth = now.getMonth();
 
-            let d=0, w=0, m=0;
             res.data.filter(i => i.tipe === "OUT").forEach(i => {
-                const t = i.tSort; 
-                if(t >= hariIni) d += i.total;
-                if(t >= awalMinggu) w += i.total;
-                if(t >= awalBulan) m += i.total;
+                const tDate = new Date(i.tSort);
+                if(i.tSort >= (new Date(new Date().setHours(0,0,0,0)).getTime())) d += i.total;
+                if(i.tSort >= oneWeekAgo) w += i.total;
+                if(tDate.getMonth() === thisMonth) m += i.total;
             });
 
             document.getElementById('out-today').innerText = `Rp ${d.toLocaleString('id-ID')}`;
             document.getElementById('out-week').innerText = `Rp ${w.toLocaleString('id-ID')}`;
             document.getElementById('out-month').innerText = `Rp ${m.toLocaleString('id-ID')}`;
-        } catch(e) { console.error("Live Stats Error"); }
+        } catch(e) { document.getElementById('out-today').innerText = "ERR"; }
     }
-    window.onload = loadStats;
 
-    // GENERATE REPORT
+    // --- LOGIC: OWNER ANFRAKAN ---
+    async function loadAnfrakan() {
+        const container = document.getElementById('anfrakan-list');
+        try {
+            const r = await fetch(`${API_URL}?action=getRekapGlobal&start=01/01/2026&end=31/12/2026&kapal=SEMUA`);
+            const res = await r.json();
+            
+            // Simulasi filter: Cari data yang belum diverifikasi (Asumsi: Total > 0 tapi item mengandung kata 'anfrakan')
+            const requests = res.data.filter(i => i.item.toLowerCase().includes('anfrakan'));
+
+            if(requests.length === 0) {
+                container.innerHTML = `<p class="text-center text-[10px] text-gray-600">Tidak ada permintaan pending.</p>`;
+                return;
+            }
+
+            container.innerHTML = requests.map(i => `
+                <div class="card-exec p-4 flex justify-between items-center border-l-4 border-yellow-600">
+                    <div>
+                        <p class="text-[8px] font-bold text-gray-500 uppercase">${i.tDisplay} | ${i.kapal}</p>
+                        <p class="text-[10px] font-black uppercase mt-1 italic">${i.item}</p>
+                    </div>
+                    <button onclick="approve('${i.item}')" class="bg-blue-600 px-4 py-2 rounded-lg text-[10px] font-bold uppercase">Setujui</button>
+                </div>
+            `).join('');
+        } catch(e) { container.innerHTML = "Gagal memuat data anfrakan."; }
+    }
+
+    function approve(item) {
+        alert("Persetujuan Terkirim untuk: " + item);
+        // Di sini bisa ditambahkan fungsi fetch untuk update status ke Spreadsheet
+    }
+
+    // --- LOGIC: REKAP ---
     document.getElementById('btn-tampilkan').addEventListener('click', async () => {
         const sRaw = document.getElementById('start-date').value;
         const eRaw = document.getElementById('end-date').value;
         const kapal = document.getElementById('filter-kapal').value;
         const tipe = document.getElementById('filter-tipe').value;
-        const appList = document.getElementById('app-list');
-        const printBody = document.getElementById('print-body');
-
-        if(!sRaw || !eRaw) return alert("Pilih tanggal terlebih dahulu, Boss!");
-
-        document.getElementById('msg').innerHTML = '<i class="fas fa-sync fa-spin text-blue-500 text-xl"></i>';
         
+        if(!sRaw || !eRaw) return alert("Pilih tanggal!");
+        document.getElementById('msg').innerHTML = '<i class="fas fa-spinner fa-spin text-blue-500"></i>';
+
         try {
             const sIndo = sRaw.split("-").reverse().join("/");
             const eIndo = eRaw.split("-").reverse().join("/");
-            document.getElementById('print-info').innerText = `ARMADA: ${kapal} | PERIODE: ${sIndo} - ${eIndo}`;
+            document.getElementById('print-info').innerText = `PERIODE: ${sIndo} - ${eIndo} | KAPAL: ${kapal}`;
 
             const r = await fetch(`${API_URL}?action=getRekapGlobal&start=${sIndo}&end=${eIndo}&kapal=${kapal}`);
             const res = await r.json();
 
-            let filtered = res.data;
-            if(tipe !== "SEMUA") filtered = res.data.filter(x => x.tipe === tipe);
-
-            if(filtered.length === 0) { 
-                document.getElementById('msg').innerText = "TIDAK ADA DATA"; 
-                document.getElementById('msg').classList.remove('hidden');
-                return; 
-            }
+            let data = res.data;
+            if(tipe !== "SEMUA") data = res.data.filter(x => x.tipe === tipe);
 
             document.getElementById('msg').classList.add('hidden');
             document.getElementById('btn-print').classList.remove('hidden');
             document.getElementById('summary-print').classList.remove('hidden');
-            
+
             let tin = 0, tout = 0;
-            filtered.forEach(i => i.tipe === "IN" ? tin += i.total : tout += i.total);
-            
+            data.forEach(i => i.tipe === "IN" ? tin += i.total : tout += i.total);
             document.getElementById('p-in').innerText = `Rp ${tin.toLocaleString('id-ID')}`;
             document.getElementById('p-out').innerText = `Rp ${tout.toLocaleString('id-ID')}`;
-            document.getElementById('p-net').innerText = `Rp ${(tin - tout).toLocaleString('id-ID')}`;
+            document.getElementById('p-net').innerText = `Rp ${(tin-tout).toLocaleString('id-ID')}`;
 
-            appList.innerHTML = filtered.map(i => `
-                <div class="card-exec p-4 flex justify-between items-center border-r-4 ${i.tipe === 'IN' ? 'border-green-600' : 'border-red-600'}">
-                    <div>
-                        <p class="text-[8px] text-gray-500 font-bold uppercase">${i.tDisplay} | ${i.kapal}</p>
-                        <p class="text-[11px] font-black uppercase mt-1 italic">${i.item}</p>
-                    </div>
-                    <p class="text-[11px] font-black ${i.tipe === 'IN' ? 'text-green-500' : 'text-red-500'}">
-                        ${i.total.toLocaleString('id-ID')}
-                    </p>
+            document.getElementById('app-list').innerHTML = data.map(i => `
+                <div class="card-exec p-4 flex justify-between items-center border-r-4 ${i.tipe==='IN'?'border-green-600':'border-red-600'}">
+                    <div><p class="text-[8px] font-bold text-gray-500">${i.tDisplay} | ${i.kapal}</p><p class="text-[10px] font-black uppercase italic">${i.item}</p></div>
+                    <p class="text-[11px] font-black ${i.tipe==='IN'?'text-green-500':'text-red-500'}">${i.total.toLocaleString('id-ID')}</p>
                 </div>
             `).join('');
 
-            printBody.innerHTML = filtered.map(i => `
-                <tr>
-                    <td>${i.tDisplay}</td>
-                    <td>${i.kapal}</td>
-                    <td>${i.item}</td>
-                    <td style="text-align:center">${i.tipe}</td>
-                    <td style="text-align:right">${i.total.toLocaleString('id-ID')}</td>
-                </tr>
+            document.getElementById('print-body').innerHTML = data.map(i => `
+                <tr><td>${i.tDisplay}</td><td>${i.kapal}</td><td>${i.item}</td><td align="center">${i.tipe}</td><td align="right">${i.total.toLocaleString('id-ID')}</td></tr>
             `).join('');
 
-        } catch (e) { document.getElementById('msg').innerText = "KONEKSI BERMASALAH"; }
+        } catch(e) { document.getElementById('msg').innerText = "GAGAL MUAT DATA"; }
     });
+
+    window.onload = loadStats;
 </script>
 </body>
 </html>
