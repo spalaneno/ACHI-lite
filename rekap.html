@@ -11,58 +11,64 @@
         body { background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
         .card-exec { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1rem; }
         .tab-active { border-bottom: 3px solid #3b82f6; color: #3b82f6; font-weight: 800; }
-        .urgent-blink { animation: alert-bg 1s infinite; border-left: 4px solid #ef4444; }
-        @keyframes alert-bg { 50% { background: #2d0a0a; } }
+        .p-photo { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #3b82f6; object-fit: cover; background: #111; }
+        .p-letter { width: 40px; height: 40px; border-radius: 50%; background: #3b82f6; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; border: 2px solid #1e3a8a; }
         @media print { .no-print { display: none !important; } body { background: white !important; color: black !important; } }
     </style>
 </head>
 <body class="p-5">
 
     <div class="flex justify-between items-center mb-6 no-print">
-        <div class="flex items-center gap-3">
-            <button onclick="location.href='dashboard.html'" class="w-10 h-10 card-exec flex items-center justify-center hover:border-blue-500">
+        <div class="flex items-center gap-4">
+            <button onclick="location.href='dashboard.html'" class="w-10 h-10 card-exec flex items-center justify-center hover:border-blue-500 transition">
                 <i class="fas fa-chevron-left text-gray-500"></i>
             </button>
-            <div>
+            <div class="text-left">
                 <h1 class="text-lg font-black italic uppercase tracking-tighter leading-none">ACHI SYSTEM</h1>
-                <p class="text-[8px] text-blue-500 font-bold tracking-widest uppercase">Executive Panel</p>
+                <p class="text-[8px] text-blue-500 font-bold tracking-widest uppercase">Executive Control Panel</p>
             </div>
         </div>
-        <button onclick="logout()" class="w-10 h-10 card-exec flex items-center justify-center border-red-900/30 hover:bg-red-600 group">
-            <i class="fas fa-sign-out-alt text-red-600 group-hover:text-white"></i>
-        </button>
+
+        <div class="flex items-center gap-3">
+            <div class="text-right hidden sm:block">
+                <p class="text-[10px] font-black uppercase leading-none">Boss</p>
+                <p class="text-[8px] text-gray-500 font-bold uppercase">Online</p>
+            </div>
+            <div class="flex gap-2">
+                <div class="p-letter">A</div>
+                <img src="https://via.placeholder.com/40" class="p-photo" alt="User Profile">
+            </div>
+            <button onclick="logout()" class="ml-2 text-red-600 hover:text-red-400"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
     </div>
 
-    <div class="flex space-x-6 mb-6 border-b border-gray-900 pb-2 no-print text-[10px] uppercase font-bold tracking-widest">
-        <button onclick="switchTab('rekap')" id="tab-rekap" class="tab-active pb-2">Rekapitulasi</button>
+    <div class="flex space-x-6 mb-6 border-b border-gray-900 pb-2 no-print text-[10px] uppercase font-bold">
+        <button onclick="switchTab('rekap')" id="tab-rekap" class="tab-active pb-2">Laporan Keuangan</button>
         <button onclick="switchTab('persetujuan')" id="tab-persetujuan" class="pb-2 text-gray-500">Menu Persetujuan</button>
     </div>
 
-    <div id="section-rekap" class="block no-print">
-        <div class="card-exec p-5 mb-6">
-            <div class="grid grid-cols-2 gap-3 mb-4">
-                <input type="date" id="start-date" class="bg-[#111] border border-[#222] p-3 rounded-xl text-xs text-white">
-                <input type="date" id="end-date" class="bg-[#111] border border-[#222] p-3 rounded-xl text-xs text-white">
-            </div>
-            <button id="btn-tampilkan" class="w-full bg-blue-600 py-4 rounded-xl font-black uppercase text-[11px]">Tampilkan Laporan</button>
-        </div>
-        <div id="rekap-list" class="space-y-3"></div>
-    </div>
-
-    <div id="section-persetujuan" class="hidden">
+    <div id="section-persetujuan" class="block">
         <div class="flex justify-between items-center mb-4 no-print">
-            <p id="count-pending" class="text-[10px] font-bold text-gray-500 uppercase italic">Memeriksa Database...</p>
-            <button onclick="window.print()" class="text-gray-500 bg-gray-900 px-3 py-1 rounded-lg text-[10px] border border-gray-800 uppercase font-bold">
-                <i class="fas fa-print mr-1"></i> Print PDF
-            </button>
+            <p id="count-pending" class="text-[10px] font-bold text-gray-500 uppercase italic">Memuat data...</p>
+            <button onclick="window.print()" class="text-gray-500 bg-gray-900 px-3 py-1 rounded-lg text-[10px] border border-gray-800 uppercase font-bold">Print PDF</button>
         </div>
         <div id="persetujuan-list" class="space-y-4 pb-20"></div>
     </div>
 
+    <div id="section-rekap" class="hidden no-print">
+        <div class="card-exec p-5 mb-6 text-center">
+             <p class="text-[10px] text-gray-500 font-bold uppercase italic">Fitur Rekapitulasi Financial</p>
+             <div class="flex gap-2 mt-4">
+                 <input type="date" id="start-date" class="w-full bg-[#111] border border-[#222] p-3 rounded-xl text-xs text-white">
+                 <input type="date" id="end-date" class="w-full bg-[#111] border border-[#222] p-3 rounded-xl text-xs text-white">
+             </div>
+             <button id="btn-tampilkan" class="w-full bg-blue-600 py-4 rounded-xl font-black uppercase text-[11px] mt-3">Tampilkan Laporan</button>
+        </div>
+        <div id="rekap-list" class="space-y-3"></div>
+    </div>
+
 <script>
-    // MASUKKAN URL DEPLOY BARU BOSS DI SINI
     const API_URL = "https://script.google.com/macros/s/AKfycbxi_XUwSAzNwwfx3VgL89-NsxRR3xdROoG0CUQ9Z1zYAVGRWWye2fJIOu0l2tHOY15Q/exec";
-    const NO_BOSS_NOTIF = "6289630025252";
 
     function switchTab(t) {
         document.getElementById('section-rekap').style.display = (t === 'rekap') ? 'block' : 'none';
@@ -93,17 +99,18 @@
                         <p class="text-blue-400 font-bold text-sm">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
                     </div>
                     <div class="no-print">
-                        <button onclick="setujuiOtomatis('${i.kapal}', '${i.barang}', this)" class="bg-blue-600 px-5 py-2 rounded-xl font-black text-[10px] uppercase">SETUJUI</button>
+                        <button onclick="setujuiOtomatis('${i.kapal}', '${i.barang}', this)" class="bg-blue-600 px-6 py-3 rounded-xl font-black text-[10px] uppercase shadow-lg shadow-blue-900/20">SETUJUI</button>
                     </div>
                 </div>
             `).join('');
-        } catch(e) { container.innerHTML = "Error Koneksi."; }
+        } catch(e) { container.innerHTML = "Gagal memuat data database."; }
     }
 
     async function setujuiOtomatis(kapal, barang, btn) {
-        btn.innerText = "WAIT..."; btn.disabled = true;
+        const originalText = btn.innerText;
+        btn.innerText = "SINKRON..."; btn.disabled = true;
         try {
-            // PERBAIKAN: Gunakan text/plain untuk membypass CORS Google
+            // FIX: Menggunakan format text/plain untuk bypass CORS
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -111,29 +118,16 @@
             });
             const result = await response.text();
             if (result.includes("SUCCESS")) {
-                alert("✅ APPROVED: " + barang);
+                alert("BERHASIL: " + barang + " telah disetujui!");
                 loadPersetujuan();
-            } else { alert("Gagal Update!"); btn.innerText = "SETUJUI"; btn.disabled = false; }
-        } catch (e) { alert("Error Koneksi!"); btn.innerText = "SETUJUI"; btn.disabled = false; }
+            } else { alert("Data tidak sinkron!"); btn.innerText = originalText; btn.disabled = false; }
+        } catch (e) { alert("Error Koneksi! Silakan periksa koneksi internet Boss."); btn.innerText = originalText; btn.disabled = false; }
     }
 
-    function logout() { if(confirm("Logout dari Achi System?")) location.href = 'index.html'; }
+    function logout() { if(confirm("Keluar dari sistem?")) location.href = 'index.html'; }
 
-    document.getElementById('btn-tampilkan').addEventListener('click', async () => {
-        const s = document.getElementById('start-date').value;
-        const e = document.getElementById('end-date').value;
-        if(!s || !e) return alert("Pilih Tanggal!");
-        const r = await fetch(`${API_URL}?action=getRekapGlobal`);
-        const res = await r.json();
-        const ds = new Date(s).getTime(); const de = new Date(e).getTime();
-        document.getElementById('rekap-list').innerHTML = res.data.filter(i => i.tSort >= ds && i.tSort <= de).map(i => `
-            <div class="card-exec p-4 flex justify-between items-center mb-2">
-                <div><p class="text-[8px] text-gray-500 uppercase">${i.tDisplay} | ${i.kapal}</p><p class="text-[10px] font-black uppercase">${i.barang}</p></div>
-                <p class="text-[11px] font-black">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
-            </div>`).join('');
-    });
-
-    window.onload = () => { if(new URLSearchParams(window.location.search).get('tab') === 'persetujuan') switchTab('persetujuan'); };
+    // Jalankan pertama kali
+    loadPersetujuan();
 </script>
 </body>
 </html>
