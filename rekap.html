@@ -24,13 +24,19 @@
 <body class="p-5">
 
     <div class="flex justify-between items-center mb-6 no-print">
-        <button onclick="location.href='dashboard.html'" class="w-10 h-10 card-exec flex items-center justify-center">
-            <i class="fas fa-chevron-left text-gray-500"></i>
-        </button>
-        <div class="text-right">
-            <h1 class="text-lg font-black italic uppercase tracking-tighter">ACHI SYSTEM</h1>
-            <p class="text-[8px] text-blue-500 font-bold tracking-widest uppercase">Owner Control</p>
+        <div class="flex items-center gap-3">
+            <button onclick="location.href='dashboard.html'" class="w-10 h-10 card-exec flex items-center justify-center hover:border-blue-500 transition">
+                <i class="fas fa-chevron-left text-gray-500"></i>
+            </button>
+            <div class="text-left">
+                <h1 class="text-lg font-black italic uppercase tracking-tighter leading-none">ACHI SYSTEM</h1>
+                <p class="text-[8px] text-blue-500 font-bold tracking-widest uppercase">Executive Panel</p>
+            </div>
         </div>
+        
+        <button onclick="logout()" class="w-10 h-10 card-exec flex items-center justify-center border-red-900/30 hover:bg-red-950 transition">
+            <i class="fas fa-sign-out-alt text-red-600"></i>
+        </button>
     </div>
 
     <div class="flex space-x-6 mb-6 border-b border-gray-900 pb-2 no-print">
@@ -44,9 +50,11 @@
                 <input type="date" id="start-date" class="bg-[#111] border border-[#222] p-3 rounded-xl text-xs">
                 <input type="date" id="end-date" class="bg-[#111] border border-[#222] p-3 rounded-xl text-xs">
             </div>
-            <button id="btn-tampilkan" class="w-full bg-blue-600 py-4 rounded-xl font-black uppercase text-[11px]">Tampilkan Laporan</button>
+            <button id="btn-tampilkan" class="w-full bg-blue-600 py-4 rounded-xl font-black uppercase text-[11px] tracking-widest">Tampilkan Laporan</button>
         </div>
-        <div id="rekap-list" class="space-y-3 pb-20"></div>
+        <div id="rekap-list" class="space-y-3 pb-20">
+            <p class="text-center text-[9px] text-gray-700 py-10 uppercase italic">Pilih periode laporan...</p>
+        </div>
     </div>
 
     <div id="section-persetujuan" class="hidden">
@@ -101,7 +109,7 @@
                             <p class="text-blue-400 font-bold text-sm">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
                         </div>
                         <div class="no-print">
-                            <button onclick="setujuiOtomatis('${i.kapal}', '${i.barang}', this)" class="bg-blue-600 px-5 py-2 rounded-xl font-black text-[10px] uppercase">SETUJUI</button>
+                            <button onclick="setujuiOtomatis('${i.kapal}', '${i.barang}', this)" class="bg-blue-600 px-5 py-2 rounded-xl font-black text-[10px] uppercase transition hover:bg-blue-700">SETUJUI</button>
                         </div>
                     </div>
                 `;
@@ -124,6 +132,12 @@
         } catch (e) { alert("Error Koneksi!"); btn.innerText = "SETUJUI"; btn.disabled = false; }
     }
 
+    function logout() {
+        if(confirm("Apakah Boss ingin logout?")) {
+            location.href = 'index.html'; // Sesuaikan dengan halaman login Boss
+        }
+    }
+
     document.getElementById('btn-tampilkan').addEventListener('click', async () => {
         const s = document.getElementById('start-date').value;
         const e = document.getElementById('end-date').value;
@@ -133,7 +147,7 @@
         const ds = new Date(s).getTime(); const de = new Date(e).getTime();
         const filtered = res.data.filter(i => i.tSort >= ds && i.tSort <= de);
         document.getElementById('rekap-list').innerHTML = filtered.map(i => `
-            <div class="card-exec p-4 flex justify-between items-center">
+            <div class="card-exec p-4 flex justify-between items-center mb-3">
                 <div><p class="text-[8px] text-gray-500 uppercase">${i.tDisplay} | ${i.kapal}</p><p class="text-[10px] font-black text-white uppercase">${i.barang}</p></div>
                 <p class="text-[11px] font-black text-white">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
             </div>`).join('');
