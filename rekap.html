@@ -3,59 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rekap Global - CV EJA</title>
+    <title>Laporan Global - CV EJA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background: #000; color: #fff; font-family: sans-serif; }
+        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; }
         .card-exec { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1.5rem; }
-        .input-exec { background: #111; border: 1px solid #222; color: #fff; border-radius: 0.75rem; padding: 12px; width: 100%; font-size: 14px; }
+        .input-exec { background: #111; border: 1px solid #222; color: #fff; border-radius: 0.75rem; padding: 12px; width: 100%; font-size: 13px; }
+        
+        /* CSS KHUSUS PRINT */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; padding: 0; }
+            .card-exec { border: 1px solid #000 !important; background: white !important; border-radius: 0 !important; color: black !important; }
+            .text-green-500, .text-red-500 { color: black !important; font-weight: bold !important; }
+            .print-only { display: block !important; }
+        }
+        .print-only { display: none; }
     </style>
 </head>
 <body class="p-5">
 
-    <div class="flex justify-between items-center mb-8">
-        <button onclick="location.href='dashboard.html'"><i class="fas fa-arrow-left text-gray-500"></i></button>
-        <h1 class="text-lg font-black italic tracking-tighter uppercase">Laporan Global</h1>
-        <div class="w-5"></div>
-    </div>
-
-    <div class="card-exec p-6 mb-8">
-        <div class="grid grid-cols-2 gap-4 mb-4">
-            <div>
-                <label class="text-[9px] font-bold text-gray-500 uppercase ml-1">Mulai</label>
-                <input type="date" id="start-input" class="input-exec mt-1">
-            </div>
-            <div>
-                <label class="text-[9px] font-bold text-gray-500 uppercase ml-1">Sampai</label>
-                <input type="date" id="end-input" class="input-exec mt-1">
-            </div>
-        </div>
-        <button onclick="prosesLaporan()" class="w-full bg-blue-600 py-4 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg shadow-blue-900/20">
-            Tampilkan Data (Format Indo)
+    <div class="flex justify-between items-center mb-6 no-print">
+        <button onclick="location.href='dashboard.html'" class="w-10 h-10 flex items-center justify-center card-exec">
+            <i class="fas fa-chevron-left text-gray-500"></i>
+        </button>
+        <h1 class="text-lg font-black italic uppercase tracking-tighter">Rekap Global</h1>
+        <button onclick="window.print()" id="btn-print" class="hidden w-10 h-10 flex items-center justify-center card-exec text-blue-500">
+            <i class="fas fa-print"></i>
         </button>
     </div>
 
-    <div id="summary" class="hidden grid grid-cols-2 gap-4 mb-8 text-center">
-        <div class="card-exec p-4 border-b-2 border-green-600">
-            <p class="text-[9px] text-gray-500 uppercase">Pemasukan</p>
-            <p id="total-in" class="text-md font-bold text-green-500 mt-1"></p>
+    <div class="card-exec p-5 mb-6 no-print">
+        <div class="grid grid-cols-2 gap-3 mb-4">
+            <div>
+                <label class="text-[9px] font-bold text-gray-500 uppercase ml-1">Mulai</label>
+                <input type="date" id="start-date" class="input-exec mt-1">
+            </div>
+            <div>
+                <label class="text-[9px] font-bold text-gray-500 uppercase ml-1">Sampai</label>
+                <input type="date" id="end-date" class="input-exec mt-1">
+            </div>
         </div>
-        <div class="card-exec p-4 border-b-2 border-red-600">
-            <p class="text-[9px] text-gray-500 uppercase">Pengeluaran</p>
-            <p id="total-out" class="text-md font-bold text-red-500 mt-1"></p>
+        
+        <div class="mb-5">
+            <label class="text-[9px] font-bold text-gray-500 uppercase ml-1">Tampilkan Data</label>
+            <select id="filter-tipe" class="input-exec mt-1 font-bold">
+                <option value="SEMUA">SEMUA TRANSAKSI</option>
+                <option value="IN">HANYA PEMASUKAN</option>
+                <option value="OUT">HANYA PENGELUARAN</option>
+            </select>
+        </div>
+
+        <button onclick="prosesLaporan()" class="w-full bg-blue-700 hover:bg-blue-600 py-4 rounded-xl font-black uppercase text-xs tracking-widest transition-all">
+            <i class="fas fa-sync-alt mr-2"></i> Tampilkan Laporan
+        </button>
+    </div>
+
+    <div class="print-only text-center mb-8">
+        <h1 class="text-xl font-bold uppercase">LAPORAN KEUANGAN CV. EJA</h1>
+        <p id="tgl-cetak" class="text-sm"></p>
+        <hr class="border-black mt-4">
+    </div>
+
+    <div id="summary" class="hidden grid grid-cols-2 gap-3 mb-6">
+        <div class="card-exec p-4 border-l-4 border-green-600">
+            <p class="text-[8px] font-bold text-gray-500 uppercase">Pemasukan</p>
+            <p id="total-in" class="text-sm font-black text-green-500 mt-1">Rp 0</p>
+        </div>
+        <div class="card-exec p-4 border-l-4 border-red-600">
+            <p class="text-[8px] font-bold text-gray-500 uppercase">Pengeluaran</p>
+            <p id="total-out" class="text-sm font-black text-red-500 mt-1">Rp 0</p>
         </div>
     </div>
 
-    <div id="list" class="space-y-4">
-        <p id="msg" class="text-center text-gray-600 text-xs py-10 uppercase font-bold tracking-widest">Pilih tanggal untuk memuat data</p>
+    <div id="list" class="space-y-3">
+        <p id="msg" class="text-center text-gray-600 text-[10px] py-10 uppercase font-black tracking-widest">Pilih kriteria laporan</p>
     </div>
 
 <script>
-    // MASUKKAN URL API BOSS DI SINI
-    const API_URL = "https://script.google.com/macros/s/AKfycby-WfRG8NX0DCs3rLG5MQGgtsvCETHpSC7dbnICqNY4FHKdB3dG2W7eRsR0VZ_-dvsm/exec";
+    // MASUKKAN URL API BOSS DI SINI (HASIL DEPLOY BARU)
+    const API_URL = https://script.google.com/macros/s/AKfycby-WfRG8NX0DCs3rLG5MQGgtsvCETHpSC7dbnICqNY4FHKdB3dG2W7eRsR0VZ_-dvsm/exec";
 
-    // Fungsi Pengubah Format: 2026-01-17 -> 17/01/2026
     function formatKeIndo(tgl) {
         if(!tgl) return "";
         const [y, m, d] = tgl.split("-");
@@ -63,54 +92,23 @@
     }
 
     async function prosesLaporan() {
-        const startRaw = document.getElementById('start-input').value;
-        const endRaw = document.getElementById('end-input').value;
-        const msg = document.getElementById('msg');
+        const startRaw = document.getElementById('start-date').value;
+        const endRaw = document.getElementById('end-date').value;
+        const tipe = document.getElementById('filter-tipe').value;
         const list = document.getElementById('list');
         const sum = document.getElementById('summary');
+        const msg = document.getElementById('msg');
+        const btnPrint = document.getElementById('btn-print');
 
-        if(!startRaw || !endRaw) return alert("Pilih tanggal dulu, Boss!");
+        if(!startRaw || !endRaw) return alert("Tentukan tanggal, Boss!");
 
-        // Ubah format sebelum dikirim ke Google Script
-        const startIndo = formatKeIndo(startRaw);
-        const endIndo = formatKeIndo(endRaw);
-
-        msg.innerHTML = `<i class="fas fa-spinner fa-spin text-blue-500"></i> <span class="ml-2 uppercase tracking-widest">Menyesuaikan Format...</span>`;
+        msg.innerHTML = `<i class="fas fa-spinner fa-spin text-blue-500"></i>`;
         list.innerHTML = "";
         sum.classList.add('hidden');
+        btnPrint.classList.add('hidden');
 
         try {
-            // Kita kirimkan parameter startIndo dan endIndo (Format DD/MM/YYYY)
-            const query = `?action=getRekapGlobal&start=${startIndo}&end=${endIndo}&kapal=SEMUA`;
-            const response = await fetch(API_URL + query);
-            const res = await response.json();
-
-            if(res.data.length === 0) {
-                msg.innerHTML = "DATA TIDAK DITEMUKAN (CEK FORMAT DI SPREADSHEET)";
-                return;
-            }
-
-            msg.innerHTML = "";
-            sum.classList.remove('hidden');
-            document.getElementById('total-in').innerText = `Rp ${res.summary.total_in.toLocaleString('id-ID')}`;
-            document.getElementById('total-out').innerText = `Rp ${res.summary.total_out.toLocaleString('id-ID')}`;
-
-            list.innerHTML = res.data.map(item => `
-                <div class="card-exec p-5 flex justify-between items-center">
-                    <div>
-                        <p class="text-[9px] text-gray-500 font-bold uppercase">${item.tDisplay} • ${item.kapal}</p>
-                        <p class="text-xs font-black uppercase mt-1 italic">${item.item}</p>
-                    </div>
-                    <p class="text-sm font-black ${item.tipe === 'IN' ? 'text-green-500' : 'text-red-500'}">
-                        ${item.tipe === 'IN' ? '+' : '-'} ${item.total.toLocaleString('id-ID')}
-                    </p>
-                </div>
-            `).join('');
-
-        } catch (e) {
-            msg.innerHTML = "GAGAL TERHUBUNG KE DATABASE";
-        }
-    }
-</script>
-</body>
-</html>
+            const startIndo = formatKeIndo(startRaw);
+            const endIndo = formatKeIndo(endRaw);
+            
+            const query = `?action=getRekapGlobal&start=${startIndo}&end=${endIndo
