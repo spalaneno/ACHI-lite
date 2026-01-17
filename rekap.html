@@ -3,143 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REKAP GLOBAL - CV EJA</title>
+    <title>Executive Report - CV EJA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { background-color: #000; color: #fff; font-family: 'Inter', sans-serif; }
-        .card-dark { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1rem; }
-        .input-custom { background: #111; border: 1px solid #222; color: #fff; padding: 12px; border-radius: 0.75rem; width: 100%; font-size: 13px; }
-        @media print { .no-print { display: none !important; } body { background: white; color: black; } .card-dark { border: 1px solid #eee; } }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { background-color: #050505; color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 1.5rem; }
+        .btn-gradient { background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); transition: all 0.3s ease; }
+        .btn-gradient:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px #2563eb; }
+        .input-field { background: #0f0f0f; border: 1px solid #1f1f1f; color: white; border-radius: 1rem; padding: 14px; width: 100%; font-size: 13px; }
+        @media print { .no-print { display: none !important; } body { background: white; color: black; } .glass-card { border: 1px solid #eee; background: none; } }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-4 md:p-10">
 
-    <div class="flex justify-between items-center mb-6 no-print">
-        <button onclick="location.href='dashboard.html'" class="text-gray-400 hover:text-white transition">
-            <i class="fas fa-arrow-left text-xl"></i>
+    <div class="max-w-4xl mx-auto flex justify-between items-center mb-10 no-print">
+        <button onclick="location.href='dashboard.html'" class="w-12 h-12 flex items-center justify-center glass-card hover:bg-white/10 transition">
+            <i class="fas fa-chevron-left"></i>
         </button>
-        <div id="export-tools" class="hidden flex gap-2">
-            <button onclick="downloadCSV()" class="bg-gray-900 border border-blue-900/50 text-blue-500 px-3 py-2 rounded-lg text-xs font-bold uppercase">
-                <i class="fas fa-file-excel mr-1"></i> Excel
+        <div class="text-right">
+            <h1 class="text-xl font-extrabold tracking-tighter italic">REKAP GLOBAL</h1>
+            <p class="text-[10px] text-blue-500 font-bold tracking-[0.2em] uppercase">Executive Dashboard</p>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto">
+        
+        <div class="glass-card p-6 mb-8 no-print">
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="text-[10px] font-bold text-gray-500 uppercase ml-2 mb-2 block">Mulai Periode</label>
+                    <input type="date" id="start-date" class="input-field">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-gray-500 uppercase ml-2 mb-2 block">Akhir Periode</label>
+                    <input type="date" id="end-date" class="input-field">
+                </div>
+            </div>
+            <button onclick="fetchData()" class="w-full btn-gradient py-4 rounded-2xl font-extrabold text-sm uppercase tracking-widest">
+                <i class="fas fa-sync-alt mr-2"></i> Sinkronkan Laporan
             </button>
-            <button onclick="window.print()" class="bg-gray-900 border border-gray-700 text-white px-3 py-2 rounded-lg text-xs font-bold uppercase">
-                <i class="fas fa-file-pdf mr-1"></i> PDF / Print
-            </button>
         </div>
+
+        <div id="summary-section" class="hidden mb-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="glass-card p-6 border-t-4 border-green-500">
+                    <p class="text-[10px] font-bold text-gray-500 uppercase">Pemasukan Owner</p>
+                    <h2 id="total-in" class="text-2xl font-extrabold mt-1 text-green-400">Rp 0</h2>
+                </div>
+                <div class="glass-card p-6 border-t-4 border-red-500">
+                    <p class="text-[10px] font-bold text-gray-500 uppercase">Biaya Logistik</p>
+                    <h2 id="total-out" class="text-2xl font-extrabold mt-1 text-red-400">Rp 0</h2>
+                </div>
+                <div class="glass-card p-6 border-t-4 border-blue-500">
+                    <p class="text-[10px] font-bold text-gray-500 uppercase">Laba Bersih</p>
+                    <h2 id="total-net" class="text-2xl font-extrabold mt-1 text-blue-400">Rp 0</h2>
+                </div>
+            </div>
+            
+            <div class="flex gap-2 mt-4 no-print">
+                <button onclick="window.print()" class="flex-1 glass-card py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5"><i class="fas fa-file-pdf mr-2"></i> Export PDF</button>
+                <button onclick="downloadCSV()" class="flex-1 glass-card py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5"><i class="fas fa-file-excel mr-2"></i> Export Excel</button>
+            </div>
+        </div>
+
+        <div id="status-msg" class="text-center py-20 text-gray-600 text-[11px] font-bold uppercase tracking-[0.3em]">
+            Silakan Pilih Tanggal Laporan
+        </div>
+
+        <div id="data-list" class="space-y-4"></div>
     </div>
 
-    <h1 class="text-2xl font-black italic uppercase tracking-tighter mb-6 no-print">Rekap Global</h1>
+<script>
+    // MASUKKAN URL WEB APP DISINI BOSS
+    const API_URL = "https://script.google.com/macros/s/AKfycbwoKqAcB_KpTJV5YgnbClhtY6GLzMysFd4RbykDys4MrR5XfXxsp41_BwDSy6rUEZrH/exec";
+    let cachedData = [];
 
-    <div class="card-dark p-5 mb-8 no-print">
-        <div class="grid grid-cols-2 gap-4 mb-4">
-            <div>
-                <label class="text-[10px] font-bold text-gray-500 uppercase mb-1 block">Mulai Tanggal</label>
-                <input type="date" id="start-date" class="input-custom">
-            </div>
-            <div>
-                <label class="text-[10px] font-bold text-gray-500 uppercase mb-1 block">Sampai Tanggal</label>
-                <input type="date" id="end-date" class="input-custom">
-            </div>
-        </div>
-        <button onclick="fetchData()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-xl uppercase tracking-widest transition-all">
-            Tampilkan Laporan
-        </button>
-    </div>
+    async function fetchData() {
+        const start = document.getElementById('start-date').value;
+        const end = document.getElementById('end-date').value;
+        const list = document.getElementById('data-list');
+        const sum = document.getElementById('summary-section');
+        const msg = document.getElementById('status-msg');
 
-    <div id="report-container">
-        <div id="print-header" class="hidden print:block text-center mb-8">
-            <h2 class="text-xl font-black uppercase underline">Laporan Keuangan CV Efendy Jaya Abadi</h2>
-            <p id="print-period" class="text-sm mt-1 text-gray-400"></p>
-        </div>
+        if(!start || !end) return;
 
-        <div id="summary-cards" class="hidden grid grid-cols-2 gap-4 mb-8">
-            <div class="card-dark p-4 border-l-4 border-green-600">
-                <p class="text-[10px] font-bold text-gray-500 uppercase">Pemasukan (Owner)</p>
-                <p id="total-in" class="text-lg font-black text-green-500 mt-1">Rp 0</p>
-            </div>
-            <div class="card-dark p-4 border-l-4 border-red-600">
-                <p class="text-[10px] font-bold text-gray-500 uppercase">Pengeluaran (Logistik)</p>
-                <p id="total-out" class="text-lg font-black text-red-500 mt-1">Rp 0</p>
-            </div>
-        </div>
+        msg.innerHTML = `<i class="fas fa-circle-notch fa-spin text-blue-500 text-xl"></i>`;
+        list.innerHTML = "";
+        sum.classList.add('hidden');
 
-        <div id="status-msg" class="text-center py-10 text-gray-600 font-bold uppercase text-xs tracking-widest">
-            Silakan tentukan periode laporan
-        </div>
+        try {
+            const res = await fetch(`${API_URL}?action=getRekapGlobal&start=${start}&end=${end}&kapal=SEMUA`);
+            const json = await res.json();
+            cachedData = json.data;
 
-        <div id="data-list" class="space-y-3"></div>
-    </div>
+            if(cachedData.length === 0) {
+                msg.innerHTML = "DATA TIDAK DITEMUKAN PADA PERIODE INI";
+                return;
+            }
 
-    <script>
-        // MASUKKAN URL HASIL DEPLOY guys!
-        const API_URL = "";https://script.google.com/macros/s/AKfycbxsKFlpv0ZshzumVkPNgUpewJ9ROMvWtFRQ1bnUbpJDS2mxzsdJaP4FAhLkcies_wH1/exec
+            msg.innerHTML = "";
+            sum.classList.remove('hidden');
+            document.getElementById('total-in').innerText = `Rp ${json.summary.total_in.toLocaleString('id-ID')}`;
+            document.getElementById('total-out').innerText = `Rp ${json.summary.total_out.toLocaleString('id-ID')}`;
+            document.getElementById('total-net').innerText = `Rp ${json.summary.net.toLocaleString('id-ID')}`;
 
-        let reportData = [];
-
-        async function fetchData() {
-            const start = document.getElementById('start-date').value;
-            const end = document.getElementById('end-date').value;
-            const msg = document.getElementById('status-msg');
-            const list = document.getElementById('data-list');
-            const summary = document.getElementById('summary-cards');
-            const tools = document.getElementById('export-tools');
-
-            if(!start || !end) return alert("Pilih tanggal dulu, bos!");
-
-            msg.innerHTML = '<i class="fas fa-spinner fa-spin text-blue-500 mr-2"></i> MENGHUBUNGKAN KE DATABASE...';
-            list.innerHTML = "";
-            summary.classList.add('hidden');
-            tools.classList.add('hidden');
-
-            try {
-                const response = await fetch(`${API_URL}?action=getRekapGlobal&start=${start}&end=${end}&kapal=SEMUA`);
-                const result = await response.json();
-                reportData = result.data;
-
-                if(reportData.length === 0) {
-                    msg.innerHTML = "TIDAK ADA TRANSAKSI PADA PERIODE INI";
-                    return;
-                }
-
-                msg.innerHTML = "";
-                summary.classList.remove('hidden');
-                tools.classList.remove('hidden');
-                document.getElementById('print-period').innerText = `Periode: ${start} s/d ${end}`;
-                document.getElementById('total-in').innerText = `Rp ${result.summary.total_in.toLocaleString('id-ID')}`;
-                document.getElementById('total-out').innerText = `Rp ${result.summary.total_out.toLocaleString('id-ID')}`;
-
-                list.innerHTML = reportData.map(item => `
-                    <div class="card-dark p-4 flex justify-between items-center border-r-4 ${item.tipe === 'IN' ? 'border-green-600' : 'border-red-600'}">
-                        <div>
-                            <p class="text-[9px] font-bold text-gray-500 uppercase">${item.tDisplay} • ${item.kapal}</p>
-                            <p class="text-sm font-black italic uppercase">${item.item}</p>
+            list.innerHTML = cachedData.map(item => `
+                <div class="glass-card p-5 flex justify-between items-center group hover:bg-white/5 transition">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-[8px] font-black px-2 py-0.5 rounded ${item.tipe === 'IN' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}">
+                                ${item.tipe}
+                            </span>
+                            <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">${item.tDisplay}</span>
                         </div>
-                        <p class="text-sm font-black ${item.tipe === 'IN' ? 'text-green-500' : 'text-red-500'}">
+                        <p class="text-xs font-bold uppercase">${item.item}</p>
+                        <p class="text-[9px] text-gray-600 font-bold uppercase">${item.kapal}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-black ${item.tipe === 'IN' ? 'text-green-400' : 'text-red-400'}">
                             ${item.tipe === 'IN' ? '+' : '-'} Rp ${item.total.toLocaleString('id-ID')}
                         </p>
                     </div>
-                `).join('');
+                </div>
+            `).join('');
 
-            } catch (error) {
-                msg.innerHTML = '<span class="text-red-500 font-black"><i class="fas fa-exclamation-triangle"></i> KONEKSI GAGAL! CEK IZIN AKSES GOOGLE SCRIPT</span>';
-                console.error(error);
-            }
+        } catch (e) {
+            msg.innerHTML = "Gagal memuat data. Periksa koneksi atau API.";
         }
+    }
 
-        function downloadCSV() {
-            let csv = "Tanggal,Kapal,Keterangan,Tipe,Nilai\n";
-            reportData.forEach(r => {
-                csv += `${r.tDisplay},${r.kapal},${r.item},${r.tipe},${r.total}\n`;
-            });
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Laporan_EJA_${new Date().getTime()}.csv`;
-            a.click();
-        }
-    </script>
+    function downloadCSV() {
+        let csv = "Tanggal,Kapal,Keterangan,Tipe,Nilai\n";
+        cachedData.forEach(r => { csv += `${r.tDisplay},${r.kapal},${r.item},${r.tipe},${r.total}\n`; });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Laporan_EJA.csv`;
+        a.click();
+    }
+</script>
 </body>
 </html>
