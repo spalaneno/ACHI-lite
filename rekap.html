@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACHI SYSTEM - Executive Control</title>
+    <title>ACHI SYSTEM - Owner Control</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+        body { background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
         .card-exec { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1rem; }
         .input-exec { background: #111; border: 1px solid #222; color: #fff; border-radius: 0.75rem; padding: 12px; width: 100%; font-size: 13px; }
-        .tab-active { border-bottom: 2px solid #3b82f6; color: #3b82f6; font-weight: 800; }
+        .tab-active { border-bottom: 3px solid #3b82f6; color: #3b82f6; font-weight: 800; }
+        .notif-alert { animation: pulse 1.5s infinite; border: 1px solid #ef4444; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
         
         @media print {
             .no-print { display: none !important; }
@@ -33,28 +35,28 @@
         </button>
         <div class="text-right">
             <h1 class="text-lg font-black italic uppercase tracking-tighter">ACHI SYSTEM</h1>
-            <p class="text-[8px] text-blue-500 font-bold tracking-widest uppercase italic">Executive Control Panel</p>
+            <p class="text-[8px] text-blue-500 font-bold tracking-widest uppercase italic">Owner Dashboard Control</p>
         </div>
     </div>
 
-    <div class="grid grid-cols-3 gap-2 mb-6 no-print text-center">
-        <div class="card-exec p-3 border-b-2 border-blue-600 shadow-lg shadow-blue-900/10">
+    <div class="grid grid-cols-3 gap-2 mb-6 no-print text-center text-white">
+        <div class="card-exec p-3 border-b-2 border-blue-600">
             <p class="text-[7px] font-bold text-gray-500 uppercase">Hari Ini</p>
-            <p id="out-today" class="text-[10px] font-extrabold mt-1 text-blue-400">Rp 0</p>
+            <p id="out-today" class="text-[10px] font-extrabold mt-1 text-blue-400">Memuat...</p>
         </div>
-        <div class="card-exec p-3 border-b-2 border-purple-600 shadow-lg shadow-purple-900/10">
+        <div class="card-exec p-3 border-b-2 border-purple-600">
             <p class="text-[7px] font-bold text-gray-500 uppercase">Minggu Ini</p>
-            <p id="out-week" class="text-[10px] font-extrabold mt-1 text-purple-400">Rp 0</p>
+            <p id="out-week" class="text-[10px] font-extrabold mt-1 text-purple-400">Memuat...</p>
         </div>
-        <div class="card-exec p-3 border-b-2 border-orange-600 shadow-lg shadow-orange-900/10">
+        <div class="card-exec p-3 border-b-2 border-orange-600">
             <p class="text-[7px] font-bold text-gray-500 uppercase">Bulan Ini</p>
-            <p id="out-month" class="text-[10px] font-extrabold mt-1 text-orange-400">Rp 0</p>
+            <p id="out-month" class="text-[10px] font-extrabold mt-1 text-orange-400">Memuat...</p>
         </div>
     </div>
 
-    <div class="flex space-x-6 mb-6 no-print border-b border-gray-900 pb-2">
-        <button onclick="switchTab('rekap')" id="tab-rekap" class="tab-active text-[10px] uppercase tracking-widest pb-2">Financial Report</button>
-        <button onclick="switchTab('anfrakan')" id="tab-anfrakan" class="text-[10px] uppercase tracking-widest pb-2 text-gray-500">Persetujuan Pembelian</button>
+    <div class="flex space-x-6 mb-6 no-print border-b border-gray-900">
+        <button onclick="switchTab('rekap')" id="tab-rekap" class="tab-active text-[10px] uppercase tracking-widest pb-3">Laporan Keuangan</button>
+        <button onclick="switchTab('persetujuan')" id="tab-persetujuan" class="text-[10px] uppercase tracking-widest pb-3 text-gray-500">Menu Persetujuan</button>
     </div>
 
     <div id="section-rekap" class="no-print">
@@ -77,41 +79,42 @@
                 </select>
             </div>
             <div class="flex gap-2">
-                <button id="btn-tampilkan" class="flex-[3] bg-blue-600 py-4 rounded-xl font-black uppercase text-[11px] tracking-widest active:scale-95 transition">Tampilkan Laporan</button>
+                <button id="btn-tampilkan" class="flex-[3] bg-blue-600 py-4 rounded-xl font-black uppercase text-[11px] tracking-widest active:scale-95 transition shadow-lg shadow-blue-900/40">Generate Report</button>
                 <button onclick="window.print()" id="btn-print" class="hidden flex-1 bg-gray-800 py-4 rounded-xl text-white"><i class="fas fa-print"></i></button>
             </div>
         </div>
     </div>
 
-    <div id="section-anfrakan" class="hidden no-print">
+    <div id="section-persetujuan" class="hidden no-print">
         <div class="mb-4">
-            <p class="text-[10px] font-bold text-orange-500 uppercase tracking-widest mb-4 flex items-center">
-                <i class="fas fa-clock mr-2"></i> Menunggu Persetujuan Boss
-            </p>
-            <div id="anfrakan-list" class="space-y-3">
-                <p class="text-center text-[9px] text-gray-600 py-20 uppercase tracking-widest">Memuat Permintaan Pembelian...</p>
+            <div id="alert-10m" class="hidden bg-red-900/20 border border-red-800 p-3 rounded-lg mb-4 text-center notif-alert">
+                <p class="text-[9px] font-bold text-red-500 uppercase tracking-tighter italic">⚠️ PERHATIAN: Ada permintaan pembelian yang belum disetujui lebih dari 10 menit!</p>
+            </div>
+            <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-4">Menunggu Konfirmasi Owner</p>
+            <div id="persetujuan-list" class="space-y-3">
+                <p class="text-center text-[9px] text-gray-600 py-20 uppercase tracking-widest italic italic">Memuat Data Persetujuan...</p>
             </div>
         </div>
     </div>
 
     <div class="print-header">
-        <h1 class="text-xl font-black uppercase">LAPORAN REKAPITULASI ACHI SYSTEM</h1>
+        <h1 class="text-xl font-black">LAPORAN REKAPITULASI ACHI SYSTEM</h1>
         <h2 class="text-lg font-bold tracking-widest uppercase">CV. EFENDY JAYA ABADI</h2>
         <p id="print-info" class="text-xs mt-2 italic font-bold uppercase"></p>
     </div>
 
     <div id="summary-print" class="summary-print">
-        <div><p class="text-[9px] font-bold uppercase">Pemasukan</p><p id="p-in" class="text-sm font-black text-green-700"></p></div>
-        <div><p class="text-[9px] font-bold uppercase">Pengeluaran</p><p id="p-out" class="text-sm font-black text-red-700"></p></div>
-        <div><p class="text-[9px] font-bold uppercase">Laba Bersih</p><p id="p-net" class="text-sm font-black text-blue-700"></p></div>
+        <div><p class="text-[9px] font-bold uppercase">Income</p><p id="p-in" class="text-sm font-black"></p></div>
+        <div><p class="text-[9px] font-bold uppercase">Expense</p><p id="p-out" class="text-sm font-black"></p></div>
+        <div><p class="text-[9px] font-bold uppercase">Net Profit</p><p id="p-net" class="text-sm font-black"></p></div>
     </div>
 
     <div id="list-container">
-        <div id="msg" class="text-center py-10 text-gray-700 font-bold uppercase text-[9px] tracking-widest no-print">Tentukan Periode Report</div>
+        <div id="msg" class="text-center py-10 text-gray-700 font-bold uppercase text-[9px] tracking-widest no-print">Sistem Siap</div>
         <div id="app-list" class="space-y-3 no-print"></div>
         <table id="print-table" class="data-table hidden print:table">
             <thead>
-                <tr><th>Tgl</th><th>Kapal</th><th>Item/Keterangan</th><th>Tipe</th><th>Nilai (IDR)</th></tr>
+                <tr><th>Tgl</th><th>Kapal</th><th>Item/Keterangan</th><th>Tipe</th><th>Nilai</th></tr>
             </thead>
             <tbody id="print-body"></tbody>
         </table>
@@ -124,101 +127,107 @@
 
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycby-WfRG8NX0DCs3rLG5MQGgtsvCETHpSC7dbnICqNY4FHKdB3dG2W7eRsR0VZ_-dvsm/exec";
+    let timerNotif;
 
     // 1. TABS SYSTEM
     function switchTab(target) {
         document.getElementById('section-rekap').classList.add('hidden');
-        document.getElementById('section-anfrakan').classList.add('hidden');
+        document.getElementById('section-persetujuan').classList.add('hidden');
         document.getElementById('tab-rekap').classList.remove('tab-active', 'text-white');
-        document.getElementById('tab-anfrakan').classList.remove('tab-active', 'text-white');
+        document.getElementById('tab-persetujuan').classList.remove('tab-active', 'text-white');
         
         if(target === 'rekap') {
             document.getElementById('section-rekap').classList.remove('hidden');
             document.getElementById('tab-rekap').classList.add('tab-active', 'text-white');
         } else {
-            document.getElementById('section-anfrakan').classList.remove('hidden');
-            document.getElementById('tab-anfrakan').classList.add('tab-active', 'text-white');
-            loadAnfrakan();
+            document.getElementById('section-persetujuan').classList.remove('hidden');
+            document.getElementById('tab-persetujuan').classList.add('tab-active', 'text-white');
+            loadPersetujuan();
         }
     }
 
-    // 2. LIVE STATS LOGIC
+    // 2. LIVE STATS & NOTIFIKASI 10 MENIT
     async function loadStats() {
         try {
             const r = await fetch(`${API_URL}?action=getRekapGlobal&start=01/01/2026&end=31/12/2026&kapal=SEMUA`);
             const res = await r.json();
             const now = new Date();
             const startOfToday = new Date(now.setHours(0,0,0,0)).getTime();
-            const startOfWeek = now.getTime() - (now.getDay() * 24 * 60 * 60 * 1000);
-            const thisMonth = new Date().getMonth();
 
             let d=0, w=0, m=0;
             res.data.filter(i => i.tipe === "OUT").forEach(i => {
-                if(i.tSort >= startOfToday) d += i.total;
-                if(i.tSort >= startOfWeek) w += i.total;
-                if(new Date(i.tSort).getMonth() === thisMonth) m += i.total;
+                const t = i.tSort;
+                if(t >= startOfToday) d += i.total;
+                if(t >= (now.getTime() - 7*24*60*60*1000)) w += i.total;
+                if(new Date(t).getMonth() === new Date().getMonth()) m += i.total;
             });
+
             document.getElementById('out-today').innerText = `Rp ${d.toLocaleString('id-ID')}`;
             document.getElementById('out-week').innerText = `Rp ${w.toLocaleString('id-ID')}`;
             document.getElementById('out-month').innerText = `Rp ${m.toLocaleString('id-ID')}`;
+            
+            // Logika Notifikasi 10 Menit (Cek Permintaan Pembelian)
+            const sepuluhMenitLalu = new Date().getTime() - (10 * 60 * 1000);
+            const adaPendingLama = res.data.some(i => 
+                (i.item.toLowerCase().includes('pembelian') || i.item.toLowerCase().includes('anfrakan')) && 
+                i.tSort <= sepuluhMenitLalu
+            );
+
+            if(adaPendingLama) {
+                document.getElementById('alert-10m').classList.remove('hidden');
+            }
         } catch(e) {}
     }
 
-    // 3. ANFRAKAN & WA NOTIFICATION
-    async function loadAnfrakan() {
-        const container = document.getElementById('anfrakan-list');
+    // 3. MENU PERSETUJUAN
+    async function loadPersetujuan() {
+        const container = document.getElementById('persetujuan-list');
         try {
             const r = await fetch(`${API_URL}?action=getRekapGlobal&start=01/01/2026&end=31/12/2026&kapal=SEMUA`);
             const res = await r.json();
-            // Filter: Anggap item yang mengandung "Anfrakan" atau "Beli" adalah permintaan
-            const pending = res.data.filter(i => i.item.toLowerCase().includes('anfrakan') || i.item.toLowerCase().includes('pembelian'));
+            const requests = res.data.filter(i => i.item.toLowerCase().includes('pembelian') || i.item.toLowerCase().includes('anfrakan'));
 
-            if(pending.length === 0) {
-                container.innerHTML = `<p class="text-center text-[10px] text-gray-600 py-10 uppercase">Tidak ada antrian pembelian.</p>`;
+            if(requests.length === 0) {
+                container.innerHTML = `<p class="text-center text-[9px] text-gray-600 py-10">Tidak ada antrian persetujuan.</p>`;
                 return;
             }
 
-            container.innerHTML = pending.map(i => `
-                <div class="card-exec p-4 flex justify-between items-center border-l-4 border-orange-600">
+            container.innerHTML = requests.map(i => `
+                <div class="card-exec p-4 flex justify-between items-center border-l-4 border-blue-600">
                     <div>
                         <p class="text-[8px] font-bold text-gray-500 uppercase">${i.tDisplay} | ${i.kapal}</p>
-                        <p class="text-[10px] font-black uppercase mt-1 italic text-white">${i.item}</p>
-                        <p class="text-[10px] font-bold text-orange-500 mt-1">Rp ${i.total.toLocaleString('id-ID')}</p>
+                        <p class="text-[10px] font-black uppercase mt-1 italic">${i.item}</p>
+                        <p class="text-[10px] font-bold text-blue-400 mt-1">Rp ${i.total.toLocaleString('id-ID')}</p>
                     </div>
-                    <button onclick="sendWA('${i.kapal}', '${i.item}', '${i.total}')" class="bg-green-600 px-4 py-2 rounded-lg text-[9px] font-black uppercase shadow-lg shadow-green-900/20 active:scale-95 transition">
-                        <i class="fab fa-whatsapp mr-1"></i> WA Boss
+                    <button onclick="approveWA('${i.kapal}', '${i.item}', '${i.total}')" class="bg-green-600 px-4 py-2 rounded-lg text-[9px] font-black uppercase shadow-lg shadow-green-900/20">
+                        Setujui (WA)
                     </button>
                 </div>
             `).join('');
-        } catch(e) { container.innerHTML = "Error memuat data."; }
+        } catch(e) { container.innerHTML = "Gagal memuat."; }
     }
 
-    function sendWA(kapal, item, total) {
-        const phone = "628xxxxxxxxxx"; // GANTI DENGAN NOMOR BOSS
-        const msg = `*NOTIFIKASI ACHI SYSTEM*%0A%0AHallo Boss, ada permintaan pembelian baru:%0A%0A🚢 *Kapal:* ${kapal}%0A📦 *Item:* ${item}%0A💰 *Nilai:* Rp ${parseInt(total).toLocaleString('id-ID')}%0A%0AMohon arahannya untuk persetujuan. Terima kasih.`;
+    function approveWA(kapal, item, total) {
+        const phone = "6282216666617"; // Nomor Boss (Sesuaikan)
+        const msg = `*PERSETUJUAN CEO - ACHI SYSTEM*%0A%0ASaya menyetujui permintaan pembelian berikut:%0A%0A🚢 *Kapal:* ${kapal}%0A📦 *Item:* ${item}%0A💰 *Nilai:* Rp ${parseInt(total).toLocaleString('id-ID')}%0A%0ASilakan Accounting segera diproses.`;
         window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
     }
 
-    // 4. FINANCIAL REPORT GENERATOR
+    // 4. GENERATE REPORT
     document.getElementById('btn-tampilkan').addEventListener('click', async () => {
         const sRaw = document.getElementById('start-date').value;
         const eRaw = document.getElementById('end-date').value;
         const kapal = document.getElementById('filter-kapal').value;
         const tipe = document.getElementById('filter-tipe').value;
         
-        if(!sRaw || !eRaw) return alert("Pilih tanggal dulu, Boss!");
-        document.getElementById('msg').innerHTML = '<i class="fas fa-spinner fa-spin text-blue-500 text-xl"></i>';
+        if(!sRaw || !eRaw) return alert("Pilih tanggal!");
+        document.getElementById('msg').innerHTML = '<i class="fas fa-spinner fa-spin text-blue-500"></i>';
 
         try {
-            const sIndo = sRaw.split("-").reverse().join("/");
-            const eIndo = eRaw.split("-").reverse().join("/");
-            document.getElementById('print-info').innerText = `KAPAL: ${kapal} | PERIODE: ${sIndo} - ${eIndo}`;
-
-            const r = await fetch(`${API_URL}?action=getRekapGlobal&start=${sIndo}&end=${eIndo}&kapal=${kapal}`);
+            const r = await fetch(`${API_URL}?action=getRekapGlobal&start=${sRaw.split("-").reverse().join("/")}&end=${eRaw.split("-").reverse().join("/")}&kapal=${kapal}`);
             const res = await r.json();
-
             let data = res.data;
-            if(tipe !== "SEMUA") data = res.data.filter(x => x.tipe === tipe);
+            if(tipe !== "SEMUA") data = data.filter(x => x.tipe === tipe);
 
             document.getElementById('msg').classList.add('hidden');
             document.getElementById('btn-print').classList.remove('hidden');
@@ -232,10 +241,7 @@
 
             document.getElementById('app-list').innerHTML = data.map(i => `
                 <div class="card-exec p-4 flex justify-between items-center border-r-4 ${i.tipe==='IN'?'border-green-600':'border-red-600'}">
-                    <div>
-                        <p class="text-[8px] font-bold text-gray-500 uppercase">${i.tDisplay} | ${i.kapal}</p>
-                        <p class="text-[10px] font-black uppercase mt-1 italic text-white">${i.item}</p>
-                    </div>
+                    <div><p class="text-[8px] font-bold text-gray-500">${i.tDisplay} | ${i.kapal}</p><p class="text-[10px] font-black uppercase italic">${i.item}</p></div>
                     <p class="text-[11px] font-black ${i.tipe==='IN'?'text-green-500':'text-red-500'}">${i.total.toLocaleString('id-ID')}</p>
                 </div>
             `).join('');
@@ -243,10 +249,11 @@
             document.getElementById('print-body').innerHTML = data.map(i => `
                 <tr><td>${i.tDisplay}</td><td>${i.kapal}</td><td>${i.item}</td><td align="center">${i.tipe}</td><td align="right">${i.total.toLocaleString('id-ID')}</td></tr>
             `).join('');
-        } catch(e) { document.getElementById('msg').innerText = "FAILED TO FETCH DATA"; }
+        } catch(e) { document.getElementById('msg').innerText = "ERROR FETCHING DATA"; }
     });
 
     window.onload = loadStats;
+    setInterval(loadStats, 60000); // Auto-refresh data setiap 1 menit
 </script>
 </body>
 </html>
