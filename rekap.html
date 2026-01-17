@@ -8,93 +8,90 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+        body { background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
         .card-exec { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1rem; }
         .tab-active { border-bottom: 3px solid #2563eb; color: #2563eb; font-weight: 800; }
-        .p-letter { width: 40px; height: 40px; border-radius: 50%; background: #2563eb; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; border: 2px solid #1e40af; }
-        .input-dark { background: #111; border: 1px solid #222; padding: 12px; border-radius: 12px; font-size: 13px; color: white; outline: none; width: 100%; }
+        .input-dark { background: #111; border: 1px solid #222; padding: 12px; border-radius: 10px; font-size: 12px; color: white; outline: none; width: 100%; }
+        .btn-blue { background: #2563eb; font-weight: 800; transition: 0.3s; }
+        .btn-blue:hover { background: #1d4ed8; }
         @media print { .no-print { display: none !important; } body { background: #fff; color: #000; } }
     </style>
 </head>
-<body class="p-4 bg-black text-white">
+<body class="p-4">
 
     <div class="flex justify-between items-center mb-6 no-print">
         <div class="flex items-center gap-3">
-            <button onclick="window.location.href='dashboard.html'" class="w-10 h-10 card-exec flex items-center justify-center border-gray-800 text-gray-400"><i class="fas fa-chevron-left"></i></button>
-            <div class="text-left">
-                <h1 class="text-lg font-black italic tracking-tighter leading-none uppercase">Owner Dashboard</h1>
-                <p class="text-[8px] text-blue-500 font-bold uppercase tracking-widest">Executive Control Panel</p>
+            <button onclick="window.location.href='dashboard.html'" class="w-10 h-10 card-exec flex items-center justify-center text-gray-500 border-gray-800"><i class="fas fa-chevron-left"></i></button>
+            <div>
+                <h1 class="text-lg font-black italic tracking-tighter uppercase leading-none">Owner Panel</h1>
+                <p class="text-[8px] text-blue-500 font-bold uppercase tracking-widest">Executive System</p>
             </div>
         </div>
-        <div class="flex items-center gap-2">
-            <div id="user-initial" class="p-letter">A</div>
-            <button onclick="logout()" class="w-10 h-10 card-exec flex items-center justify-center border-red-900/30 ml-1 text-red-600"><i class="fas fa-sign-out-alt"></i></button>
-        </div>
+        <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center font-black border-2 border-blue-900">A</div>
     </div>
 
-    <div class="flex space-x-8 mb-6 border-b border-gray-900 pb-2 no-print text-[10px] uppercase font-bold tracking-widest">
+    <div class="flex space-x-6 mb-6 border-b border-gray-900 pb-2 no-print text-[10px] uppercase font-bold tracking-widest">
         <button onclick="switchTab('rekapan')" id="btn-rekapan" class="tab-active pb-2">Rekapan Data</button>
-        <button onclick="switchTab('persetujuan')" id="btn-persetujuan" class="pb-2 text-gray-500">Persetujuan Pembelian</button>
+        <button onclick="switchTab('persetujuan')" id="btn-persetujuan" class="pb-2 text-gray-500">Persetujuan</button>
     </div>
 
     <div id="section-rekapan" class="block">
         <div class="card-exec p-5 mb-5 no-print">
-            <div class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 uppercase italic">Filter Nama Kapal</label>
-                    <select id="filter-kapal" class="input-dark mt-1">
-                        <option value="SEMUA">-- SEMUA KAPAL --</option>
-                    </select>
+                    <label class="text-[9px] font-bold text-gray-500 uppercase">Pilih Kapal</label>
+                    <select id="filter-kapal" class="input-dark mt-1"><option value="SEMUA">SEMUA KAPAL</option></select>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-500 uppercase italic">Dari Tanggal</label>
-                        <input type="date" id="start-date" class="input-dark mt-1">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-500 uppercase italic">Sampai Tanggal</label>
-                        <input type="date" id="end-date" class="input-dark mt-1">
-                    </div>
+                <div>
+                    <label class="text-[9px] font-bold text-gray-500 uppercase">Pilih No. Trip</label>
+                    <select id="filter-trip" class="input-dark mt-1"><option value="SEMUA">SEMUA TRIP</option></select>
                 </div>
-                <button onclick="filterRekapan()" class="w-full bg-blue-600 py-4 rounded-xl font-black uppercase text-[11px] tracking-widest shadow-lg shadow-blue-900/30">Tampilkan Rekapan</button>
+                <div>
+                    <label class="text-[9px] font-bold text-gray-500 uppercase">Dari Tanggal</label>
+                    <input type="date" id="start-date" class="input-dark mt-1">
+                </div>
+                <div>
+                    <label class="text-[9px] font-bold text-gray-500 uppercase">Sampai Tanggal</label>
+                    <input type="date" id="end-date" class="input-dark mt-1">
+                </div>
             </div>
+            <button onclick="applyFilters()" class="w-full btn-blue py-4 rounded-xl mt-4 uppercase text-[11px] tracking-widest shadow-lg">Tampilkan Rekap</button>
         </div>
         
-        <div id="print-header" class="hidden flex justify-between items-center mb-4 px-2">
-            <h2 class="text-xs font-bold uppercase italic">Laporan Rekapan Pembelian</h2>
-            <button onclick="window.print()" class="no-print text-gray-400 bg-gray-900 px-3 py-1.5 rounded-lg text-[9px] border border-gray-800 font-bold uppercase"><i class="fas fa-print mr-1"></i> Cetak PDF</button>
+        <div id="rekap-tools" class="hidden flex justify-end mb-4 no-print">
+            <button onclick="window.print()" class="text-gray-400 bg-gray-900 px-4 py-2 rounded-lg text-[10px] border border-gray-800 font-bold uppercase"><i class="fas fa-print mr-2"></i>Cetak PDF</button>
         </div>
-        <div id="rekapan-list" class="space-y-3 pb-24"></div>
+        <div id="rekapan-list" class="space-y-2 pb-24"></div>
     </div>
 
     <div id="section-persetujuan" class="hidden">
-        <div id="persetujuan-list" class="space-y-3 pb-24 pt-2"></div>
+        <div id="persetujuan-list" class="space-y-3 pt-2 pb-24"></div>
     </div>
 
 <script>
-    const API_URL = "MASUKKAN_URL_WEB_APP_BOSS_DISINI";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxg7D2w2x1YEbgCVt3na5FDQ1FFk83TYGBIfLH7fEy6peaHKl8IzLBDKvFhIA137j4o/exec";
     let masterData = [];
 
-    async function loadData() {
-        // Cek Nama User dari localStorage
-        const user = localStorage.getItem("username") || "Owner";
-        document.getElementById('user-initial').innerText = user.charAt(0).toUpperCase();
-
+    async function loadInitial() {
+        const list = document.getElementById('rekapan-list');
+        list.innerHTML = '<p class="text-center py-10 text-[10px] text-gray-600 italic">Sinkronisasi Data...</p>';
         try {
-            const response = await fetch(`${API_URL}?action=getRekapGlobal&t=${new Date().getTime()}`);
-            const result = await response.json();
-            masterData = result.data;
+            const r = await fetch(`${API_URL}?action=getRekapGlobal&t=${new Date().getTime()}`);
+            const res = await r.json();
+            masterData = res.data;
 
-            const selectKapal = document.getElementById('filter-kapal');
-            selectKapal.innerHTML = '<option value="SEMUA">-- SEMUA KAPAL --</option>';
-            result.kapal.forEach(k => {
-                selectKapal.innerHTML += `<option value="${k}">${k.toUpperCase()}</option>`;
-            });
+            // Fill Kapal
+            const sk = document.getElementById('filter-kapal');
+            sk.innerHTML = '<option value="SEMUA">SEMUA KAPAL</option>';
+            res.kapal.forEach(k => sk.innerHTML += `<option value="${k}">${k}</option>`);
 
-            document.getElementById('rekapan-list').innerHTML = '<p class="text-center py-20 text-gray-700 text-[10px] uppercase italic">Pilih kapal & tanggal untuk menampilkan rekap</p>';
-        } catch (e) {
-            document.getElementById('rekapan-list').innerHTML = '<p class="text-center py-20 text-red-600 text-xs">Koneksi Database Gagal!</p>';
-        }
+            // Fill Trip
+            const st = document.getElementById('filter-trip');
+            st.innerHTML = '<option value="SEMUA">SEMUA TRIP</option>';
+            res.trip.forEach(t => st.innerHTML += `<option value="${t}">TRIP ${t}</option>`);
+
+            list.innerHTML = '<p class="text-center py-10 text-gray-700 text-[10px] uppercase italic">Gunakan filter untuk menampilkan data</p>';
+        } catch(e) { list.innerHTML = 'Koneksi Gagal!'; }
     }
 
     function switchTab(t) {
@@ -105,57 +102,53 @@
         if(t === 'persetujuan') renderPersetujuan();
     }
 
-    function filterRekapan() {
+    function applyFilters() {
         const kapal = document.getElementById('filter-kapal').value;
+        const trip = document.getElementById('filter-trip').value;
         const start = document.getElementById('start-date').value;
         const end = document.getElementById('end-date').value;
-        const list = document.getElementById('rekapan-list');
 
         if(!start || !end) return alert("Pilih Rentang Tanggal!");
-
         const ds = new Date(start + "T00:00:00").getTime();
         const de = new Date(end + "T23:59:59").getTime();
 
         let filtered = masterData.filter(i => {
             const matchDate = i.tglSort >= ds && i.tglSort <= de;
             const matchKapal = (kapal === "SEMUA") || (i.kapal === kapal);
-            return matchDate && matchKapal;
+            const matchTrip = (trip === "SEMUA") || (i.trip === trip);
+            return matchDate && matchKapal && matchTrip;
         });
 
+        const list = document.getElementById('rekapan-list');
         if(filtered.length === 0) {
-            list.innerHTML = '<p class="text-center py-10 text-xs text-gray-500 uppercase">Tidak Ada Data</p>';
-            document.getElementById('print-header').classList.add('hidden');
+            list.innerHTML = '<p class="text-center py-10 text-gray-600 text-xs">DATA TIDAK DITEMUKAN</p>';
+            document.getElementById('rekap-tools').classList.add('hidden');
             return;
         }
 
-        document.getElementById('print-header').classList.remove('hidden');
+        document.getElementById('rekap-tools').classList.remove('hidden');
         list.innerHTML = filtered.map(i => `
-            <div class="card-exec p-4 flex justify-between items-center border-l-2 ${i.status === 'APPROVED' ? 'border-green-600' : 'border-gray-800'}">
+            <div class="card-exec p-4 flex justify-between items-center border-l-2 ${i.status === 'APPROVED' ? 'border-green-600' : 'border-blue-900'}">
                 <div>
-                    <p class="text-[7px] text-gray-600 font-bold uppercase">${i.tglDisplay} | ${i.kapal}</p>
+                    <p class="text-[7px] text-gray-600 font-bold uppercase">${i.tglDisplay} | TRIP ${i.trip} | ${i.kapal}</p>
                     <p class="text-[10px] font-bold uppercase">${i.barang}</p>
                     <p class="text-[7px] font-black uppercase italic ${i.status === 'APPROVED' ? 'text-green-500' : 'text-yellow-500'}">${i.status}</p>
                 </div>
-                <div class="text-right">
-                    <p class="text-[10px] font-black italic">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
-                </div>
+                <p class="text-[10px] font-black">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
             </div>`).join('');
     }
 
     function renderPersetujuan() {
         const list = document.getElementById('persetujuan-list');
         const pending = masterData.filter(i => i.status === "PENDING");
-        
         if(pending.length === 0) {
-            list.innerHTML = '<p class="text-center py-20 text-gray-700 text-[10px] uppercase font-bold italic">✅ Tidak Ada Permintaan Pending</p>';
+            list.innerHTML = '<p class="text-center py-20 text-gray-700 text-[10px] uppercase font-bold italic">✅ TIDAK ADA PENDING</p>';
             return;
         }
-
-        list.innerHTML = `<p class="text-[9px] font-bold text-gray-500 uppercase mb-4 italic ml-2">${pending.length} Permintaan Menunggu Disetujui</p>` + 
-        pending.map(i => `
+        list.innerHTML = pending.map(i => `
             <div class="card-exec p-4 flex justify-between items-center border-l-4 border-blue-600">
                 <div>
-                    <p class="text-[7px] text-gray-600 font-bold uppercase">${i.tglDisplay} | ${i.kapal}</p>
+                    <p class="text-[7px] text-gray-600 font-bold uppercase">${i.tglDisplay} | TRIP ${i.trip} | ${i.kapal}</p>
                     <h2 class="text-xs font-black uppercase italic">${i.barang}</h2>
                     <p class="text-blue-500 font-bold text-xs mt-1">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
                 </div>
@@ -164,16 +157,14 @@
     }
 
     async function setujui(kapal, barang, btn) {
-        btn.innerText = "WAIT..."; btn.disabled = true;
+        btn.innerText = "WAIT"; btn.disabled = true;
         try {
-            const r = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ kapal, barang }) });
-            alert("PERMINTAAN PEMBELIAN DISETUJUI!");
-            loadData(); // Sync Ulang
-        } catch (e) { alert("Error!"); btn.innerText = "SETUJUI"; btn.disabled = false; }
+            await fetch(API_URL, { method: 'POST', body: JSON.stringify({ kapal, barang }) });
+            alert("DISETUJUI!"); loadInitial();
+        } catch (e) { alert("GAGAL!"); btn.innerText = "SETUJUI"; btn.disabled = false; }
     }
 
-    function logout() { if(confirm("Keluar dari Panel?")) window.location.href = 'index.html'; }
-    window.onload = loadData;
+    window.onload = loadInitial;
 </script>
 </body>
 </html>
