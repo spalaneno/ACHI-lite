@@ -3,56 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACHI SYSTEM - Owner Dashboard</title>
+    <title>ACHI SYSTEM - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
-        body { background-color: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .menu-card { background: #0a0a0a; border: 1px solid #1a1a1a; transition: all 0.3s ease; cursor: pointer; }
-        .menu-card:hover { border-color: #3b82f6; transform: translateY(-5px); }
+        body { background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .menu-card { background: #0a0a0a; border: 1px solid #1a1a1a; transition: 0.3s; cursor: pointer; border-radius: 1.5rem; position: relative; overflow: hidden; }
+        .menu-card:hover { border-color: #3b82f6; background: #0f172a; transform: translateY(-5px); }
     </style>
 </head>
 <body class="p-6">
-    <header class="mb-10 flex justify-between items-start">
+    <header class="mb-10 flex justify-between items-center">
         <div>
-            <p class="text-blue-500 font-bold text-[10px] tracking-[0.3em] uppercase mb-1">Authenticated</p>
-            <h1 class="text-2xl font-black italic italic tracking-tighter">ACHI LITE V2.0</h1>
+            <h1 class="text-2xl font-black italic tracking-tighter uppercase">ACHI LITE V2.0</h1>
+            <p class="text-blue-500 font-bold text-[10px] tracking-[0.3em] uppercase">Executive Dashboard</p>
         </div>
-        <button class="w-10 h-10 bg-red-950/30 text-red-500 rounded-full border border-red-900/50 flex items-center justify-center">
-            <i class="fas fa-power-off"></i>
-        </button>
+        <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center font-bold">B</div>
     </header>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div onclick="location.href='rekap.html?tab=persetujuan'" class="menu-card p-6 rounded-3xl relative overflow-hidden group">
+        <div onclick="location.href='rekap.html?tab=persetujuan'" class="menu-card p-6 group">
             <div class="w-12 h-12 bg-blue-900/30 text-blue-500 rounded-xl flex items-center justify-center mb-6 border border-blue-800/50">
                 <i class="fas fa-file-signature text-xl"></i>
             </div>
-            <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Verification</p>
-            <h2 class="text-xl font-black uppercase italic group-hover:text-blue-400 transition">Menu Persetujuan</h2>
-            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition">
-                <i class="fas fa-file-signature text-8xl"></i>
-            </div>
+            <p class="text-[9px] font-bold text-gray-500 uppercase mb-1">Owner Action Required</p>
+            <h2 class="text-xl font-black uppercase italic group-hover:text-blue-400">Menu Persetujuan</h2>
+            <i class="fas fa-chevron-right absolute right-6 bottom-6 text-gray-800 group-hover:text-blue-600 transition"></i>
         </div>
 
-        <div onclick="location.href='rekap.html?tab=rekap'" class="menu-card p-6 rounded-3xl relative overflow-hidden group">
+        <div onclick="location.href='rekap.html?tab=rekap'" class="menu-card p-6 group">
             <div class="w-12 h-12 bg-green-900/30 text-green-500 rounded-xl flex items-center justify-center mb-6 border border-green-800/50">
                 <i class="fas fa-chart-line text-xl"></i>
             </div>
-            <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Financial Report</p>
-            <h2 class="text-xl font-black uppercase italic group-hover:text-green-400 transition">Rekapitulasi</h2>
-            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition">
-                <i class="fas fa-chart-line text-8xl"></i>
-            </div>
+            <p class="text-[9px] font-bold text-gray-500 uppercase mb-1">Financial Analysis</p>
+            <h2 class="text-xl font-black uppercase italic group-hover:text-green-400">Rekapitulasi</h2>
+            <i class="fas fa-chevron-right absolute right-6 bottom-6 text-gray-800 group-hover:text-green-600 transition"></i>
         </div>
-
-        <div class="menu-card p-6 rounded-3xl relative overflow-hidden group opacity-50">
-            <div class="w-12 h-12 bg-orange-900/30 text-orange-500 rounded-xl flex items-center justify-center mb-6 border border-orange-800/50">
+        
+        <div class="menu-card p-6 opacity-40 grayscale">
+            <div class="w-12 h-12 bg-gray-800 text-gray-500 rounded-xl flex items-center justify-center mb-6">
                 <i class="fas fa-gas-pump text-xl"></i>
             </div>
-            <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Logistik</p>
-            <h2 class="text-xl font-black uppercase italic">Laporan BBM</h2>
+            <h2 class="text-xl font-black uppercase italic">Stok BBM</h2>
         </div>
     </div>
 </body>
