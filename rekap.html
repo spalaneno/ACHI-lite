@@ -3,115 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rekap Global - CV EJA</title>
+    <title>REKAP GLOBAL - CV EJA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background: #000; color: white; font-family: 'Inter', sans-serif; }
-        .input-dark { background: #0a0a0a; border: 1px solid #222; color: white; border-radius: 1rem; padding: 12px; font-size: 12px; width: 100%; }
-        .card-rekap { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1.5rem; padding: 1.25rem; }
-        
-        /* CSS Khusus Print */
-        @media print {
-            .no-print { display: none !important; }
-            body { background: white !important; color: black !important; }
-            .card-rekap { border: 1px solid #ddd !important; margin-bottom: 10px !important; break-inside: avoid; }
-            .text-green-500, .text-red-500 { color: black !important; font-weight: bold; }
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { background-color: #000; color: #fff; font-family: 'Inter', sans-serif; }
+        .card-dark { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1rem; }
+        .input-custom { background: #111; border: 1px solid #222; color: #fff; padding: 12px; border-radius: 0.75rem; width: 100%; font-size: 13px; }
+        @media print { .no-print { display: none !important; } body { background: white; color: black; } .card-dark { border: 1px solid #eee; } }
     </style>
 </head>
-<body class="p-6">
-    <div class="flex items-center justify-between mb-8 no-print">
-        <div class="flex items-center gap-4">
-            <button onclick="location.href='dashboard.html'" class="text-gray-500"><i class="fas fa-arrow-left"></i></button>
-            <h1 class="text-xl font-black italic tracking-tighter uppercase">Rekap Global</h1>
-        </div>
-        <div id="action-buttons" class="hidden flex gap-2">
-            <button onclick="downloadCSV()" class="p-2 bg-gray-900 rounded-lg text-blue-500 border border-blue-900/30 text-xs">
-                <i class="fas fa-file-excel"></i>
+<body class="p-4 md:p-8">
+
+    <div class="flex justify-between items-center mb-6 no-print">
+        <button onclick="location.href='dashboard.html'" class="text-gray-400 hover:text-white transition">
+            <i class="fas fa-arrow-left text-xl"></i>
+        </button>
+        <div id="export-tools" class="hidden flex gap-2">
+            <button onclick="downloadCSV()" class="bg-gray-900 border border-blue-900/50 text-blue-500 px-3 py-2 rounded-lg text-xs font-bold uppercase">
+                <i class="fas fa-file-excel mr-1"></i> Excel
             </button>
-            <button onclick="window.print()" class="p-2 bg-gray-900 rounded-lg text-white border border-gray-700 text-xs">
-                <i class="fas fa-print"></i> PDF
+            <button onclick="window.print()" class="bg-gray-900 border border-gray-700 text-white px-3 py-2 rounded-lg text-xs font-bold uppercase">
+                <i class="fas fa-file-pdf mr-1"></i> PDF / Print
             </button>
         </div>
     </div>
 
-    <div class="card-rekap mb-6 no-print">
-        <div class="grid grid-cols-2 gap-3 mb-4">
-            <div><label class="text-[8px] font-bold text-gray-500 uppercase">Mulai</label><input type="date" id="start" class="input-dark"></div>
-            <div><label class="text-[8px] font-bold text-gray-500 uppercase">Sampai</label><input type="date" id="end" class="input-dark"></div>
+    <h1 class="text-2xl font-black italic uppercase tracking-tighter mb-6 no-print">Rekap Global</h1>
+
+    <div class="card-dark p-5 mb-8 no-print">
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="text-[10px] font-bold text-gray-500 uppercase mb-1 block">Mulai Tanggal</label>
+                <input type="date" id="start-date" class="input-custom">
+            </div>
+            <div>
+                <label class="text-[10px] font-bold text-gray-500 uppercase mb-1 block">Sampai Tanggal</label>
+                <input type="date" id="end-date" class="input-custom">
+            </div>
         </div>
-        <button onclick="load()" class="w-full bg-blue-700 text-white font-black py-3 rounded-xl uppercase text-[10px]">Tampilkan Laporan</button>
+        <button onclick="fetchData()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-xl uppercase tracking-widest transition-all">
+            Tampilkan Laporan
+        </button>
     </div>
 
-    <div id="print-area">
-        <div id="header-print" class="hidden mb-6">
-            <h2 class="text-center font-bold uppercase underline">LAPORAN REKAPITULASI GLOBAL - CV EJA</h2>
-            <p id="periode-print" class="text-center text-xs"></p>
+    <div id="report-container">
+        <div id="print-header" class="hidden print:block text-center mb-8">
+            <h2 class="text-xl font-black uppercase underline">Laporan Keuangan CV Efendy Jaya Abadi</h2>
+            <p id="print-period" class="text-sm mt-1 text-gray-400"></p>
         </div>
-        
-        <div id="results" class="space-y-3">
-            <p class="text-center text-gray-600 text-[10px] no-print">Tentukan tanggal untuk melihat data.</p>
+
+        <div id="summary-cards" class="hidden grid grid-cols-2 gap-4 mb-8">
+            <div class="card-dark p-4 border-l-4 border-green-600">
+                <p class="text-[10px] font-bold text-gray-500 uppercase">Pemasukan (Owner)</p>
+                <p id="total-in" class="text-lg font-black text-green-500 mt-1">Rp 0</p>
+            </div>
+            <div class="card-dark p-4 border-l-4 border-red-600">
+                <p class="text-[10px] font-bold text-gray-500 uppercase">Pengeluaran (Logistik)</p>
+                <p id="total-out" class="text-lg font-black text-red-500 mt-1">Rp 0</p>
+            </div>
         </div>
+
+        <div id="status-msg" class="text-center py-10 text-gray-600 font-bold uppercase text-xs tracking-widest">
+            Silakan tentukan periode laporan
+        </div>
+
+        <div id="data-list" class="space-y-3"></div>
     </div>
 
-<script>
-    const API = "https://script.google.com/macros/s/AKfycbzk03FnZDF_z2F8MNzUDF42WM6pzxsHZMufwRNNg-ejDMb9ri86iEKeSUqQGXU81T0-/exec";
-    let currentData = [];
+    <script>
+        // MASUKKAN URL HASIL DEPLOY guys!
+        const API_URL = "https://script.google.com/macros/s/AKfycbx9fCxEOUo1Jb_gVDQVSQ6ankqrzqlLMPd1SMaS6eiyzhGTdHL01oqxrxhpTVYE1ZI/exec";
 
-    async function load() {
-        const resDiv = document.getElementById('results');
-        const btnArea = document.getElementById('action-buttons');
-        resDiv.innerHTML = '<p class="text-center animate-pulse text-[10px]">MENYAMBUNGKAN KE DATABASE...</p>';
-        
-        try {
-            const start = document.getElementById('start').value;
-            const end = document.getElementById('end').value;
-            const url = `${API}?action=getRekapGlobal&start=${start}&end=${end}&kapal=SEMUA`;
-            
-            const r = await fetch(url);
-            const d = await r.json();
-            currentData = d.data;
+        let reportData = [];
 
-            if(currentData.length === 0) {
-                resDiv.innerHTML = '<p class="text-center text-gray-600 text-[10px]">TIDAK ADA DATA</p>';
-                btnArea.classList.add('hidden');
-                return;
-            }
+        async function fetchData() {
+            const start = document.getElementById('start-date').value;
+            const end = document.getElementById('end-date').value;
+            const msg = document.getElementById('status-msg');
+            const list = document.getElementById('data-list');
+            const summary = document.getElementById('summary-cards');
+            const tools = document.getElementById('export-tools');
 
-            btnArea.classList.remove('hidden');
-            document.getElementById('periode-print').innerText = `Periode: ${start} s/d ${end}`;
+            if(!start || !end) return alert("Pilih tanggal dulu, bos!");
 
-            resDiv.innerHTML = currentData.map(i => `
-                <div class="card-rekap flex justify-between items-center ${i.tipe === 'IN' ? 'border-r-4 border-green-600' : 'border-r-4 border-red-600'}">
-                    <div>
-                        <p class="text-[8px] text-gray-500 font-bold uppercase">${i.tDisplay} | ${i.kapal}</p>
-                        <p class="text-sm font-black italic uppercase">${i.item}</p>
+            msg.innerHTML = '<i class="fas fa-spinner fa-spin text-blue-500 mr-2"></i> MENGHUBUNGKAN KE DATABASE...';
+            list.innerHTML = "";
+            summary.classList.add('hidden');
+            tools.classList.add('hidden');
+
+            try {
+                const response = await fetch(`${API_URL}?action=getRekapGlobal&start=${start}&end=${end}&kapal=SEMUA`);
+                const result = await response.json();
+                reportData = result.data;
+
+                if(reportData.length === 0) {
+                    msg.innerHTML = "TIDAK ADA TRANSAKSI PADA PERIODE INI";
+                    return;
+                }
+
+                msg.innerHTML = "";
+                summary.classList.remove('hidden');
+                tools.classList.remove('hidden');
+                document.getElementById('print-period').innerText = `Periode: ${start} s/d ${end}`;
+                document.getElementById('total-in').innerText = `Rp ${result.summary.total_in.toLocaleString('id-ID')}`;
+                document.getElementById('total-out').innerText = `Rp ${result.summary.total_out.toLocaleString('id-ID')}`;
+
+                list.innerHTML = reportData.map(item => `
+                    <div class="card-dark p-4 flex justify-between items-center border-r-4 ${item.tipe === 'IN' ? 'border-green-600' : 'border-red-600'}">
+                        <div>
+                            <p class="text-[9px] font-bold text-gray-500 uppercase">${item.tDisplay} • ${item.kapal}</p>
+                            <p class="text-sm font-black italic uppercase">${item.item}</p>
+                        </div>
+                        <p class="text-sm font-black ${item.tipe === 'IN' ? 'text-green-500' : 'text-red-500'}">
+                            ${item.tipe === 'IN' ? '+' : '-'} Rp ${item.total.toLocaleString('id-ID')}
+                        </p>
                     </div>
-                    <p class="font-black ${i.tipe === 'IN' ? 'text-green-500' : 'text-red-500'}">Rp ${i.total.toLocaleString()}</p>
-                </div>
-            `).join('');
-        } catch(e) {
-            resDiv.innerHTML = '<p class="text-center text-red-500 text-[10px]">KONEKSI GAGAL.</p>';
+                `).join('');
+
+            } catch (error) {
+                msg.innerHTML = '<span class="text-red-500 font-black"><i class="fas fa-exclamation-triangle"></i> KONEKSI GAGAL! CEK IZIN AKSES GOOGLE SCRIPT</span>';
+                console.error(error);
+            }
         }
-    }
 
-    function downloadCSV() {
-        let csv = "Tanggal,Kapal,Item,Tipe,Total\n";
-        currentData.forEach(row => {
-            csv += `${row.tDisplay},${row.kapal},${row.item},${row.tipe},${row.total}\n`;
-        });
-
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.setAttribute('hidden', '');
-        a.setAttribute('href', url);
-        a.setAttribute('download', `Rekap_EJA_${new Date().toLocaleDateString()}.csv`);
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    }
-</script>
+        function downloadCSV() {
+            let csv = "Tanggal,Kapal,Keterangan,Tipe,Nilai\n";
+            reportData.forEach(r => {
+                csv += `${r.tDisplay},${r.kapal},${r.item},${r.tipe},${r.total}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Laporan_EJA_${new Date().getTime()}.csv`;
+            a.click();
+        }
+    </script>
 </body>
 </html>
