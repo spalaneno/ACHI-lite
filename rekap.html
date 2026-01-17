@@ -3,100 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PERSERUJUAN - ACHI SYSTEM</title>
+    <title>OWNER CONTROL - ACHI SYSTEM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background: #000; color: #fff; font-family: sans-serif; }
-        .card-p { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1rem; padding: 15px; border-left: 4px solid #3b82f6; }
-        .urgent { animation: pulse-red 1s infinite; border-left-color: #ef4444; }
-        @keyframes pulse-red { 50% { background: #2d0a0a; } }
-        /* Style khusus saat print */
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.3s; }
+        .card-exec { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1rem; overflow: hidden; }
+        .tab-active { border-bottom: 3px solid #3b82f6; color: #3b82f6; font-weight: 800; }
+        .urgent-blink { animation: alert-bg 1s infinite; border: 1px solid #ef4444; }
+        @keyframes alert-bg { 50% { background: #2d0a0a; } }
+        
         @media print {
-            body { background: white !important; color: black !important; }
             .no-print { display: none !important; }
-            .card-p { border: 1px solid #ccc !important; page-break-inside: avoid; margin-bottom: 20px; }
-            .text-blue-500 { color: black !important; }
+            body { background: white !important; color: black !important; }
+            .card-exec { border: 1px solid #000 !important; background: white !important; margin-bottom: 10px; }
+            .text-blue-500, .text-blue-400 { color: black !important; font-weight: bold; }
         }
     </style>
 </head>
 <body class="p-5">
 
-    <div class="flex justify-between items-center mb-8 no-print">
-        <h1 class="text-xl font-black italic uppercase">MENU PERSETUJUAN</h1>
-        <div class="flex gap-2">
-            <button onclick="window.print()" class="bg-gray-800 p-3 rounded-xl text-xs font-bold uppercase"><i class="fas fa-print"></i></button>
-            <button onclick="location.href='dashboard.html'" class="bg-gray-800 p-3 rounded-xl text-xs font-bold uppercase"><i class="fas fa-times"></i></button>
+    <div class="flex justify-between items-center mb-6 no-print">
+        <button onclick="location.href='dashboard.html'" class="w-10 h-10 card-exec flex items-center justify-center">
+            <i class="fas fa-chevron-left text-gray-500"></i>
+        </button>
+        <div class="text-right">
+            <h1 class="text-lg font-black italic uppercase tracking-tighter">ACHI SYSTEM</h1>
+            <p class="text-[8px] text-blue-500 font-bold tracking-widest uppercase">Owner Control Panel</p>
         </div>
     </div>
 
-    <div id="area-persetujuan" class="space-y-4">
-        <p class="text-center py-20 text-gray-700 italic text-xs">Menghubungkan Database...</p>
+    <div class="flex space-x-6 mb-6 border-b border-gray-900 pb-2 no-print">
+        <button onclick="switchTab('rekap')" id="tab-rekap" class="tab-active text-[10px] uppercase tracking-widest pb-2">Rekapitulasi</button>
+        <button onclick="switchTab('persetujuan')" id="tab-persetujuan" class="text-[10px] uppercase tracking-widest pb-2 text-gray-500">Menu Persetujuan</button>
+    </div>
+
+    <div id="section-rekap" class="block no-print">
+        <div class="card-exec p-5 mb-6">
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                    <label class="text-[9px] text-gray-500 font-bold uppercase ml-1">Dari Tanggal</label>
+                    <input type="date" id="start-date" class="w-full bg-[#111] border border-[#222] p-3 rounded-xl text-xs mt-1">
+                </div>
+                <div>
+                    <label class="text-[9px] text-gray-500 font-bold uppercase ml-1">Sampai Tanggal</label>
+                    <input type="date" id="end-date" class="w-full bg-[#111] border border-[#222] p-3 rounded-xl text-xs mt-1">
+                </div>
+            </div>
+            <button id="btn-tampilkan" class="w-full bg-blue-600 py-4 rounded-xl font-black uppercase text-[11px] tracking-widest">Tampilkan Laporan</button>
+        </div>
+        <div id="rekap-list" class="space-y-3 pb-20">
+             <p class="text-center text-[9px] text-gray-700 py-10 uppercase font-black italic">Silakan tentukan periode laporan</p>
+        </div>
+    </div>
+
+    <div id="section-persetujuan" class="hidden">
+        <div class="flex justify-between items-center mb-4 no-print">
+            <p id="count-pending" class="text-[10px] font-bold text-gray-500 uppercase italic tracking-widest">Memeriksa Antrian...</p>
+            <button onclick="window.print()" class="text-gray-500 bg-gray-900 px-3 py-1 rounded-lg text-xs border border-gray-800">
+                <i class="fas fa-print mr-1"></i> PRINT PDF
+            </button>
+        </div>
+        
+        <div id="persetujuan-list" class="space-y-4 pb-20">
+            <p class="text-center text-[9px] text-gray-700 py-20 uppercase font-black italic">Sinkronisasi Database...</p>
+        </div>
     </div>
 
 <script>
+    // MASUKKAN URL API TERBARU BOSS DI SINI
     const API_URL = "https://script.google.com/macros/s/AKfycbxi_XUwSAzNwwfx3VgL89-NsxRR3xdROoG0CUQ9Z1zYAVGRWWye2fJIOu0l2tHOY15Q/exec";
-    const NO_OD = "6281356740848";    
-    const NO_BOSS = "6289630025252";  
+    const NO_BOSS_NOTIF = "6289630025252";
 
-    async function loadData() {
+    // 1. FUNGSI PINDAH TAB
+    function switchTab(t) {
+        document.getElementById('section-rekap').style.display = (t === 'rekap') ? 'block' : 'none';
+        document.getElementById('section-persetujuan').style.display = (t === 'persetujuan') ? 'block' : 'none';
+        document.getElementById('tab-rekap').className = (t === 'rekap') ? 'tab-active text-[10px] uppercase pb-2' : 'text-[10px] uppercase pb-2 text-gray-500';
+        document.getElementById('tab-persetujuan').className = (t === 'persetujuan') ? 'tab-active text-[10px] uppercase pb-2' : 'text-[10px] uppercase pb-2 text-gray-500';
+        if(t === 'persetujuan') loadPersetujuan();
+    }
+
+    // 2. FUNGSI LOAD PERSETUJUAN (KHUSUS PENDING)
+    async function loadPersetujuan() {
+        const container = document.getElementById('persetujuan-list');
+        const countText = document.getElementById('count-pending');
+        
         try {
-            const r = await fetch(API_URL + "?action=getRekapGlobal");
+            const r = await fetch(`${API_URL}?action=getRekapGlobal`);
             const res = await r.json();
-            const container = document.getElementById('area-persetujuan');
-
+            
+            // FILTER: HANYA STATUS PENDING
             const dataPending = res.data.filter(i => i.status === "PENDING");
+            countText.innerText = `${dataPending.length} PERMINTAAN MENUNGGU`;
 
             if(dataPending.length === 0) {
-                container.innerHTML = `<div class="text-center py-20 text-gray-600 font-bold text-[10px] uppercase italic">✅ Semua permintaan sudah disetujui.</div>`;
+                container.innerHTML = `<div class="text-center py-20 text-gray-600 font-bold text-[10px] uppercase italic">✅ Semua permintaan sudah APPROVED</div>`;
                 return;
             }
 
             const skrg = new Date().getTime();
 
             container.innerHTML = dataPending.map(i => {
-                const selisih = (skrg - i.tSort) / 60000;
-                const isUrgent = selisih > 10;
+                const selisihMenit = (skrg - i.tSort) / 60000;
+                const isUrgent = selisihMenit > 10;
 
-                if(isUrgent && !localStorage.getItem('notif_'+i.tSort)) {
-                    kirimAlertBoss(i.kapal, i.barang || i.item, i.total || i.harga);
-                    localStorage.setItem('notif_'+i.tSort, 'sent');
+                // NOTIFIKASI OTOMATIS KE BOSS JIKA 10 MENIT MENGENDAP
+                if(isUrgent && !localStorage.getItem('wa_notif_'+i.tSort)) {
+                    kirimAlertBoss(i.kapal, i.barang, i.harga);
+                    localStorage.setItem('wa_notif_'+i.tSort, 'sent');
                 }
 
                 return `
-                    <div class="card-p ${isUrgent ? 'urgent' : ''}">
-                        <div class="flex justify-between items-start">
-                            <div class="flex-1">
-                                <p class="text-[8px] text-gray-500 font-bold uppercase">${i.tDisplay} | ${i.kapal}</p>
-                                <h2 class="text-sm font-black uppercase text-white">${i.barang || i.item}</h2>
-                                <p class="text-blue-500 font-bold text-sm">Rp ${parseFloat(i.total || i.harga).toLocaleString('id-ID')}</p>
-                            </div>
-                            <div class="flex flex-col gap-2 no-print">
-                                <button onclick="approve('${i.kapal}', '${i.barang || i.item}', '${i.total || i.harga}')" 
-                                        class="bg-blue-600 px-4 py-2 rounded-lg text-[9px] font-black uppercase">SETUJUI</button>
-                                <button onclick="window.print()" 
-                                        class="bg-gray-800 text-gray-400 px-4 py-2 rounded-lg text-[9px] font-black uppercase"><i class="fas fa-file-pdf"></i> PDF</button>
-                            </div>
+                    <div class="card-exec p-4 flex justify-between items-center border-l-4 ${isUrgent ? 'urgent-blink' : 'border-blue-600'}">
+                        <div>
+                            <p class="text-[8px] font-bold text-gray-500 uppercase tracking-tighter">${i.tDisplay} | ${i.kapal}</p>
+                            <h2 class="text-sm font-black uppercase text-white leading-tight mt-1 italic">${i.barang}</h2>
+                            <p class="text-blue-400 font-bold text-sm mt-1">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
+                        </div>
+                        <div class="no-print">
+                            <button onclick="setujuiOtomatis('${i.kapal}', '${i.barang}', this)" 
+                                    class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-black text-[10px] uppercase shadow-lg shadow-blue-900/20">
+                                SETUJUI
+                            </button>
                         </div>
                     </div>
                 `;
             }).join('');
-
-        } catch(e) { container.innerHTML = "Gagal mengambil data."; }
+        } catch(e) { container.innerHTML = "Gagal memuat data."; }
     }
 
-    function approve(kapal, barang, harga) {
-        const msg = `*PENGESAHAN OWNER*%0A%0ASaya menyetujui pembelian:%0A🚢 *Kapal:* ${kapal}%0A📦 *Barang:* ${barang}%0A💰 *Nilai:* Rp ${parseInt(harga).toLocaleString('id-ID')}%0A%0A*Kepada OD (David):* Silakan segera diproses pembayarannya.`;
-        window.open(`https://wa.me/${NO_OD}?text=${msg}`, '_blank');
+    // 3. FUNGSI SETUJUI (UBAH SPREADSHEET LANGSUNG)
+    async function setujuiOtomatis(kapal, barang, btn) {
+        const originalText = btn.innerText;
+        btn.innerText = "WAIT...";
+        btn.disabled = true;
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({ kapal: kapal, barang: barang })
+            });
+
+            if (await response.text() === "SUCCESS") {
+                alert("✅ " + barang + " BERHASIL DI-APPROVED!");
+                loadPersetujuan(); // Refresh list
+            } else {
+                alert("Gagal update status!");
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        } catch (e) {
+            alert("Error Koneksi!");
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
     }
 
+    // 4. PENGINGAT WA OTOMATIS KE BOSS
     function kirimAlertBoss(kapal, barang, harga) {
-        const msg = `⚠️ *PENGINGAT BOSS*%0A%0AAda permintaan *${barang}* (${kapal}) senilai *Rp ${parseInt(harga).toLocaleString('id-ID')}* yang sudah PENDING 10 menit!`;
-        window.open(`https://wa.me/${NO_BOSS}?text=${msg}`, '_blank');
+        const msg = `⚠️ *REMINDER BOSS*%0A%0AAda permintaan *${barang}* (${kapal}) senilai *Rp ${parseInt(harga).toLocaleString('id-ID')}* sudah PENDING 10 menit! Mohon segera disetujui.`;
+        window.open(`https://wa.me/${NO_BOSS_NOTIF}?text=${msg}`, '_blank');
     }
 
-    loadData();
-    setInterval(loadData, 60000);
+    // 5. LOAD LAPORAN (REKAPITULASI)
+    document.getElementById('btn-tampilkan').addEventListener('click', async () => {
+        const s = document.getElementById('start-date').value;
+        const e = document.getElementById('end-date').value;
+        if(!s || !e) return alert("Pilih Tanggal!");
+        
+        document.getElementById('rekap-list').innerHTML = `<p class="text-center py-10 text-xs">Mencari Data...</p>`;
+        
+        try {
+            const r = await fetch(`${API_URL}?action=getRekapGlobal`);
+            const res = await r.json();
+            
+            // Filter Berdasarkan Tanggal Input
+            const ds = new Date(s).getTime();
+            const de = new Date(e).getTime();
+
+            const hasilFilter = res.data.filter(i => i.tSort >= ds && i.tSort <= de);
+
+            if(hasilFilter.length === 0) {
+                document.getElementById('rekap-list').innerHTML = `<p class="text-center py-10 text-xs text-gray-600 uppercase">Tidak ada data di periode ini</p>`;
+                return;
+            }
+
+            document.getElementById('rekap-list').innerHTML = hasilFilter.map(i => `
+                <div class="card-exec p-4 flex justify-between items-center">
+                    <div>
+                        <p class="text-[8px] font-bold text-gray-500 uppercase">${i.tDisplay} | ${i.kapal}</p>
+                        <p class="text-[10px] font-black uppercase text-white">${i.barang}</p>
+                        <p class="text-[8px] text-blue-500 font-bold uppercase">${i.status}</p>
+                    </div>
+                    <p class="text-[11px] font-black text-white">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
+                </div>
+            `).join('');
+        } catch(err) { alert("Error mengambil laporan."); }
+    });
+
+    // Jalankan pengecekan otomatis setiap 60 detik
+    setInterval(loadPersetujuan, 60000);
+
+    // Buka tab persetujuan jika URL mengandung ?tab=persetujuan
+    window.onload = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if(urlParams.get('tab') === 'persetujuan') switchTab('persetujuan');
+    };
 </script>
 </body>
 </html>
