@@ -3,114 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - CV EJA</title>
+    <title>ACHI SYSTEM - Owner Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background: #000; color: white; font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.5rem; }
-        .menu-card { background: #0a0a0a; border: 1px solid #1a1a1a; transition: all 0.3s; }
-        .menu-card:active { transform: scale(0.95); background: #111; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { background-color: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .menu-card { background: #0a0a0a; border: 1px solid #1a1a1a; transition: all 0.3s ease; cursor: pointer; }
+        .menu-card:hover { border-color: #3b82f6; transform: translateY(-5px); }
     </style>
 </head>
-<body class="pb-10">
-
-    <div class="p-6 flex justify-between items-center bg-black border-b border-white/5 sticky top-0 z-20">
+<body class="p-6">
+    <header class="mb-10 flex justify-between items-start">
         <div>
-            <p id="sapaan" class="text-[10px] font-black text-blue-500 uppercase tracking-widest italic mb-1">MEMUAT...</p>
-            <h1 class="text-xl font-black italic tracking-tighter uppercase leading-none">ACHI LITE v2.0</h1>
+            <p class="text-blue-500 font-bold text-[10px] tracking-[0.3em] uppercase mb-1">Authenticated</p>
+            <h1 class="text-2xl font-black italic italic tracking-tighter">ACHI LITE V2.0</h1>
         </div>
-        <button onclick="logout()" class="w-10 h-10 rounded-full bg-red-900/20 text-red-500 border border-red-900/30 flex items-center justify-center">
+        <button class="w-10 h-10 bg-red-950/30 text-red-500 rounded-full border border-red-900/50 flex items-center justify-center">
             <i class="fas fa-power-off"></i>
         </button>
-    </div>
+    </header>
 
-    <div class="p-6">
-        <div id="owner-stats" class="hidden grid grid-cols-1 gap-4 mb-8">
-            <div class="glass p-5 relative overflow-hidden">
-                <div class="absolute -right-4 -top-4 text-blue-500/10 text-6xl rotate-12"><i class="fas fa-ship"></i></div>
-                <p class="text-[8px] font-black text-gray-500 uppercase tracking-widest">Status Armada</p>
-                <h2 class="text-2xl font-black italic mt-1">OPERASIONAL</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div onclick="location.href='rekap.html?tab=persetujuan'" class="menu-card p-6 rounded-3xl relative overflow-hidden group">
+            <div class="w-12 h-12 bg-blue-900/30 text-blue-500 rounded-xl flex items-center justify-center mb-6 border border-blue-800/50">
+                <i class="fas fa-file-signature text-xl"></i>
+            </div>
+            <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Verification</p>
+            <h2 class="text-xl font-black uppercase italic group-hover:text-blue-400 transition">Menu Persetujuan</h2>
+            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition">
+                <i class="fas fa-file-signature text-8xl"></i>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
-            
-            <button onclick="location.href='permintaan.html'" class="menu-card p-6 rounded-[2rem] text-left flex flex-col justify-between h-40">
-                <div class="w-10 h-10 rounded-xl bg-blue-600/20 flex items-center justify-center text-blue-500">
-                    <i class="fas fa-file-signature"></i>
-                </div>
-                <div>
-                    <p class="text-[9px] font-black uppercase text-gray-500 tracking-tighter">Input Data</p>
-                    <p class="text-sm font-black italic uppercase">Anfrakan</p>
-                </div>
-            </button>
+        <div onclick="location.href='rekap.html?tab=rekap'" class="menu-card p-6 rounded-3xl relative overflow-hidden group">
+            <div class="w-12 h-12 bg-green-900/30 text-green-500 rounded-xl flex items-center justify-center mb-6 border border-green-800/50">
+                <i class="fas fa-chart-line text-xl"></i>
+            </div>
+            <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Financial Report</p>
+            <h2 class="text-xl font-black uppercase italic group-hover:text-green-400 transition">Rekapitulasi</h2>
+            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition">
+                <i class="fas fa-chart-line text-8xl"></i>
+            </div>
+        </div>
 
-            <button onclick="location.href='rekap.html'" class="menu-card p-6 rounded-[2rem] text-left flex flex-col justify-between h-40">
-                <div class="w-10 h-10 rounded-xl bg-green-600/20 flex items-center justify-center text-green-500">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div>
-                    <p class="text-[9px] font-black uppercase text-gray-500 tracking-tighter">Laporan</p>
-                    <p class="text-sm font-black italic uppercase">Rekapitulasi</p>
-                </div>
-            </button>
-
-            <button id="btn-approval" onclick="location.href='approval.html'" class="hidden menu-card p-6 rounded-[2rem] text-left flex flex-col justify-between h-40 border-red-900/30">
-                <div class="w-10 h-10 rounded-xl bg-red-600/20 flex items-center justify-center text-red-500">
-                    <i class="fas fa-check-double"></i>
-                </div>
-                <div>
-                    <p class="text-[9px] font-black uppercase text-gray-500 tracking-tighter">Otoritas</p>
-                    <p class="text-sm font-black italic uppercase">Approval</p>
-                </div>
-            </button>
-
-            <button id="btn-purchasing" onclick="location.href='purchasing.html'" class="hidden menu-card p-6 rounded-[2rem] text-left flex flex-col justify-between h-40 border-yellow-900/30">
-                <div class="w-10 h-10 rounded-xl bg-yellow-600/20 flex items-center justify-center text-yellow-500">
-                    <i class="fas fa-shopping-cart"></i>
-                </div>
-                <div>
-                    <p class="text-[9px] font-black uppercase text-gray-500 tracking-tighter">Belanja</p>
-                    <p class="text-sm font-black italic uppercase">Purchasing</p>
-                </div>
-            </button>
-
-            <button onclick="location.href='bbm.html'" class="menu-card p-6 rounded-[2rem] text-left flex flex-col justify-between h-40">
-                <div class="w-10 h-10 rounded-xl bg-orange-600/20 flex items-center justify-center text-orange-500">
-                    <i class="fas fa-gas-pump"></i>
-                </div>
-                <div>
-                    <p class="text-[9px] font-black uppercase text-gray-500 tracking-tighter">Logistik</p>
-                    <p class="text-sm font-black italic uppercase">Laporan BBM</p>
-                </div>
-            </button>
-
+        <div class="menu-card p-6 rounded-3xl relative overflow-hidden group opacity-50">
+            <div class="w-12 h-12 bg-orange-900/30 text-orange-500 rounded-xl flex items-center justify-center mb-6 border border-orange-800/50">
+                <i class="fas fa-gas-pump text-xl"></i>
+            </div>
+            <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Logistik</p>
+            <h2 class="text-xl font-black uppercase italic">Laporan BBM</h2>
         </div>
     </div>
-
-    <script>
-        const USER = JSON.parse(localStorage.getItem('achi_session'));
-
-        if(!USER) {
-            window.location.href = "index.html";
-        } else {
-            document.getElementById('sapaan').innerText = USER.sapaan;
-            
-            // Logika Tampilan Berdasarkan Level
-            if(USER.level === 1) {
-                document.getElementById('owner-stats').classList.remove('hidden');
-                document.getElementById('btn-approval').classList.remove('hidden');
-            }
-            if(USER.level === 2 || USER.level === 3) {
-                document.getElementById('btn-purchasing').classList.remove('hidden');
-            }
-        }
-
-        function logout() {
-            localStorage.clear();
-            window.location.href = "index.html";
-        }
-    </script>
 </body>
 </html>
