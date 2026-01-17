@@ -3,159 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OWNER CONTROL - ACHI SYSTEM</title>
+    <title>Executive Rekap - CV EJA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         body { background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .card-exec { background: #0b0b0b; border: 1px solid #1a1a1a; border-radius: 12px; }
-        .input-dark { background: #111; border: 1px solid #222; padding: 12px; border-radius: 10px; font-size: 13px; color: white; width: 100%; outline: none; }
-        .tab-active { border-bottom: 3px solid #2563eb; color: #2563eb; font-weight: 800; }
+        .card-exec { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1rem; }
+        .input-exec { background: #111; border: 1px solid #222; color: #fff; border-radius: 0.75rem; padding: 12px; width: 100%; font-size: 13px; }
+        
+        /* DESAIN CETAK RESMI (OFFICIAL REPORT) */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: #000 !important; padding: 1.5cm; }
+            .print-header { display: block !important; text-align: center; border-bottom: 3px double #000; margin-bottom: 20px; padding-bottom: 10px; }
+            .summary-print { display: flex !important; justify-content: space-around; border: 1px solid #000; padding: 15px; margin-bottom: 25px; background: #f9f9f9 !important; -webkit-print-color-adjust: exact; }
+            .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            .data-table th { background: #f2f2f2 !important; border: 1px solid #000; padding: 8px; font-size: 10px; text-transform: uppercase; -webkit-print-color-adjust: exact; }
+            .data-table td { border: 1px solid #ccc; padding: 8px; font-size: 10px; }
+            .sign-section { display: grid !important; grid-template-cols: 1fr 1fr; margin-top: 50px; text-align: center; font-size: 12px; }
+            .sign-space { height: 80px; }
+        }
+        .print-header, .summary-print, .sign-section { display: none; }
     </style>
 </head>
-<body class="p-4">
+<body class="p-5">
 
-    <div class="flex justify-between items-center mb-6">
-        <div class="flex items-center gap-3">
-            <div class="text-left">
-                <h1 class="text-lg font-black italic tracking-tighter uppercase leading-none">Owner Panel</h1>
-                <p class="text-[8px] text-blue-500 font-bold uppercase tracking-widest">Executive System</p>
+    <div class="flex justify-between items-center mb-6 no-print">
+        <button onclick="location.href='dashboard.html'" class="w-10 h-10 card-exec flex items-center justify-center"><i class="fas fa-chevron-left text-gray-400"></i></button>
+        <div class="text-right">
+            <h1 class="text-lg font-black italic uppercase tracking-tighter">Executive Dashboard</h1>
+            <p class="text-[8px] text-blue-500 font-bold tracking-widest uppercase">Financial Report System</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-2 mb-6 no-print">
+        <div class="card-exec p-3 text-center border-b-2 border-blue-600">
+            <p class="text-[7px] font-bold text-gray-500 uppercase italic">Out Today</p>
+            <p id="out-today" class="text-[10px] font-extrabold mt-1 text-blue-400">Rp 0</p>
+        </div>
+        <div class="card-exec p-3 text-center border-b-2 border-purple-600">
+            <p class="text-[7px] font-bold text-gray-500 uppercase italic">Out Week</p>
+            <p id="out-week" class="text-[10px] font-extrabold mt-1 text-purple-400">Rp 0</p>
+        </div>
+        <div class="card-exec p-3 text-center border-b-2 border-orange-600">
+            <p class="text-[7px] font-bold text-gray-500 uppercase italic">Out Month</p>
+            <p id="out-month" class="text-[10px] font-extrabold mt-1 text-orange-400">Rp 0</p>
+        </div>
+    </div>
+
+    <div class="card-exec p-5 mb-8 no-print shadow-xl">
+        <div class="grid grid-cols-2 gap-3 mb-4 text-xs font-bold text-gray-500">
+            <div>
+                <label class="ml-1 mb-1 block uppercase">Mulai</label>
+                <input type="date" id="start-date" class="input-exec">
+            </div>
+            <div>
+                <label class="ml-1 mb-1 block uppercase">Sampai</label>
+                <input type="date" id="end-date" class="input-exec">
             </div>
         </div>
-        <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center font-black border-2 border-blue-900">A</div>
-    </div>
-
-    <div class="flex space-x-6 mb-6 border-b border-gray-900 pb-2 text-[10px] uppercase font-bold tracking-widest">
-        <button onclick="switchTab('rekapan')" id="btn-rekapan" class="tab-active pb-2">Rekapan Data</button>
-        <button onclick="switchTab('persetujuan')" id="btn-persetujuan" class="pb-2 text-gray-500">Persetujuan</button>
-    </div>
-
-    <div id="section-rekapan">
-        <div class="card-exec p-5 mb-5">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="text-[9px] font-bold text-gray-500 uppercase">Pilih Kapal</label>
-                    <select id="filter-kapal" class="input-dark mt-1"><option value="SEMUA">-- SEMUA KAPAL --</option></select>
-                </div>
-                <div>
-                    <label class="text-[9px] font-bold text-gray-500 uppercase">Pilih No. Trip</label>
-                    <select id="filter-trip" class="input-dark mt-1"><option value="SEMUA">-- SEMUA TRIP --</option></select>
-                </div>
-                <div>
-                    <label class="text-[9px] font-bold text-gray-500 uppercase">Dari Tanggal</label>
-                    <input type="date" id="start-date" class="input-dark mt-1">
-                </div>
-                <div>
-                    <label class="text-[9px] font-bold text-gray-500 uppercase">Sampai Tanggal</label>
-                    <input type="date" id="end-date" class="input-dark mt-1">
-                </div>
-            </div>
-            <button onclick="applyFilters()" class="w-full bg-blue-600 py-4 rounded-xl mt-5 font-black uppercase text-[11px] tracking-widest">Tampilkan Rekap</button>
+        <select id="filter-tipe" class="input-exec mb-4 font-bold text-blue-400">
+            <option value="SEMUA">SELURUH TRANSAKSI (LAPORAN GABUNGAN)</option>
+            <option value="IN">HANYA PEMASUKAN (LAPORAN OWNER)</option>
+            <option value="OUT">HANYA PENGELUARAN (LAPORAN LOGISTIK)</option>
+        </select>
+        <div class="flex gap-2">
+            <button id="btn-tampilkan" class="flex-[3] bg-blue-600 py-4 rounded-xl font-black uppercase text-[11px] tracking-widest shadow-lg shadow-blue-900/30 active:scale-95 transition">Tampilkan Laporan</button>
+            <button onclick="window.print()" id="btn-print" class="hidden flex-1 bg-gray-800 py-4 rounded-xl text-white active:scale-95 transition"><i class="fas fa-print"></i></button>
         </div>
-        <div id="rekapan-list" class="space-y-2 pb-24"></div>
     </div>
 
-    <div id="section-persetujuan" class="hidden">
-        <div id="persetujuan-list" class="space-y-3 pb-24"></div>
+    <div class="print-header">
+        <h1 class="text-xl font-black">LAPORAN REKAPITULASI KEUANGAN GLOBAL</h1>
+        <h2 class="text-lg font-bold tracking-widest">CV. EFENDY JAYA ABADI</h2>
+        <p id="print-range" class="text-xs mt-2 italic text-gray-600"></p>
+    </div>
+
+    <div id="summary-print" class="summary-print">
+        <div><p class="text-[9px] font-bold">TOTAL PEMASUKAN</p><p id="p-in" class="text-sm font-black text-green-700"></p></div>
+        <div><p class="text-[9px] font-bold">TOTAL PENGELUARAN</p><p id="p-out" class="text-sm font-black text-red-700"></p></div>
+        <div><p class="text-[9px] font-bold">LABA BERSIH (NET)</p><p id="p-net" class="text-sm font-black text-blue-700"></p></div>
+    </div>
+
+    <div id="list-container">
+        <div id="msg" class="text-center py-10 text-gray-700 font-bold uppercase text-[9px] tracking-widest no-print">Tentukan Periode Laporan</div>
+        <div id="app-list" class="space-y-3 no-print"></div>
+        <table id="print-table" class="data-table hidden print:table">
+            <thead>
+                <tr><th>Tgl</th><th>Kapal</th><th>Keterangan</th><th>Tipe</th><th>Nilai (IDR)</th></tr>
+            </thead>
+            <tbody id="print-body"></tbody>
+        </table>
+    </div>
+
+    <div class="sign-section">
+        <div><p>Disusun Oleh,</p><div class="sign-space"></div><p class="font-bold underline">Admin Keuangan</p></div>
+        <div><p>Disetujui Oleh,</p><div class="sign-space"></div><p class="font-bold underline">Hengky (Owner)</p></div>
     </div>
 
 <script>
-    // URL Web App yang Boss Berikan
-    const API_URL = "https://script.google.com/macros/s/AKfycbwXVYldmD36WRt1Qgu5rcXqLRCjDyorZeYwaDUNueOmaoSlCFyJcK3WVQsXktDPG6Q/exec"; 
-    let masterData = [];
+    const API_URL = "https://script.google.com/macros/s/AKfycbxAzbSmHvslcbl3y_0_lW5fOAYnAxz2vMOx_AYsmqA5ksAiUMjWTiJZdS0V9chA3Grb/exec"; 
 
-    async function init() {
-        const list = document.getElementById('rekapan-list');
-        list.innerHTML = '<p class="text-center py-10 text-[10px] text-gray-600 italic">Menghubungkan ke Database...</p>';
+    async function loadStats() {
         try {
-            const r = await fetch(API_URL);
+            const res = await fetch(`${API_URL}?action=getRekapGlobal&start=01/01/2020&end=31/12/2030&kapal=SEMUA`);
+            const json = await res.json();
+            const now = new Date().getTime();
+            let d=0, w=0, m=0;
+            json.data.filter(i => i.tipe === "OUT").forEach(i => {
+                const gap = now - i.tSort;
+                if(gap <= 86400000) d += i.total;
+                if(gap <= 604800000) w += i.total;
+                if(gap <= 2592000000) m += i.total;
+            });
+            document.getElementById('out-today').innerText = `Rp ${d.toLocaleString('id-ID')}`;
+            document.getElementById('out-week').innerText = `Rp ${w.toLocaleString('id-ID')}`;
+            document.getElementById('out-month').innerText = `Rp ${m.toLocaleString('id-ID')}`;
+        } catch(e) {}
+    }
+    window.onload = loadStats;
+
+    document.getElementById('btn-tampilkan').addEventListener('click', async () => {
+        const sRaw = document.getElementById('start-date').value;
+        const eRaw = document.getElementById('end-date').value;
+        const tipe = document.getElementById('filter-tipe').value;
+        const appList = document.getElementById('app-list');
+        const printBody = document.getElementById('print-body');
+
+        if(!sRaw || !eRaw) return alert("Pilih tanggal dulu, Boss!");
+
+        document.getElementById('msg').innerHTML = '<i class="fas fa-sync fa-spin text-blue-500 text-xl"></i>';
+        
+        try {
+            const sIndo = sRaw.split("-").reverse().join("/");
+            const eIndo = eRaw.split("-").reverse().join("/");
+            document.getElementById('print-range').innerText = `PERIODE LAPORAN: ${sIndo} S/D ${eIndo}`;
+
+            const r = await fetch(`${API_URL}?action=getRekapGlobal&start=${sIndo}&end=${eIndo}&kapal=SEMUA`);
             const res = await r.json();
-            masterData = res.data;
 
-            const sk = document.getElementById('filter-kapal');
-            sk.innerHTML = '<option value="SEMUA">-- SEMUA KAPAL --</option>';
-            res.kapal.forEach(k => sk.innerHTML += `<option value="${k}">${k}</option>`);
+            let filtered = res.data;
+            if(tipe !== "SEMUA") filtered = res.data.filter(x => x.tipe === tipe);
 
-            const st = document.getElementById('filter-trip');
-            st.innerHTML = '<option value="SEMUA">-- SEMUA TRIP --</option>';
-            res.trip.forEach(t => st.innerHTML += `<option value="${t}">TRIP ${t}</option>`);
+            if(filtered.length === 0) { document.getElementById('msg').innerText = "DATA KOSONG"; return; }
 
-            list.innerHTML = '<p class="text-center py-10 text-gray-700 text-[10px] uppercase italic">Data Siap. Silakan Filter.</p>';
-        } catch(e) { 
-            list.innerHTML = '<p class="text-red-500 text-center uppercase font-bold text-[10px]">Koneksi Error! Cek Deployment.</p>'; 
-        }
-    }
+            document.getElementById('msg').classList.add('hidden');
+            document.getElementById('btn-print').classList.remove('hidden');
+            document.getElementById('summary-print').classList.remove('hidden');
+            
+            let tin = 0, tout = 0;
+            filtered.forEach(i => i.tipe === "IN" ? tin += i.total : tout += i.total);
+            
+            // Set Summary Cetak
+            document.getElementById('p-in').innerText = `Rp ${tin.toLocaleString('id-ID')}`;
+            document.getElementById('p-out').innerText = `Rp ${tout.toLocaleString('id-ID')}`;
+            document.getElementById('p-net').innerText = `Rp ${(tin - tout).toLocaleString('id-ID')}`;
 
-    function switchTab(t) {
-        document.getElementById('section-rekapan').classList.toggle('hidden', t !== 'rekapan');
-        document.getElementById('section-persetujuan').classList.toggle('hidden', t !== 'persetujuan');
-        document.getElementById('btn-rekapan').className = (t === 'rekapan') ? 'tab-active pb-2' : 'pb-2 text-gray-500';
-        document.getElementById('btn-persetujuan').className = (t === 'persetujuan') ? 'tab-active pb-2' : 'pb-2 text-gray-500';
-        if(t === 'persetujuan') renderPersetujuan();
-    }
-
-    function applyFilters() {
-        const kapal = document.getElementById('filter-kapal').value;
-        const trip = document.getElementById('filter-trip').value;
-        const start = document.getElementById('start-date').value;
-        const end = document.getElementById('end-date').value;
-
-        if(!start || !end) return alert("Pilih Tanggal!");
-        const ds = new Date(start + "T00:00:00").getTime();
-        const de = new Date(end + "T23:59:59").getTime();
-
-        let filtered = masterData.filter(i => {
-            const matchDate = i.tglSort >= ds && i.tglSort <= de;
-            const matchKapal = (kapal === "SEMUA") || (i.kapal.toUpperCase() === kapal.toUpperCase());
-            const matchTrip = (trip === "SEMUA") || (i.trip.toString() === trip.toString());
-            return matchDate && matchKapal && matchTrip;
-        });
-
-        const list = document.getElementById('rekapan-list');
-        if(filtered.length === 0) {
-            list.innerHTML = '<p class="text-center py-10 text-gray-600 text-[10px] font-bold uppercase italic">Data Tidak Ditemukan</p>';
-            return;
-        }
-
-        list.innerHTML = filtered.map(i => `
-            <div class="card-exec p-4 flex justify-between items-center border-l-2 ${i.status === 'APPROVED' ? 'border-green-600' : 'border-blue-900'}">
-                <div>
-                    <p class="text-[7px] text-gray-500 font-bold uppercase">${i.tglDisplay} | TRIP ${i.trip} | ${i.kapal}</p>
-                    <p class="text-[11px] font-bold uppercase tracking-tight">${i.barang}</p>
-                    <p class="text-[7px] font-black uppercase italic ${i.status === 'APPROVED' ? 'text-green-500' : 'text-yellow-500'}">${i.status}</p>
+            // List di App (Mode Gelap)
+            appList.innerHTML = filtered.map(i => `
+                <div class="card-exec p-4 flex justify-between items-center border-r-4 ${i.tipe === 'IN' ? 'border-green-600' : 'border-red-600'}">
+                    <div><p class="text-[8px] text-gray-500 font-bold uppercase">${i.tDisplay} | ${i.kapal}</p><p class="text-[10px] font-black uppercase mt-1 italic">${i.item}</p></div>
+                    <p class="text-[11px] font-black ${i.tipe === 'IN' ? 'text-green-500' : 'text-red-500'}">${i.total.toLocaleString('id-ID')}</p>
                 </div>
-                <p class="text-[11px] font-black italic">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
-            </div>`).join('');
-    }
+            `).join('');
 
-    function renderPersetujuan() {
-        const list = document.getElementById('persetujuan-list');
-        const pending = masterData.filter(i => i.status === "PENDING");
-        if(pending.length === 0) {
-            list.innerHTML = '<p class="text-center py-20 text-gray-700 text-[10px] uppercase font-bold italic">Semua Permintaan Telah Disetujui</p>';
-            return;
-        }
-        list.innerHTML = pending.map(i => `
-            <div class="card-exec p-4 flex justify-between items-center border-l-4 border-blue-600">
-                <div>
-                    <p class="text-[7px] text-gray-500 font-bold uppercase">${i.tglDisplay} | TRIP ${i.trip} | ${i.kapal}</p>
-                    <h2 class="text-[11px] font-black uppercase italic">${i.barang}</h2>
-                    <p class="text-blue-500 font-bold text-[10px] mt-1">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
-                </div>
-                <button onclick="setujui('${i.kapal}', '${i.barang}', this)" class="bg-blue-600 px-6 py-3 rounded-xl font-black text-[9px] uppercase shadow-lg shadow-blue-900/40">Setujui</button>
-            </div>`).join('');
-    }
+            // Body di Tabel Print (Mode Kertas)
+            printBody.innerHTML = filtered.map(i => `
+                <tr><td>${i.tDisplay}</td><td>${i.kapal}</td><td>${i.item}</td><td>${i.tipe}</td><td style="text-align:right">${i.total.toLocaleString('id-ID')}</td></tr>
+            `).join('');
 
-    async function setujui(kapal, barang, btn) {
-        btn.innerText = "WAIT"; btn.disabled = true;
-        try {
-            await fetch(API_URL, { method: 'POST', body: JSON.stringify({ kapal, barang }) });
-            alert("Berhasil Disetujui!"); init();
-        } catch (e) { alert("Gagal!"); btn.innerText = "Setujui"; btn.disabled = false; }
-    }
-
-    window.onload = init;
+        } catch (e) { document.getElementById('msg').innerText = "GAGAL MEMUAT"; }
+    });
 </script>
 </body>
 </html>
