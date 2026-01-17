@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Executive Rekap - CV EJA</title>
+    <title>ACHI SYSTEM - Executive Rekap</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -12,14 +12,13 @@
         .card-exec { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1rem; }
         .input-exec { background: #111; border: 1px solid #222; color: #fff; border-radius: 0.75rem; padding: 12px; width: 100%; font-size: 13px; }
         
-        /* DESAIN CETAK RESMI (OFFICIAL REPORT) */
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; color: #000 !important; padding: 1.5cm; }
             .print-header { display: block !important; text-align: center; border-bottom: 3px double #000; margin-bottom: 20px; padding-bottom: 10px; }
             .summary-print { display: flex !important; justify-content: space-around; border: 1px solid #000; padding: 15px; margin-bottom: 25px; background: #f9f9f9 !important; -webkit-print-color-adjust: exact; }
             .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-            .data-table th { background: #f2f2f2 !important; border: 1px solid #000; padding: 8px; font-size: 10px; text-transform: uppercase; -webkit-print-color-adjust: exact; }
+            .data-table th { background: #f2f2f2 !important; border: 1px solid #000; padding: 8px; font-size: 10px; -webkit-print-color-adjust: exact; }
             .data-table td { border: 1px solid #ccc; padding: 8px; font-size: 10px; }
             .sign-section { display: grid !important; grid-template-cols: 1fr 1fr; margin-top: 50px; text-align: center; font-size: 12px; }
             .sign-space { height: 80px; }
@@ -32,8 +31,8 @@
     <div class="flex justify-between items-center mb-6 no-print">
         <button onclick="location.href='dashboard.html'" class="w-10 h-10 card-exec flex items-center justify-center"><i class="fas fa-chevron-left text-gray-400"></i></button>
         <div class="text-right">
-            <h1 class="text-lg font-black italic uppercase tracking-tighter">Executive Dashboard</h1>
-            <p class="text-[8px] text-blue-500 font-bold tracking-widest uppercase">Financial Report System</p>
+            <h1 class="text-lg font-black italic uppercase tracking-tighter">ACHI SYSTEM</h1>
+            <p class="text-[8px] text-blue-500 font-bold tracking-widest uppercase">Global Management Control</p>
         </div>
     </div>
 
@@ -53,65 +52,70 @@
     </div>
 
     <div class="card-exec p-5 mb-8 no-print shadow-xl">
-        <div class="grid grid-cols-2 gap-3 mb-4 text-xs font-bold text-gray-500">
-            <div>
-                <label class="ml-1 mb-1 block uppercase">Mulai</label>
-                <input type="date" id="start-date" class="input-exec">
-            </div>
-            <div>
-                <label class="ml-1 mb-1 block uppercase">Sampai</label>
-                <input type="date" id="end-date" class="input-exec">
-            </div>
+        <div class="grid grid-cols-2 gap-3 mb-4">
+            <input type="date" id="start-date" class="input-exec text-xs">
+            <input type="date" id="end-date" class="input-exec text-xs">
         </div>
-        <select id="filter-tipe" class="input-exec mb-4 font-bold text-blue-400">
-            <option value="SEMUA">SELURUH TRANSAKSI (LAPORAN GABUNGAN)</option>
-            <option value="IN">HANYA PEMASUKAN (LAPORAN OWNER)</option>
-            <option value="OUT">HANYA PENGELUARAN (LAPORAN LOGISTIK)</option>
-        </select>
+        
+        <div class="grid grid-cols-2 gap-3 mb-4">
+            <select id="filter-kapal" class="input-exec font-bold text-gray-300">
+                <option value="SEMUA">SELURUH ARMADA</option>
+                <option value="KM. NABAWI 09">KM. NABAWI 09</option>
+                <option value="KM. LASTIKA STAR">KM. LASTIKA STAR</option>
+                <option value="KM. SRIKANDI 01">KM. SRIKANDI 01</option>
+            </select>
+            <select id="filter-tipe" class="input-exec font-bold text-blue-400">
+                <option value="SEMUA">SEMUA TIPE</option>
+                <option value="IN">PEMASUKAN</option>
+                <option value="OUT">PENGELUARAN</option>
+            </select>
+        </div>
+
         <div class="flex gap-2">
-            <button id="btn-tampilkan" class="flex-[3] bg-blue-600 py-4 rounded-xl font-black uppercase text-[11px] tracking-widest shadow-lg shadow-blue-900/30 active:scale-95 transition">Tampilkan Laporan</button>
-            <button onclick="window.print()" id="btn-print" class="hidden flex-1 bg-gray-800 py-4 rounded-xl text-white active:scale-95 transition"><i class="fas fa-print"></i></button>
+            <button id="btn-tampilkan" class="flex-[3] bg-blue-600 py-4 rounded-xl font-black uppercase text-[11px] tracking-widest active:scale-95 transition shadow-lg shadow-blue-900/30">Tampilkan Laporan</button>
+            <button onclick="window.print()" id="btn-print" class="hidden flex-1 bg-gray-800 py-4 rounded-xl text-white"><i class="fas fa-print"></i></button>
         </div>
     </div>
 
     <div class="print-header">
-        <h1 class="text-xl font-black">LAPORAN REKAPITULASI KEUANGAN GLOBAL</h1>
+        <h1 class="text-xl font-black uppercase">LAPORAN REKAPITULASI ACHI SYSTEM</h1>
         <h2 class="text-lg font-bold tracking-widest">CV. EFENDY JAYA ABADI</h2>
-        <p id="print-range" class="text-xs mt-2 italic text-gray-600"></p>
+        <p id="print-info" class="text-xs mt-2 italic text-gray-600"></p>
     </div>
 
     <div id="summary-print" class="summary-print">
-        <div><p class="text-[9px] font-bold">TOTAL PEMASUKAN</p><p id="p-in" class="text-sm font-black text-green-700"></p></div>
-        <div><p class="text-[9px] font-bold">TOTAL PENGELUARAN</p><p id="p-out" class="text-sm font-black text-red-700"></p></div>
-        <div><p class="text-[9px] font-bold">LABA BERSIH (NET)</p><p id="p-net" class="text-sm font-black text-blue-700"></p></div>
+        <div><p class="text-[9px] font-bold">PEMASUKAN</p><p id="p-in" class="text-sm font-black text-green-700"></p></div>
+        <div><p class="text-[9px] font-bold">PENGELUARAN</p><p id="p-out" class="text-sm font-black text-red-700"></p></div>
+        <div><p class="text-[9px] font-bold">LABA BERSIH</p><p id="p-net" class="text-sm font-black text-blue-700"></p></div>
     </div>
 
     <div id="list-container">
-        <div id="msg" class="text-center py-10 text-gray-700 font-bold uppercase text-[9px] tracking-widest no-print">Tentukan Periode Laporan</div>
+        <div id="msg" class="text-center py-10 text-gray-700 font-bold uppercase text-[9px] tracking-widest no-print">Tentukan Filter Laporan</div>
         <div id="app-list" class="space-y-3 no-print"></div>
         <table id="print-table" class="data-table hidden print:table">
             <thead>
-                <tr><th>Tgl</th><th>Kapal</th><th>Keterangan</th><th>Tipe</th><th>Nilai (IDR)</th></tr>
+                <tr><th>Tgl</th><th>Kapal</th><th>Item</th><th>Tipe</th><th>Nilai (IDR)</th></tr>
             </thead>
             <tbody id="print-body"></tbody>
         </table>
     </div>
 
     <div class="sign-section">
-        <div><p>Disusun Oleh,</p><div class="sign-space"></div><p class="font-bold underline">Admin Keuangan</p></div>
-        <div><p>Disetujui Oleh,</p><div class="sign-space"></div><p class="font-bold underline">Hengky (Owner)</p></div>
+        <div><p>Admin Sistem,</p><div class="sign-space"></div><p class="font-bold underline">Achy System Admin</p></div>
+        <div><p>Menyetujui,</p><div class="sign-space"></div><p class="font-bold underline">Pak CEO Hengky</p></div>
     </div>
 
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycby-WfRG8NX0DCs3rLG5MQGgtsvCETHpSC7dbnICqNY4FHKdB3dG2W7eRsR0VZ_-dvsm/exec"; 
 
-    async function loadStats() {
+    // Stats otomatis saat buka halaman
+    window.onload = async () => {
         try {
-            const res = await fetch(`${API_URL}?action=getRekapGlobal&start=01/01/2020&end=31/12/2030&kapal=SEMUA`);
-            const json = await res.json();
+            const r = await fetch(`${API_URL}?action=getRekapGlobal&start=01/01/2020&end=31/12/2030&kapal=SEMUA`);
+            const res = await r.json();
             const now = new Date().getTime();
             let d=0, w=0, m=0;
-            json.data.filter(i => i.tipe === "OUT").forEach(i => {
+            res.data.filter(i => i.tipe === "OUT").forEach(i => {
                 const gap = now - i.tSort;
                 if(gap <= 86400000) d += i.total;
                 if(gap <= 604800000) w += i.total;
@@ -121,32 +125,32 @@
             document.getElementById('out-week').innerText = `Rp ${w.toLocaleString('id-ID')}`;
             document.getElementById('out-month').innerText = `Rp ${m.toLocaleString('id-ID')}`;
         } catch(e) {}
-    }
-    window.onload = loadStats;
+    };
 
     document.getElementById('btn-tampilkan').addEventListener('click', async () => {
         const sRaw = document.getElementById('start-date').value;
         const eRaw = document.getElementById('end-date').value;
+        const kapal = document.getElementById('filter-kapal').value;
         const tipe = document.getElementById('filter-tipe').value;
         const appList = document.getElementById('app-list');
         const printBody = document.getElementById('print-body');
 
         if(!sRaw || !eRaw) return alert("Pilih tanggal dulu, Boss!");
 
-        document.getElementById('msg').innerHTML = '<i class="fas fa-sync fa-spin text-blue-500 text-xl"></i>';
+        document.getElementById('msg').innerHTML = '<i class="fas fa-circle-notch fa-spin text-blue-500 text-xl"></i>';
         
         try {
             const sIndo = sRaw.split("-").reverse().join("/");
             const eIndo = eRaw.split("-").reverse().join("/");
-            document.getElementById('print-range').innerText = `PERIODE LAPORAN: ${sIndo} S/D ${eIndo}`;
+            document.getElementById('print-info').innerText = `ARMADA: ${kapal} | PERIODE: ${sIndo} - ${eIndo}`;
 
-            const r = await fetch(`${API_URL}?action=getRekapGlobal&start=${sIndo}&end=${eIndo}&kapal=SEMUA`);
+            const r = await fetch(`${API_URL}?action=getRekapGlobal&start=${sIndo}&end=${eIndo}&kapal=${kapal}`);
             const res = await r.json();
 
             let filtered = res.data;
             if(tipe !== "SEMUA") filtered = res.data.filter(x => x.tipe === tipe);
 
-            if(filtered.length === 0) { document.getElementById('msg').innerText = "DATA KOSONG"; return; }
+            if(filtered.length === 0) { document.getElementById('msg').innerText = "DATA TIDAK DITEMUKAN"; return; }
 
             document.getElementById('msg').classList.add('hidden');
             document.getElementById('btn-print').classList.remove('hidden');
@@ -154,13 +158,10 @@
             
             let tin = 0, tout = 0;
             filtered.forEach(i => i.tipe === "IN" ? tin += i.total : tout += i.total);
-            
-            // Set Summary Cetak
             document.getElementById('p-in').innerText = `Rp ${tin.toLocaleString('id-ID')}`;
             document.getElementById('p-out').innerText = `Rp ${tout.toLocaleString('id-ID')}`;
             document.getElementById('p-net').innerText = `Rp ${(tin - tout).toLocaleString('id-ID')}`;
 
-            // List di App (Mode Gelap)
             appList.innerHTML = filtered.map(i => `
                 <div class="card-exec p-4 flex justify-between items-center border-r-4 ${i.tipe === 'IN' ? 'border-green-600' : 'border-red-600'}">
                     <div><p class="text-[8px] text-gray-500 font-bold uppercase">${i.tDisplay} | ${i.kapal}</p><p class="text-[10px] font-black uppercase mt-1 italic">${i.item}</p></div>
@@ -168,12 +169,11 @@
                 </div>
             `).join('');
 
-            // Body di Tabel Print (Mode Kertas)
             printBody.innerHTML = filtered.map(i => `
                 <tr><td>${i.tDisplay}</td><td>${i.kapal}</td><td>${i.item}</td><td>${i.tipe}</td><td style="text-align:right">${i.total.toLocaleString('id-ID')}</td></tr>
             `).join('');
 
-        } catch (e) { document.getElementById('msg').innerText = "GAGAL MEMUAT"; }
+        } catch (e) { document.getElementById('msg').innerText = "ERROR KONEKSI"; }
     });
 </script>
 </body>
