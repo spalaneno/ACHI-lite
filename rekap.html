@@ -3,164 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACHI SYSTEM - OWNER CONTROL</title>
+    <title>PERSERUJUAN OWNER - ACHI SYSTEM</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .card-exec { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1rem; }
-        .tab-active { border-bottom: 3px solid #3b82f6; color: #3b82f6; font-weight: 800; }
-        .urgent-blink { animation: pulse-red 1s infinite; border: 1px solid #ef4444; }
-        @keyframes pulse-red { 50% { background: #450a0a; } }
+        body { background: #000; color: #fff; font-family: sans-serif; }
+        .card { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 12px; padding: 15px; margin-bottom: 12px; border-left: 4px solid #ef4444; }
+        .blink { animation: alert 1s infinite; }
+        @keyframes alert { 50% { border-color: transparent; } }
     </style>
 </head>
 <body class="p-5">
 
-    <div class="flex justify-between items-center mb-6">
-        <button onclick="location.href='dashboard.html'" class="w-10 h-10 card-exec flex items-center justify-center">
-            <i class="fas fa-chevron-left text-gray-400"></i>
-        </button>
-        <div class="text-right">
-            <h1 class="text-lg font-black italic uppercase tracking-tighter">ACHI SYSTEM</h1>
-            <p class="text-[8px] text-blue-500 font-bold tracking-widest uppercase italic">Executive Control Panel</p>
-        </div>
-    </div>
+    <header class="mb-8">
+        <h1 class="text-xl font-black italic">MENU PERSETUJUAN</h1>
+        <p class="text-blue-500 text-[10px] font-bold tracking-widest uppercase">Hanya Menampilkan Status PENDING</p>
+    </header>
 
-    <div class="flex space-x-6 mb-6 border-b border-gray-900 pb-2">
-        <button onclick="switchTab('rekap')" id="tab-rekap" class="tab-active text-[10px] uppercase tracking-widest pb-2">Laporan Keuangan</button>
-        <button onclick="switchTab('persetujuan')" id="tab-persetujuan" class="text-[10px] uppercase tracking-widest pb-2 text-gray-500">Menu Persetujuan</button>
-    </div>
-
-    <div id="section-rekap" class="block">
-        <div class="card-exec p-5 mb-6">
-            <p class="text-[10px] text-gray-500 font-bold uppercase mb-4 text-center tracking-widest">Filter Laporan</p>
-            <div class="grid grid-cols-2 gap-3 mb-4">
-                <input type="date" id="start-date" class="bg-[#111] border border-[#222] p-3 rounded-xl text-xs">
-                <input type="date" id="end-date" class="bg-[#111] border border-[#222] p-3 rounded-xl text-xs">
-            </div>
-            <button id="btn-tampilkan" class="w-full bg-blue-600 py-4 rounded-xl font-black uppercase text-[11px] tracking-widest">Generate Report</button>
-        </div>
-        <div id="rekap-list" class="space-y-3">
-             <p class="text-center text-[9px] text-gray-700 py-10 uppercase font-black italic">Tentukan Periode Report</p>
-        </div>
-    </div>
-
-    <div id="section-persetujuan" class="hidden">
-        <div id="urgent-notif" class="hidden urgent-blink p-4 rounded-xl mb-4 text-center">
-            <p class="text-[10px] font-black text-red-500 uppercase tracking-tighter italic">⚠️ PERHATIAN: Ada Permintaan Belum Disetujui > 10 Menit!</p>
-        </div>
-        
-        <div id="persetujuan-list" class="space-y-3">
-            <p class="text-center text-[9px] text-gray-700 py-20 uppercase font-black italic">Memeriksa Data Excel...</p>
-        </div>
+    <div id="list-persetujuan">
+        <p class="text-center py-20 text-gray-700">Menghubungkan ke Spreadsheet...</p>
     </div>
 
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycby-WfRG8NX0DCs3rLG5MQGgtsvCETHpSC7dbnICqNY4FHKdB3dG2W7eRsR0VZ_-dvsm/exec";
-    const NO_WA_OWNER = "6282216666617";
+    // MASUKKAN LINK URL DEPLOY BARU BOSS DI SINI:
+    const API_URL = "https://script.google.com/macros/s/AKfycbxi_XUwSAzNwwfx3VgL89-NsxRR3xdROoG0CUQ9Z1zYAVGRWWye2fJIOu0l2tHOY15Q/exec"; 
+    const NO_WA_BOSS = "6282216666617";
 
-    // 1. TABS SYSTEM
-    function switchTab(target) {
-        document.getElementById('section-rekap').classList.toggle('hidden', target !== 'rekap');
-        document.getElementById('section-persetujuan').classList.toggle('hidden', target !== 'persetujuan');
-        document.getElementById('tab-rekap').className = target === 'rekap' ? 'tab-active text-[10px] uppercase pb-2' : 'text-[10px] uppercase pb-2 text-gray-500';
-        document.getElementById('tab-persetujuan').className = target === 'persetujuan' ? 'tab-active text-[10px] uppercase pb-2' : 'text-[10px] uppercase pb-2 text-gray-500';
-        
-        if(target === 'persetujuan') loadPersetujuan();
-    }
-
-    // 2. LOAD DATA PERSETUJUAN (Hanya Filter PENDING)
-    async function loadPersetujuan() {
-        const container = document.getElementById('persetujuan-list');
-        const urgentTag = document.getElementById('urgent-notif');
+    async function loadData() {
         try {
-            const r = await fetch(`${API_URL}?action=getRekapGlobal&start=01/01/2026&end=31/12/2026&kapal=SEMUA`);
+            const r = await fetch(API_URL + "?action=getRekapGlobal");
             const res = await r.json();
-            
-            // FILTER SANGAT KETAT: Hanya Status 'PENDING'
-            const dataPending = res.data.filter(i => i.status === "PENDING");
+            const container = document.getElementById('list-persetujuan');
 
-            if(dataPending.length === 0) {
-                container.innerHTML = `<p class="text-center text-[9px] text-gray-600 py-20 uppercase italic">✅ Semua permintaan sudah disetujui</p>`;
-                urgentTag.classList.add('hidden');
+            // FILTER: HANYA YANG STATUSNYA 'PENDING'
+            const pending = res.data.filter(i => i.status === "PENDING");
+
+            if(pending.length === 0) {
+                container.innerHTML = `<div class="text-center py-20 text-gray-500 font-bold uppercase text-xs">✅ Semua Beres. Tidak ada yang Pending.</div>`;
                 return;
             }
 
             const skrg = new Date().getTime();
-            let adaTelat = false;
 
-            container.innerHTML = dataPending.map(i => {
+            container.innerHTML = pending.map(i => {
                 const selisihMenit = (skrg - i.tSort) / 60000;
-                if(selisihMenit > 10) {
-                    adaTelat = true;
-                    // Auto Kirim WA jika telat 10 menit
-                    if(!localStorage.getItem('sent_'+i.tSort)) {
-                        autoWA(i.kapal, i.item, i.total);
-                        localStorage.setItem('sent_'+i.tSort, 'true');
-                    }
+                
+                // OTOMATIS BUKA WA JIKA SUDAH 10 MENIT
+                if(selisihMenit > 10 && !localStorage.getItem('notif_'+i.tSort)) {
+                    const pesan = `⚠️ *REMINDER BOSS*%0APermintaan *${i.barang}* (${i.kapal}) sudah PENDING 10 menit!`;
+                    window.open(`https://wa.me/${NO_WA_BOSS}?text=${pesan}`, '_blank');
+                    localStorage.setItem('notif_'+i.tSort, 'sent');
                 }
 
                 return `
-                    <div class="card-exec p-4 flex justify-between items-center border-l-4 ${selisihMenit > 10 ? 'border-red-600' : 'border-blue-600'}">
-                        <div>
-                            <p class="text-[8px] font-bold text-gray-500 uppercase">${i.tDisplay} | ${i.kapal}</p>
-                            <p class="text-[11px] font-black uppercase text-white italic">${i.item}</p>
-                            <p class="text-[10px] font-bold text-blue-500 mt-1">Rp ${i.total.toLocaleString('id-ID')}</p>
+                    <div class="card ${selisihMenit > 10 ? 'blink' : ''}">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-[9px] text-gray-500 font-bold">${i.tDisplay} | ${i.kapal}</p>
+                                <h2 class="text-sm font-black uppercase text-white">${i.barang}</h2>
+                                <p class="text-blue-500 font-bold text-sm">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
+                            </div>
+                            <button onclick="approveWA('${i.kapal}','${i.barang}','${i.harga}')" class="bg-blue-600 px-4 py-2 rounded-lg text-[10px] font-black">SETUJUI</button>
                         </div>
-                        <button onclick="approveWA('${i.kapal}', '${i.item}', '${i.total}')" class="bg-blue-600 px-5 py-2 rounded-lg text-[10px] font-black uppercase shadow-lg shadow-blue-900/30">SETUJUI</button>
                     </div>
                 `;
             }).join('');
 
-            if(adaTelat) urgentTag.classList.remove('hidden'); else urgentTag.classList.add('hidden');
-
-        } catch(e) { container.innerHTML = "Error Koneksi."; }
+        } catch(e) { container.innerHTML = "Gagal memuat data. Periksa URL API."; }
     }
 
-    // 3. FUNGSI WHATSAPP
-    function approveWA(kapal, item, total) {
-        const msg = `*OWNER APPROVAL - ACHI SYSTEM*%0A%0ASaya menyetujui permintaan pembelian berikut:%0A🚢 *Kapal:* ${kapal}%0A📦 *Item:* ${item}%0A💰 *Nilai:* Rp ${parseInt(total).toLocaleString('id-ID')}%0A%0ASilakan diproses segera.`;
-        window.open(`https://wa.me/${NO_WA_OWNER}?text=${msg}`, '_blank');
+    function approveWA(kapal, barang, harga) {
+        const msg = `*OWNER APPROVAL*%0ASaya SETUJU:%0A🚢 Kapal: ${kapal}%0A📦 Barang: ${barang}%0A💰 Nilai: Rp ${parseInt(harga).toLocaleString('id-ID')}`;
+        window.open(`https://wa.me/${NO_WA_BOSS}?text=${msg}`, '_blank');
     }
 
-    function autoWA(kapal, item, total) {
-        const msg = `⚠️ *PENGINGAT OTOMATIS*%0A%0ABoss, permintaan *${item}* untuk *${kapal}* senilai *Rp ${parseInt(total).toLocaleString('id-ID')}* sudah pending lebih dari 10 menit!%0A%0AMohon segera dicek.`;
-        window.open(`https://wa.me/${NO_WA_OWNER}?text=${msg}`, '_blank');
-    }
-
-    // 4. LOAD REKAP LAPORAN
-    document.getElementById('btn-tampilkan').addEventListener('click', async () => {
-        const s = document.getElementById('start-date').value;
-        const e = document.getElementById('end-date').value;
-        if(!s || !e) return alert("Pilih Tanggal!");
-        
-        document.getElementById('rekap-list').innerHTML = `<p class="text-center py-10">Mencari Data...</p>`;
-        
-        try {
-            const r = await fetch(`${API_URL}?action=getRekapGlobal&start=${s.split("-").reverse().join("/")}&end=${e.split("-").reverse().join("/")}&kapal=SEMUA`);
-            const res = await r.json();
-            
-            document.getElementById('rekap-list').innerHTML = res.data.map(i => `
-                <div class="card-exec p-4 flex justify-between items-center border-r-4 ${i.tipe === 'IN' ? 'border-green-600' : 'border-red-600'}">
-                    <div>
-                        <p class="text-[8px] font-bold text-gray-500 uppercase">${i.tDisplay} | ${i.kapal}</p>
-                        <p class="text-[10px] font-black uppercase text-white">${i.item}</p>
-                    </div>
-                    <p class="text-[10px] font-black ${i.tipe === 'IN' ? 'text-green-500' : 'text-red-500'}">Rp ${i.total.toLocaleString('id-ID')}</p>
-                </div>
-            `).join('');
-        } catch(err) { alert("Gagal mengambil data laporan."); }
-    });
-
-    // Auto Refresh setiap 1 menit untuk cek notifikasi
-    setInterval(loadPersetujuan, 60000);
-    
-    // Inisialisasi awal jika ada parameter tab=persetujuan di URL
-    window.onload = () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        if(urlParams.get('tab') === 'persetujuan') switchTab('persetujuan');
-    };
+    loadData();
+    setInterval(loadData, 30000); // Refresh tiap 30 detik
 </script>
 </body>
 </html>
