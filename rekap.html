@@ -1,17 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekap Global - CV EJA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #030303; color: white; font-family: 'Inter', sans-serif; }
+        .input-dark { background: #111; border: 1px solid #333; color: white; border-radius: 0.75rem; padding: 10px; font-size: 11px; width: 100%; }
+        .card-rekap { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1.5rem; }
+    </style>
+</head>
+<body class="pb-10">
+
+    <div class="p-5 flex justify-between items-center bg-black border-b border-white/5 sticky top-0 z-20">
+        <button onclick="location.href='dashboard.html'" class="text-gray-400 flex items-center gap-2">
+            <i class="fas fa-arrow-left"></i> <span class="text-[9px] font-black uppercase">Dashboard</span>
+        </button>
+        <p class="text-[10px] font-black uppercase italic tracking-widest text-blue-500">Rekapitulasi Global</p>
+        <div class="w-8"></div>
+    </div>
+
+    <div class="p-6">
+        <div class="card-rekap p-5 mb-6">
+            <div class="grid grid-cols-2 gap-3 mb-3">
+                <div>
+                    <label class="text-[8px] font-black text-gray-500 uppercase ml-1">Dari</label>
+                    <input type="date" id="start-date" class="input-dark mt-1">
+                </div>
+                <div>
+                    <label class="text-[8px] font-black text-gray-500 uppercase ml-1">Sampai</label>
+                    <input type="date" id="end-date" class="input-dark mt-1">
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="text-[8px] font-black text-gray-500 uppercase ml-1">Filter Armada</label>
+                <select id="filter-kapal" class="input-dark mt-1">
+                    <option value="SEMUA">SEMUA ARMADA</option>
+                    <option value="KM. NABAWI 09">KM. NABAWI 09</option>
+                    <option value="KM. LASTIKA STAR">KM. LASTIKA STAR</option>
+                    <option value="KM. SRIKANDI 01">KM. SRIKANDI 01</option>
+                </select>
+            </div>
+            <button onclick="loadRekap()" class="w-full bg-blue-700 hover:bg-blue-600 text-white font-black text-[10px] py-3 rounded-xl uppercase transition-all">Tampilkan Laporan</button>
+        </div>
+
+        <div id="summary-area" class="grid grid-cols-2 gap-4 mb-6 hidden">
+            <div class="card-rekap p-4 border-l-4 border-green-600">
+                <p class="text-[7px] font-black text-gray-500 uppercase tracking-widest">Pemasukan (Owner)</p>
+                <p id="total-in" class="text-sm font-black text-green-500">Rp 0</p>
+            </div>
+            <div class="card-rekap p-4 border-l-4 border-red-600">
+                <p class="text-[7px] font-black text-gray-500 uppercase tracking-widest">Pengeluaran (Log)</p>
+                <p id="total-out" class="text-sm font-black text-red-500">Rp 0</p>
+            </div>
+        </div>
+
+        <div id="detail-list" class="space-y-3">
+            <p class="text-center text-[10px] text-gray-600 italic py-10 uppercase tracking-widest">Silakan tentukan tanggal laporan</p>
+        </div>
+    </div>
+
 <script>
-    const API = "https://script.google.com/macros/s/AKfycbweR2qCuqWKC7gCXaEUjFaLlT1XgaWGBKulYlJ92EuLfgtU_c0N4ZNoh2Beve3bePwg/execS"; // Ganti dengan URL Deploy terbaru
+    // MASUKKAN URL WEB APP SCRIPT TERBARU BOSS DI SINI
+    const API = "https://script.google.com/macros/s/AKfycbzk03FnZDF_z2F8MNzUDF42WM6pzxsHZMufwRNNg-ejDMb9ri86iEKeSUqQGXU81T0-/exec";
+    
+    const tgl = new Date().toISOString().split('T')[0];
+    document.getElementById('start-date').value = tgl;
+    document.getElementById('end-date').value = tgl;
 
     async function loadRekap() {
-        // ... kode lainnya ...
+        const detailList = document.getElementById('detail-list');
+        const summaryArea = document.getElementById('summary-area');
+        
+        detailList.innerHTML = `<div class="text-center py-10"><i class="fas fa-circle-notch fa-spin text-blue-500"></i><p class="text-[9px] mt-2 text-gray-500">MENARIK DATA DARI DATABASE...</p></div>`;
+        
+        const params = new URLSearchParams({
+            action: 'getRekapGlobal',
+            start: document.getElementById('start-date').value,
+            end: document.getElementById('end-date').value,
+            kapal: document.getElementById('filter-kapal').value
+        });
+
         try {
-            const r = await fetch(`${API}?action=getRekapGlobal&start=${s}&end=${e}&kapal=${k}`);
+            const r = await fetch(`${API}?${params.toString()}`);
             const res = await r.json();
 
-            // Menampilkan Angka Sesuai Kolom Spreadsheet Boss
-            document.getElementById('total-in').innerText = `Rp ${res.summary.total_in.toLocaleString()}`; // Dari Bag_Owner
-            document.getElementById('total-out').innerText = `Rp ${res.summary.total_out.toLocaleString()}`; // Dari Logistik
-            
-            // ... kode mapping list ...
-        } catch(e) { console.error(e); }
+            summaryArea.classList.remove('hidden');
+            document.getElementById('total-in').innerText = `Rp ${res.summary.total_in.toLocaleString('id-ID')}`;
+            document.getElementById('total-out').innerText = `Rp ${res.summary.total_out.toLocaleString('id-ID')}`;
+
+            if(res.data.length === 0) {
+                detailList.innerHTML = `<div class="text-center py-10 text-[10px] text-gray-600 font-black uppercase tracking-widest border border-dashed border-gray-900 rounded-3xl">Tidak ada transaksi pada periode ini</div>`;
+                return;
+            }
+
+            detailList.innerHTML = res.data.map(item => `
+                <div class="card-rekap p-4 flex justify-between items-center border-r-4 ${item.tipe === 'IN' ? 'border-green-600' : 'border-red-600'}">
+                    <div>
+                        <p class="text-[7px] text-gray-500 font-black uppercase tracking-tighter">${item.tDisplay} • ${item.kapal}</p>
+                        <p class="text-[11px] font-black uppercase italic">${item.item}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[11px] font-black ${item.tipe === 'IN' ? 'text-green-500' : 'text-red-500'}">
+                            ${item.tipe === 'IN' ? '+' : '-'} ${item.total.toLocaleString('id-ID')}
+                        </p>
+                    </div>
+                </div>
+            `).join('');
+
+        } catch(e) {
+            detailList.innerHTML = `<div class="text-center py-10 text-red-500 font-black text-[9px] uppercase">Koneksi Database Gagal. Cek URL API Boss.</div>`;
+        }
     }
 </script>
+</body>
+</html>
