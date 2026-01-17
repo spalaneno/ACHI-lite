@@ -8,32 +8,33 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+        body { background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
         .card-exec { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1rem; }
-        .tab-active { border-bottom: 3px solid #3b82f6; color: #3b82f6; font-weight: 800; }
-        .p-letter { width: 35px; height: 35px; border-radius: 50%; background: #3b82f6; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; color: #fff; }
-        .p-photo { width: 35px; height: 35px; border-radius: 50%; border: 1px solid #333; overflow: hidden; background: #111; }
-        button:active { transform: scale(0.95); }
-        @media print { .no-print { display: none !important; } }
+        .tab-active { border-bottom: 3px solid #2563eb; color: #2563eb; font-weight: 800; }
+        .p-letter { width: 40px; height: 40px; border-radius: 50%; background: #2563eb; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; border: 2px solid #1e40af; }
+        .p-photo { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #333; overflow: hidden; background: #111; }
+        .btn-blue { background: #2563eb; transition: all 0.3s; }
+        .btn-blue:hover { background: #1d4ed8; }
+        @media print { .no-print { display: none !important; } body { background: #fff; color: #000; } }
     </style>
 </head>
 <body class="p-4">
 
     <div class="flex justify-between items-center mb-6 no-print">
-        <div class="flex items-center gap-3">
-            <button onclick="window.location.href='dashboard.html'" class="w-10 h-10 card-exec flex items-center justify-center border-gray-800">
-                <i class="fas fa-chevron-left text-gray-400"></i>
+        <div class="flex items-center gap-4">
+            <button onclick="window.location.href='dashboard.html'" class="w-10 h-10 card-exec flex items-center justify-center hover:border-blue-600">
+                <i class="fas fa-chevron-left text-gray-500"></i>
             </button>
             <div class="text-left">
-                <h1 class="text-base font-black italic uppercase tracking-tighter leading-none">ACHI SYSTEM</h1>
-                <p class="text-[7px] text-blue-500 font-bold tracking-widest uppercase">Executive Control</p>
+                <h1 class="text-lg font-black italic tracking-tighter leading-none">ACHI SYSTEM</h1>
+                <p class="text-[8px] text-blue-500 font-bold uppercase tracking-widest">Executive Control</p>
             </div>
         </div>
 
         <div class="flex items-center gap-2">
             <div class="p-letter">A</div>
             <div class="p-photo"><img src="https://via.placeholder.com/40" class="w-full h-full object-cover"></div>
-            <button onclick="logout()" class="w-10 h-10 card-exec flex items-center justify-center border-red-900/30 ml-1">
+            <button onclick="logout()" class="w-10 h-10 card-exec flex items-center justify-center ml-2 border-red-900/30">
                 <i class="fas fa-sign-out-alt text-red-600"></i>
             </button>
         </div>
@@ -45,9 +46,9 @@
     </div>
 
     <div id="section-persetujuan" class="block">
-        <div class="flex justify-between items-center mb-4 no-print">
-            <p id="count-pending" class="text-[9px] font-bold text-gray-500 uppercase">Checking Database...</p>
-            <button onclick="window.print()" class="text-gray-400 bg-gray-900 px-3 py-1.5 rounded-lg text-[9px] border border-gray-800 font-bold uppercase">
+        <div class="flex justify-between items-center mb-4">
+            <p id="count-pending" class="text-[9px] font-bold text-gray-500 uppercase italic">Sinkronisasi...</p>
+            <button onclick="window.print()" class="no-print text-gray-400 bg-gray-900 px-3 py-1.5 rounded-lg text-[9px] border border-gray-800 font-bold">
                 <i class="fas fa-print mr-1"></i> PRINT PDF
             </button>
         </div>
@@ -56,45 +57,30 @@
 
     <div id="section-arsip" class="hidden">
         <div class="card-exec p-5 mb-5 no-print">
-            <p class="text-[9px] text-gray-500 font-bold uppercase text-center mb-4 italic">Filter Data Financial</p>
+            <p class="text-[9px] text-gray-500 font-bold uppercase text-center mb-4">Filter Arsip Data</p>
             <div class="grid grid-cols-2 gap-2 mb-4">
                 <input type="date" id="start-date" class="bg-black border border-gray-800 p-3 rounded-xl text-xs text-white outline-none">
                 <input type="date" id="end-date" class="bg-black border border-gray-800 p-3 rounded-xl text-xs text-white outline-none">
             </div>
-            <button onclick="cariArsip()" class="w-full bg-blue-600 py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-lg shadow-blue-900/20">Cari Data</button>
+            <button onclick="cariArsip()" class="w-full btn-blue py-4 rounded-xl font-black uppercase text-[10px] tracking-widest">Cari Data</button>
         </div>
         <div id="arsip-list" class="space-y-3 pb-20"></div>
     </div>
 
 <script>
-    // URL API BOSS
-    const API_URL = "https://script.google.com/macros/s/AKfycbxi_XUwSAzNwwfx3VgL89-NsxRR3xdROoG0CUQ9Z1zYAVGRWWye2fJIOu0l2tHOY15Q/exec";
+    const API_URL = "ISI_URL_DEPLOY_BARU_DI_SINI";
 
-    // FUNGSI PINDAH TAB (DIJAMIN TIDAK MACET)
-    function switchTab(target) {
-        if(target === 'arsip') {
-            document.getElementById('section-arsip').classList.remove('hidden');
-            document.getElementById('section-persetujuan').classList.add('hidden');
-            document.getElementById('btn-arsip').classList.add('tab-active');
-            document.getElementById('btn-arsip').classList.remove('text-gray-500');
-            document.getElementById('btn-persetujuan').classList.remove('tab-active');
-            document.getElementById('btn-persetujuan').classList.add('text-gray-500');
-        } else {
-            document.getElementById('section-persetujuan').classList.remove('hidden');
-            document.getElementById('section-arsip').classList.add('hidden');
-            document.getElementById('btn-persetujuan').classList.add('tab-active');
-            document.getElementById('btn-persetujuan').classList.remove('text-gray-500');
-            document.getElementById('btn-arsip').classList.remove('tab-active');
-            document.getElementById('btn-arsip').classList.add('text-gray-500');
-            loadPersetujuan();
-        }
+    function switchTab(t) {
+        document.getElementById('section-arsip').classList.toggle('hidden', t !== 'arsip');
+        document.getElementById('section-persetujuan').classList.toggle('hidden', t !== 'persetujuan');
+        document.getElementById('btn-arsip').className = (t === 'arsip') ? 'tab-active pb-2' : 'pb-2 text-gray-500';
+        document.getElementById('btn-persetujuan').className = (t === 'persetujuan') ? 'tab-active pb-2' : 'pb-2 text-gray-500';
+        if(t === 'persetujuan') loadPersetujuan();
     }
 
-    // FUNGSI LOAD DATA PERSETUJUAN
     async function loadPersetujuan() {
         const list = document.getElementById('persetujuan-list');
-        list.innerHTML = '<p class="text-center py-10 text-[10px] text-gray-600 animate-pulse uppercase">Syncing Database...</p>';
-        
+        list.innerHTML = '<p class="text-center py-10 text-[10px] text-gray-600">Syncing...</p>';
         try {
             const r = await fetch(`${API_URL}?action=getRekapGlobal`);
             const res = await r.json();
@@ -102,67 +88,63 @@
             document.getElementById('count-pending').innerText = `${pending.length} PERMINTAAN PENDING`;
 
             if(pending.length === 0) {
-                list.innerHTML = '<div class="text-center py-20 text-gray-700 font-bold text-[10px] uppercase">✅ Semua Permintaan Approved</div>';
+                list.innerHTML = '<p class="text-center py-20 text-gray-700 text-[10px] uppercase font-bold italic">✅ Semua permintaan sudah disetujui</p>';
                 return;
             }
 
             list.innerHTML = pending.map(i => `
-                <div class="card-exec p-4 flex justify-between items-center border-l-2 border-blue-600">
+                <div class="card-exec p-4 flex justify-between items-center border-l-4 border-blue-600">
                     <div>
                         <p class="text-[7px] text-gray-600 font-bold uppercase">${i.tDisplay} | ${i.kapal}</p>
                         <h2 class="text-xs font-black uppercase italic">${i.barang}</h2>
-                        <p class="text-blue-500 font-bold text-xs mt-1">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
+                        <p class="text-blue-500 font-bold text-xs">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
                     </div>
-                    <button onclick="setujui('${i.kapal}', '${i.barang}', this)" class="bg-blue-600 px-5 py-2.5 rounded-xl font-black text-[9px] uppercase tracking-tighter">SETUJUI</button>
+                    <button onclick="setujui('${i.kapal}', '${i.barang}', this)" class="btn-blue px-6 py-3 rounded-xl font-black text-[9px] uppercase">SETUJUI</button>
                 </div>
             `).join('');
-        } catch(e) { list.innerHTML = '<p class="text-red-500 text-center py-10 text-xs">Error Koneksi!</p>'; }
+        } catch(e) { list.innerHTML = "Gagal memuat data."; }
     }
 
-    // FUNGSI TOMBOL SETUJUI (ANTI ERROR)
     async function setujui(kapal, barang, btn) {
         btn.innerText = "WAIT..."; btn.disabled = true;
         try {
-            const r = await fetch(API_URL, {
+            const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify({ kapal: kapal, barang: barang })
             });
-            const res = await r.text();
-            if(res.includes("SUCCESS")) {
-                alert("APPROVED: " + barang);
-                loadPersetujuan();
-            } else { alert("Gagal Update!"); btn.innerText = "SETUJUI"; btn.disabled = false; }
-        } catch(e) { alert("Error Koneksi!"); btn.innerText = "SETUJUI"; btn.disabled = false; }
+            const text = await response.text();
+            if (text.includes("SUCCESS")) {
+                alert("BERHASIL!"); loadPersetujuan();
+            } else { alert("Gagal!"); btn.innerText = "SETUJUI"; btn.disabled = false; }
+        } catch (e) { alert("Error!"); btn.innerText = "SETUJUI"; btn.disabled = false; }
     }
 
-    // FUNGSI CARI ARSIP
     async function cariArsip() {
         const s = document.getElementById('start-date').value;
         const e = document.getElementById('end-date').value;
-        const list = document.getElementById('arsip-list');
         if(!s || !e) return alert("Pilih Tanggal!");
-
-        list.innerHTML = '<p class="text-center py-10 text-[10px] text-gray-600 animate-pulse">SEARCHING...</p>';
+        const list = document.getElementById('arsip-list');
+        list.innerHTML = '<p class="text-center py-10 text-[10px] text-gray-600">Mencari...</p>';
+        
         try {
             const r = await fetch(`${API_URL}?action=getRekapGlobal`);
             const res = await r.json();
-            const ds = new Date(s).getTime(); const de = new Date(e).getTime();
-            const filtered = res.data.filter(i => i.tSort >= ds && i.tSort <= de);
+            const ds = new Date(s).setHours(0,0,0,0); 
+            const de = new Date(e).setHours(23,59,59,999);
             
-            if(filtered.length === 0) { list.innerHTML = '<p class="text-center py-10 text-xs text-gray-500">Tidak ada data.</p>'; return; }
+            const filtered = res.data.filter(i => i.tSort >= ds && i.tSort <= de);
+            if(filtered.length === 0) { list.innerHTML = '<p class="text-center py-10 text-xs">Tidak ada data.</p>'; return; }
             
             list.innerHTML = filtered.map(i => `
                 <div class="card-exec p-4 flex justify-between items-center mb-2">
                     <div><p class="text-[7px] text-gray-600 font-bold uppercase">${i.tDisplay} | ${i.kapal}</p><p class="text-[10px] font-bold uppercase">${i.barang}</p></div>
                     <p class="text-[10px] font-black">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
                 </div>`).join('');
-        } catch(e) { alert("Gagal memuat arsip!"); }
+        } catch(e) { alert("Error!"); }
     }
 
-    function logout() { if(confirm("Logout dari Executive Panel?")) location.href = 'index.html'; }
-
-    // MULAI LOAD DATA SAAT BUKA HALAMAN
+    function logout() { if(confirm("Keluar?")) window.location.href = 'index.html'; }
     window.onload = loadPersetujuan;
 </script>
 </body>
