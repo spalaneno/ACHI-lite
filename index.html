@@ -3,92 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - CV Efendy Jaya Abadi</title>
+    <title>Laporan Global - CV EJA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            background: radial-gradient(circle at center, #1a0000 0%, #000000 100%);
-            font-family: 'Inter', sans-serif;
-            height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0;
-            overflow: hidden;
-        }
-        .bg-glow {
-            position: absolute; width: 400px; height: 400px;
-            background: #b31d1d; filter: blur(180px);
-            border-radius: 50%; opacity: 0.15; animation: move 12s infinite alternate;
-        }
-        @keyframes move { from { transform: translate(-30%, -30%); } to { transform: translate(30%, 30%); } }
+        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; }
+        .card-exec { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1.5rem; }
+        .input-exec { background: #111; border: 1px solid #222; color: #fff; border-radius: 0.75rem; padding: 12px; width: 100%; font-size: 13px; }
         
-        .login-card {
-            background: rgba(15, 15, 15, 0.85);
-            backdrop-filter: blur(25px);
-            border: 1px solid rgba(179, 29, 29, 0.2);
-            border-radius: 3.5rem;
-            width: 100%; max-width: 350px;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+        /* CSS KHUSUS PRINT */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; padding: 0; }
+            .card-exec { border: 1px solid #000 !important; background: white !important; border-radius: 0 !important; color: black !important; }
+            .text-green-500, .text-red-500 { color: black !important; font-weight: bold !important; }
+            .print-only { display: block !important; }
         }
-        .input-premium {
-            background: rgba(30, 30, 30, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            color: white; transition: 0.4s;
-        }
-        .input-premium:focus { border-color: #b31d1d; background: rgba(50, 50, 50, 0.9); outline: none; }
-        
-        .btn-boss {
-            background: linear-gradient(135deg, #b31d1d 0%, #7a1212 100%);
-            color: white; font-weight: 900; transition: 0.3s; letter-spacing: 0.1em;
-        }
-        .btn-boss:active { transform: scale(0.96); opacity: 0.9; }
+        .print-only { display: none; }
     </style>
 </head>
-<body>
-    <div class="bg-glow"></div>
-    
-    <div class="login-card p-12 z-10 animate__animated animate__fadeIn">
-        <div class="text-center mb-10">
-            <img src="logo.png" alt="CV Efendy Jaya Abadi" class="h-32 mx-auto drop-shadow-[0_0_25px_rgba(179,29,29,0.4)]">
-            <p class="text-[9px] font-black text-white/30 tracking-[0.4em] uppercase mt-6">CV Efendy Jaya Abadi</p>
+<body class="p-5">
+
+    <div class="flex justify-between items-center mb-6 no-print">
+        <button onclick="location.href='dashboard.html'" class="w-10 h-10 flex items-center justify-center card-exec">
+            <i class="fas fa-chevron-left text-gray-500"></i>
+        </button>
+        <h1 class="text-lg font-black italic uppercase tracking-tighter">Rekap Global</h1>
+        <button onclick="window.print()" id="btn-print" class="hidden w-10 h-10 flex items-center justify-center card-exec text-blue-500">
+            <i class="fas fa-print"></i>
+        </button>
+    </div>
+
+    <div class="card-exec p-5 mb-6 no-print">
+        <div class="grid grid-cols-2 gap-3 mb-4">
+            <div>
+                <label class="text-[9px] font-bold text-gray-500 uppercase ml-1">Mulai</label>
+                <input type="date" id="start-date" class="input-exec mt-1">
+            </div>
+            <div>
+                <label class="text-[9px] font-bold text-gray-500 uppercase ml-1">Sampai</label>
+                <input type="date" id="end-date" class="input-exec mt-1">
+            </div>
+        </div>
+        
+        <div class="mb-5">
+            <label class="text-[9px] font-bold text-gray-500 uppercase ml-1">Tampilkan Data</label>
+            <select id="filter-tipe" class="input-exec mt-1 font-bold">
+                <option value="SEMUA">SEMUA TRANSAKSI</option>
+                <option value="IN">HANYA PEMASUKAN</option>
+                <option value="OUT">HANYA PENGELUARAN</option>
+            </select>
         </div>
 
-        <div class="space-y-4">
-            <div class="relative">
-                <i class="fas fa-user absolute left-5 top-5 text-gray-600 text-[10px]"></i>
-                <input type="text" id="u" placeholder="USERNAME" class="input-premium w-full pl-12 pr-5 py-5 rounded-[1.8rem] font-bold text-xs uppercase tracking-widest">
-            </div>
-            <div class="relative">
-                <i class="fas fa-lock absolute left-5 top-5 text-gray-600 text-[10px]"></i>
-                <input type="password" id="p" placeholder="PASSWORD" class="input-premium w-full pl-12 pr-5 py-5 rounded-[1.8rem] font-bold text-xs tracking-widest">
-            </div>
-            <button onclick="doLogin()" id="btn" class="btn-boss w-full py-5 rounded-[1.8rem] shadow-2xl mt-4 uppercase italic text-[11px]">
-                Authentifikasi
-            </button>
+        <button onclick="prosesLaporan()" class="w-full bg-blue-700 hover:bg-blue-600 py-4 rounded-xl font-black uppercase text-xs tracking-widest transition-all">
+            <i class="fas fa-sync-alt mr-2"></i> Tampilkan Laporan
+        </button>
+    </div>
+
+    <div class="print-only text-center mb-8">
+        <h1 class="text-xl font-bold uppercase">LAPORAN KEUANGAN CV. EJA</h1>
+        <p id="tgl-cetak" class="text-sm"></p>
+        <hr class="border-black mt-4">
+    </div>
+
+    <div id="summary" class="hidden grid grid-cols-2 gap-3 mb-6">
+        <div class="card-exec p-4 border-l-4 border-green-600">
+            <p class="text-[8px] font-bold text-gray-500 uppercase">Pemasukan</p>
+            <p id="total-in" class="text-sm font-black text-green-500 mt-1">Rp 0</p>
         </div>
-        <p id="msg" class="mt-8 text-[9px] font-black text-red-600 text-center uppercase italic tracking-widest opacity-80"></p>
+        <div class="card-exec p-4 border-l-4 border-red-600">
+            <p class="text-[8px] font-bold text-gray-500 uppercase">Pengeluaran</p>
+            <p id="total-out" class="text-sm font-black text-red-500 mt-1">Rp 0</p>
+        </div>
+    </div>
+
+    <div id="list" class="space-y-3">
+        <p id="msg" class="text-center text-gray-600 text-[10px] py-10 uppercase font-black tracking-widest">Pilih kriteria laporan</p>
     </div>
 
 <script>
-    // GANTI DENGAN URL WEB APP GOOGLE SCRIPT BOSS
-    const API = "https://script.google.com/macros/s/AKfycbynp6pxAtHrx_JSy3scsRQ88KYlDLY0gFUqxNU5ib8vyqfhDB13wFxI2ZKAup5Wn1gX/exec";
+    // MASUKKAN URL API BOSS DI SINI (HASIL DEPLOY BARU)
+    const API_URL = "https://script.google.com/macros/s/AKfycbxAzbSmHvslcbl3y_0_lW5fOAYnAxz2vMOx_AYsmqA5ksAiUMjWTiJZdS0V9chA3Grb/exec";
 
-    async function doLogin() {
-        const u = document.getElementById('u').value.trim();
-        const p = document.getElementById('p').value.trim();
+    function formatKeIndo(tgl) {
+        if(!tgl) return "";
+        const [y, m, d] = tgl.split("-");
+        return `${d}/${m}/${y}`;
+    }
+
+    async function prosesLaporan() {
+        const startRaw = document.getElementById('start-date').value;
+        const endRaw = document.getElementById('end-date').value;
+        const tipe = document.getElementById('filter-tipe').value;
+        const list = document.getElementById('list');
+        const sum = document.getElementById('summary');
         const msg = document.getElementById('msg');
-        if(!u || !p) return;
-        
-        msg.innerText = "MENGECEK AKSES BOSS...";
+        const btnPrint = document.getElementById('btn-print');
+
+        if(!startRaw || !endRaw) return alert("Tentukan tanggal, Boss!");
+
+        msg.innerHTML = `<i class="fas fa-spinner fa-spin text-blue-500"></i>`;
+        list.innerHTML = "";
+        sum.classList.add('hidden');
+        btnPrint.classList.add('hidden');
+
         try {
-            const r = await fetch(`${API}?action=login&u=${u}&p=${p}`);
-            const res = await r.json();
-            if(res.status === "success") {
-                localStorage.setItem('achi_session', JSON.stringify(res.data));
-                window.location.href = "dashboard.html";
-            } else { 
-                msg.innerText = "AKSES DITOLAK!"; 
+            const startIndo = formatKeIndo(startRaw);
+            const endIndo = formatKeIndo(endRaw);
+            
+            const query = `?action=getRekapGlobal&start=${startIndo}&end=${endIndo}&kapal=SEMUA`;
+            const response = await fetch(API_URL + query);
+            const res = await response.json();
+
+            // Filter Tipe Data secara Local agar cepat
+            let filteredData = res.data;
+            if(tipe !== "SEMUA") {
+                filteredData = res.data.filter(item => item.tipe === tipe);
             }
-        } catch(e) { 
-            msg.innerText = "SERVER ERROR!"; 
+
+            if(filteredData.length === 0) {
+                msg.innerHTML = "TIDAK ADA DATA DITEMUKAN";
+                return;
+            }
+
+            msg.innerHTML = "";
+            sum.classList.remove('hidden');
+            btnPrint.classList.remove('hidden');
+            document.getElementById('tgl-cetak').innerText = `Periode: ${startIndo} - ${endIndo}`;
+            
+            // Hitung Ulang Summary berdasarkan filter
+            let tin = 0; let tout = 0;
+            filteredData.forEach(i => i.tipe === "IN" ? tin += i.total : tout += i.total);
+
+            document.getElementById('total-in').innerText = `Rp ${tin.toLocaleString('id-ID')}`;
+            document.getElementById('total-out').innerText = `Rp ${tout.toLocaleString('id-ID')}`;
+
+            list.innerHTML = filteredData.map(item => `
+                <div class="card-exec p-4 flex justify-between items-center border-r-4 ${item.tipe === 'IN' ? 'border-green-600' : 'border-red-600'}">
+                    <div>
+                        <p class="text-[8px] text-gray-500 font-bold uppercase">${item.tDisplay} • ${item.kapal}</p>
+                        <p class="text-[11px] font-black uppercase italic mt-1">${item.item}</p>
+                    </div>
+                    <p class="text-sm font-black ${item.tipe === 'IN' ? 'text-green-500' : 'text-red-500'}">
+                        ${item.tipe === 'IN' ? '+' : '-'} ${item.total.toLocaleString('id-ID')}
+                    </p>
+                </div>
+            `).join('');
+
+        } catch (e) {
+            msg.innerHTML = "KONEKSI DATABASE BERMASALAH";
         }
     }
 </script>
