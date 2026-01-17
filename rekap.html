@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OWNER PANEL - ACHI SYSTEM</title>
+    <title>DASHBOARD OWNER - ACHI SYSTEM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -11,11 +11,9 @@
         body { background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
         .card-exec { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1rem; }
         .tab-active { border-bottom: 3px solid #2563eb; color: #2563eb; font-weight: 800; }
-        .p-letter { width: 40px; height: 40px; border-radius: 50%; background: #2563eb; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; border: 2px solid #1e40af; }
+        .p-letter { width: 40px; height: 40px; border-radius: 50%; background: #2563eb; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; }
         .input-dark { background: #111; border: 1px solid #222; padding: 12px; border-radius: 12px; font-size: 12px; color: white; outline: none; width: 100%; }
-        .btn-primary { background: #2563eb; font-weight: 800; transition: 0.3s; }
-        .btn-primary:hover { background: #1d4ed8; }
-        @media print { .no-print { display: none !important; } body { background: #fff; color: #000; } }
+        @media print { .no-print { display: none !important; } }
     </style>
 </head>
 <body class="p-4">
@@ -24,29 +22,29 @@
         <div class="flex items-center gap-3">
             <button onclick="window.location.href='dashboard.html'" class="w-10 h-10 card-exec flex items-center justify-center border-gray-800"><i class="fas fa-chevron-left text-gray-500"></i></button>
             <div class="text-left">
-                <h1 class="text-lg font-black italic tracking-tighter leading-none uppercase">Owner Dashboard</h1>
-                <p class="text-[8px] text-blue-500 font-bold uppercase tracking-widest">Achi System Executive</p>
+                <h1 class="text-lg font-black italic tracking-tighter uppercase leading-none">Owner Dashboard</h1>
+                <p class="text-[8px] text-blue-500 font-bold uppercase tracking-widest">Executive Access</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
             <div class="p-letter">A</div>
-            <div class="w-10 h-10 rounded-full border border-gray-800 bg-gray-900 overflow-hidden"><img src="https://via.placeholder.com/40" class="w-full h-full object-cover"></div>
+            <div class="w-10 h-10 rounded-full border border-gray-800 overflow-hidden"><img src="https://via.placeholder.com/40" class="w-full h-full object-cover"></div>
             <button onclick="logout()" class="w-10 h-10 card-exec flex items-center justify-center border-red-900/30"><i class="fas fa-sign-out-alt text-red-600"></i></button>
         </div>
     </div>
 
     <div class="flex space-x-6 mb-6 border-b border-gray-900 pb-2 no-print text-[10px] uppercase font-bold tracking-widest">
         <button onclick="switchTab('rekapan')" id="btn-rekapan" class="tab-active pb-2">Rekapan Data</button>
-        <button onclick="switchTab('persetujuan')" id="btn-persetujuan" class="pb-2 text-gray-500">Persetujuan Pembelian</button>
+        <button onclick="switchTab('persetujuan')" id="btn-persetujuan" class="pb-2 text-gray-500">Persetujuan</button>
     </div>
 
     <div id="section-rekapan" class="block">
         <div class="card-exec p-5 mb-5 no-print">
             <div class="space-y-4">
                 <div>
-                    <label class="text-[9px] font-bold text-gray-500 uppercase italic">Filter Kapal</label>
+                    <label class="text-[9px] font-bold text-gray-500 uppercase italic">Pilih Kapal</label>
                     <select id="filter-kapal" class="input-dark mt-1">
-                        <option value="SEMUA">-- SEMUA KAPAL --</option>
+                        <option value="SEMUA">-- TAMPILKAN SEMUA KAPAL --</option>
                     </select>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
@@ -59,23 +57,37 @@
                         <input type="date" id="end-date" class="input-dark mt-1">
                     </div>
                 </div>
-                <button onclick="filterRekapan()" class="w-full btn-primary py-4 rounded-xl uppercase text-[11px] tracking-widest shadow-lg shadow-blue-900/30">TAMPILKAN REKAP</button>
+                <button onclick="filterRekapan()" class="w-full bg-blue-600 py-4 rounded-xl font-black uppercase text-[11px] tracking-widest shadow-lg">TAMPILKAN DATA</button>
             </div>
         </div>
-        
-        <div class="flex justify-end mb-2 no-print">
-             <button onclick="window.print()" class="text-gray-400 bg-gray-900 px-3 py-1.5 rounded-lg text-[9px] border border-gray-800 font-bold uppercase"><i class="fas fa-print mr-1"></i> CETAK REKAP</button>
-        </div>
-        <div id="rekapan-list" class="space-y-3 pb-20"></div>
+        <div id="rekapan-list" class="space-y-2 pb-20"></div>
     </div>
 
     <div id="section-persetujuan" class="hidden">
-        <div id="persetujuan-list" class="space-y-3 pb-20 pt-4"></div>
+        <div id="persetujuan-list" class="space-y-3 pt-2"></div>
     </div>
 
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxOgf5HbVs7_aW1u3HYMu5eXSzmiewrmj3uw2AmqUNSvpX5bEDbNMW0Dq-tHdHhKRFN/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxOgf5HbVs7_aW1u3HYMu5eXSzmiewrmj3uw2AmqUNSvpX5bEDbNMW0Dq-tHdHhKRFN/exec"; 
     let masterData = [];
+
+    async function init() {
+        try {
+            const r = await fetch(`${API_URL}?action=getRekapGlobal`);
+            const res = await r.json();
+            masterData = res.data;
+            
+            // ISI DROPDOWN KAPAL SECARA OTOMATIS
+            const selectKapal = document.getElementById('filter-kapal');
+            const uniqueKapal = [...new Set(masterData.map(item => item.kapal))].sort();
+            
+            uniqueKapal.forEach(k => {
+                if(k) selectKapal.innerHTML += `<option value="${k}">${k}</option>`;
+            });
+
+            document.getElementById('rekapan-list').innerHTML = '<p class="text-center py-10 text-gray-600 text-[10px] uppercase italic">Pilih filter dan klik Tampilkan Data</p>';
+        } catch(e) { alert("Koneksi Error!"); }
+    }
 
     function switchTab(t) {
         document.getElementById('section-rekapan').classList.toggle('hidden', t !== 'rekapan');
@@ -85,66 +97,47 @@
         if(t === 'persetujuan') renderPersetujuan();
     }
 
-    async function loadData() {
-        try {
-            const r = await fetch(`${API_URL}?action=getRekapGlobal`);
-            const res = await r.json();
-            masterData = res.data;
-            
-            const selectKapal = document.getElementById('filter-kapal');
-            selectKapal.innerHTML = '<option value="SEMUA">-- SEMUA KAPAL --</option>';
-            res.kapal.sort().forEach(k => { 
-                if(k) selectKapal.innerHTML += `<option value="${k}">${k}</option>`; 
-            });
-            
-            document.getElementById('rekapan-list').innerHTML = '<p class="text-center py-10 text-gray-700 text-[10px] uppercase italic">Pilih filter untuk menampilkan data</p>';
-        } catch(e) { console.error("Koneksi gagal"); }
-    }
-
     function filterRekapan() {
         const kapal = document.getElementById('filter-kapal').value;
         const s = document.getElementById('start-date').value;
         const e = document.getElementById('end-date').value;
-        const list = document.getElementById('rekapan-list');
+        if(!s || !e) return alert("Pilih Rentang Tanggal!");
 
-        if(!s || !e) return alert("Pilih tanggal dulu, Boss!");
-        
-        // Buat objek Date tanpa timezone offset untuk akurasi
-        const startDate = new Date(s + "T00:00:00").getTime();
-        const endDate = new Date(e + "T23:59:59").getTime();
+        const ds = new Date(s + "T00:00:00").getTime();
+        const de = new Date(e + "T23:59:59").getTime();
 
-        let filtered = masterData.filter(item => {
-            const itemDate = item.tSort;
-            const matchDate = itemDate >= startDate && itemDate <= endDate;
-            const matchKapal = (kapal === "SEMUA") || (item.kapal === kapal);
+        let filtered = masterData.filter(i => {
+            const matchDate = i.tSort >= ds && i.tSort <= de;
+            const matchKapal = (kapal === "SEMUA") || (i.kapal === kapal);
             return matchDate && matchKapal;
         });
 
+        const list = document.getElementById('rekapan-list');
         if(filtered.length === 0) {
-            list.innerHTML = '<p class="text-center py-10 text-xs text-gray-500 uppercase">Data tidak ditemukan</p>';
+            list.innerHTML = '<p class="text-center py-10 text-xs text-gray-600">DATA TIDAK DITEMUKAN</p>';
             return;
         }
 
-        list.innerHTML = filtered.map(i => `
-            <div class="card-exec p-4 flex justify-between items-center border-l-2 border-gray-800 mb-2">
+        list.innerHTML = `<button onclick="window.print()" class="w-full no-print mb-4 bg-gray-900 border border-gray-800 py-2 rounded text-[9px] font-bold uppercase tracking-widest text-gray-400"><i class="fas fa-print mr-2"></i>CETAK REKAPAN INI</button>` + 
+        filtered.map(i => `
+            <div class="card-exec p-4 flex justify-between items-center border-l-2 ${i.status === 'APPROVED' ? 'border-green-600' : 'border-gray-800'}">
                 <div>
                     <p class="text-[7px] text-gray-600 font-bold uppercase">${i.tDisplay} | ${i.kapal}</p>
                     <p class="text-[10px] font-bold uppercase">${i.barang}</p>
-                    <span class="text-[7px] px-2 py-0.5 rounded ${i.status === 'APPROVED' ? 'bg-green-900/30 text-green-500' : 'bg-yellow-900/30 text-yellow-500'} font-black uppercase tracking-tighter">${i.status}</span>
+                    <p class="text-[7px] font-black uppercase ${i.status === 'APPROVED' ? 'text-green-500' : 'text-yellow-500'} italic">${i.status}</p>
                 </div>
-                <p class="text-[10px] font-black">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
+                <p class="text-[10px] font-black italic">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
             </div>`).join('');
     }
 
     function renderPersetujuan() {
         const list = document.getElementById('persetujuan-list');
-        const pending = masterData.filter(i => i.status === "PENDING");
-        if(pending.length === 0) {
-            list.innerHTML = '<p class="text-center py-20 text-gray-700 text-[10px] uppercase font-bold italic">✅ Semua Permintaan Sudah Disetujui</p>';
+        const p = masterData.filter(i => i.status === "PENDING");
+        if(p.length === 0) {
+            list.innerHTML = '<p class="text-center py-20 text-gray-700 text-[10px] uppercase font-bold italic">✅ Semua Sudah Disetujui</p>';
             return;
         }
-        list.innerHTML = `<p class="text-[9px] font-bold text-gray-500 uppercase mb-4 italic">${pending.length} Permintaan Menunggu</p>` + 
-        pending.map(i => `
+        list.innerHTML = p.map(i => `
             <div class="card-exec p-4 flex justify-between items-center border-l-4 border-blue-600">
                 <div><p class="text-[7px] text-gray-600 font-bold uppercase">${i.tDisplay} | ${i.kapal}</p><h2 class="text-xs font-black uppercase italic">${i.barang}</h2><p class="text-blue-500 font-bold text-xs">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p></div>
                 <button onclick="setujui('${i.kapal}', '${i.barang}', this)" class="bg-blue-600 px-6 py-3 rounded-xl font-black text-[9px] uppercase">SETUJUI</button>
@@ -154,13 +147,13 @@
     async function setujui(kapal, barang, btn) {
         btn.innerText = "WAIT"; btn.disabled = true;
         try {
-            await fetch(API_URL, { method: 'POST', body: JSON.stringify({ kapal, barang }) });
-            alert("BERHASIL!"); loadData();
-        } catch (e) { alert("Gagal!"); btn.innerText = "SETUJUI"; btn.disabled = false; }
+            const r = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ kapal, barang }) });
+            alert("SUCCESS!"); init();
+        } catch (e) { alert("FAIL!"); btn.innerText = "SETUJUI"; btn.disabled = false; }
     }
 
-    function logout() { if(confirm("Keluar?")) window.location.href = 'index.html'; }
-    window.onload = loadData;
+    function logout() { if(confirm("Logout?")) window.location.href = 'index.html'; }
+    window.onload = init;
 </script>
 </body>
 </html>
