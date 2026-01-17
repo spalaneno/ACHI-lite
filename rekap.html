@@ -3,62 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REKAP GLOBAL - CV EJA</title>
+    <title>Rekap Global - CV EJA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background: #000; color: white; font-family: sans-serif; }
-        .card { background: #0a0a0a; border: 1px solid #222; border-radius: 1rem; padding: 1rem; }
+        body { background: #000; color: #fff; font-family: sans-serif; }
+        .card-exec { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1.5rem; }
+        .input-exec { background: #111; border: 1px solid #222; color: #fff; border-radius: 0.75rem; padding: 12px; width: 100%; font-size: 14px; }
     </style>
 </head>
 <body class="p-5">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-xl font-bold italic text-blue-500">REKAP GLOBAL EJA</h1>
-        <button onclick="fetchData()" class="bg-blue-600 px-4 py-2 rounded-lg text-xs font-bold">REFRESH DATA</button>
+
+    <div class="flex justify-between items-center mb-8">
+        <button onclick="location.href='dashboard.html'"><i class="fas fa-arrow-left text-gray-500"></i></button>
+        <h1 class="text-lg font-black italic tracking-tighter uppercase">Laporan Global</h1>
+        <div class="w-5"></div>
     </div>
 
-    <div class="grid grid-cols-2 gap-3 mb-6">
-        <div class="card border-l-4 border-green-500">
-            <p class="text-[10px] text-gray-400 uppercase">Pemasukan</p>
-            <p id="t-in" class="text-lg font-bold text-green-500">Rp 0</p>
+    <div class="card-exec p-6 mb-8">
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="text-[9px] font-bold text-gray-500 uppercase ml-1">Mulai</label>
+                <input type="date" id="start-input" class="input-exec mt-1">
+            </div>
+            <div>
+                <label class="text-[9px] font-bold text-gray-500 uppercase ml-1">Sampai</label>
+                <input type="date" id="end-input" class="input-exec mt-1">
+            </div>
         </div>
-        <div class="card border-l-4 border-red-500">
-            <p class="text-[10px] text-gray-400 uppercase">Pengeluaran</p>
-            <p id="t-out" class="text-lg font-bold text-red-500">Rp 0</p>
+        <button onclick="prosesLaporan()" class="w-full bg-blue-600 py-4 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg shadow-blue-900/20">
+            Tampilkan Data (Format Indo)
+        </button>
+    </div>
+
+    <div id="summary" class="hidden grid grid-cols-2 gap-4 mb-8 text-center">
+        <div class="card-exec p-4 border-b-2 border-green-600">
+            <p class="text-[9px] text-gray-500 uppercase">Pemasukan</p>
+            <p id="total-in" class="text-md font-bold text-green-500 mt-1"></p>
+        </div>
+        <div class="card-exec p-4 border-b-2 border-red-600">
+            <p class="text-[9px] text-gray-500 uppercase">Pengeluaran</p>
+            <p id="total-out" class="text-md font-bold text-red-500 mt-1"></p>
         </div>
     </div>
 
-    <div id="loading" class="text-center py-10 hidden"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
-    <div id="list" class="space-y-3"></div>
+    <div id="list" class="space-y-4">
+        <p id="msg" class="text-center text-gray-600 text-xs py-10 uppercase font-bold tracking-widest">Pilih tanggal untuk memuat data</p>
+    </div>
 
 <script>
-    // MASUKKAN URL BARU DISINI BOSS!
-    const API = "https://script.google.com/macros/s/AKfycby-WfRG8NX0DCs3rLG5MQGgtsvCETHpSC7dbnICqNY4FHKdB3dG2W7eRsR0VZ_-dvsm/exec";
+    // MASUKKAN URL API BOSS DI SINI
+    const API_URL = "https://script.google.com/macros/s/AKfycby-WfRG8NX0DCs3rLG5MQGgtsvCETHpSC7dbnICqNY4FHKdB3dG2W7eRsR0VZ_-dvsm/exec";
 
-    async function fetchData() {
-        document.getElementById('loading').classList.remove('hidden');
+    // Fungsi Pengubah Format: 2026-01-17 -> 17/01/2026
+    function formatKeIndo(tgl) {
+        if(!tgl) return "";
+        const [y, m, d] = tgl.split("-");
+        return `${d}/${m}/${y}`;
+    }
+
+    async function prosesLaporan() {
+        const startRaw = document.getElementById('start-input').value;
+        const endRaw = document.getElementById('end-input').value;
+        const msg = document.getElementById('msg');
+        const list = document.getElementById('list');
+        const sum = document.getElementById('summary');
+
+        if(!startRaw || !endRaw) return alert("Pilih tanggal dulu, Boss!");
+
+        // Ubah format sebelum dikirim ke Google Script
+        const startIndo = formatKeIndo(startRaw);
+        const endIndo = formatKeIndo(endRaw);
+
+        msg.innerHTML = `<i class="fas fa-spinner fa-spin text-blue-500"></i> <span class="ml-2 uppercase tracking-widest">Menyesuaikan Format...</span>`;
+        list.innerHTML = "";
+        sum.classList.add('hidden');
+
         try {
-            const r = await fetch(API + "?action=getRekapGlobal");
-            const res = await r.json();
-            
-            document.getElementById('t-in').innerText = "Rp " + res.summary.total_in.toLocaleString();
-            document.getElementById('t-out').innerText = "Rp " + res.summary.total_out.toLocaleString();
-            
-            document.getElementById('list').innerHTML = res.data.map(i => `
-                <div class="card flex justify-between items-center border-r-4 ${i.tipe === 'IN' ? 'border-green-600' : 'border-red-600'}">
+            // Kita kirimkan parameter startIndo dan endIndo (Format DD/MM/YYYY)
+            const query = `?action=getRekapGlobal&start=${startIndo}&end=${endIndo}&kapal=SEMUA`;
+            const response = await fetch(API_URL + query);
+            const res = await response.json();
+
+            if(res.data.length === 0) {
+                msg.innerHTML = "DATA TIDAK DITEMUKAN (CEK FORMAT DI SPREADSHEET)";
+                return;
+            }
+
+            msg.innerHTML = "";
+            sum.classList.remove('hidden');
+            document.getElementById('total-in').innerText = `Rp ${res.summary.total_in.toLocaleString('id-ID')}`;
+            document.getElementById('total-out').innerText = `Rp ${res.summary.total_out.toLocaleString('id-ID')}`;
+
+            list.innerHTML = res.data.map(item => `
+                <div class="card-exec p-5 flex justify-between items-center">
                     <div>
-                        <p class="text-[10px] text-gray-500">${i.tDisplay} | ${i.kapal}</p>
-                        <p class="text-sm font-bold uppercase">${i.item}</p>
+                        <p class="text-[9px] text-gray-500 font-bold uppercase">${item.tDisplay} • ${item.kapal}</p>
+                        <p class="text-xs font-black uppercase mt-1 italic">${item.item}</p>
                     </div>
-                    <p class="font-bold ${i.tipe === 'IN' ? 'text-green-500' : 'text-red-500'}">
-                        Rp ${i.total.toLocaleString()}
+                    <p class="text-sm font-black ${item.tipe === 'IN' ? 'text-green-500' : 'text-red-500'}">
+                        ${item.tipe === 'IN' ? '+' : '-'} ${item.total.toLocaleString('id-ID')}
                     </p>
                 </div>
             `).join('');
-        } catch (e) { alert("Koneksi Gagal. Cek URL API Boss."); }
-        document.getElementById('loading').classList.add('hidden');
+
+        } catch (e) {
+            msg.innerHTML = "GAGAL TERHUBUNG KE DATABASE";
+        }
     }
-    window.onload = fetchData;
 </script>
 </body>
 </html>
