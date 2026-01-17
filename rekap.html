@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EXECUTIVE PANEL - ACHI SYSTEM</title>
+    <title>OWNER PANEL - ACHI SYSTEM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -12,140 +12,131 @@
         .card-exec { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1rem; }
         .tab-active { border-bottom: 3px solid #2563eb; color: #2563eb; font-weight: 800; }
         .p-letter { width: 40px; height: 40px; border-radius: 50%; background: #2563eb; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; border: 2px solid #1e40af; }
-        .p-photo { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #333; overflow: hidden; background: #111; }
-        .btn-blue { background: #2563eb; transition: all 0.3s; }
-        .btn-blue:hover { background: #1d4ed8; }
+        .input-dark { background: #111; border: 1px solid #222; padding: 12px; border-radius: 12px; font-size: 12px; color: white; outline: none; width: 100%; }
         @media print { .no-print { display: none !important; } body { background: #fff; color: #000; } }
     </style>
 </head>
 <body class="p-4">
 
     <div class="flex justify-between items-center mb-6 no-print">
-        <div class="flex items-center gap-4">
-            <button onclick="window.location.href='dashboard.html'" class="w-10 h-10 card-exec flex items-center justify-center hover:border-blue-600">
-                <i class="fas fa-chevron-left text-gray-500"></i>
-            </button>
+        <div class="flex items-center gap-3">
+            <button onclick="window.location.href='dashboard.html'" class="w-10 h-10 card-exec flex items-center justify-center border-gray-800"><i class="fas fa-chevron-left text-gray-500"></i></button>
             <div class="text-left">
-                <h1 class="text-lg font-black italic tracking-tighter leading-none">ACHI SYSTEM</h1>
-                <p class="text-[8px] text-blue-500 font-bold uppercase tracking-widest">Executive Control</p>
+                <h1 class="text-lg font-black italic tracking-tighter leading-none uppercase">Owner Dashboard</h1>
+                <p class="text-[8px] text-blue-500 font-bold uppercase tracking-widest">Achi System Executive</p>
             </div>
         </div>
-
         <div class="flex items-center gap-2">
             <div class="p-letter">A</div>
-            <div class="p-photo"><img src="https://via.placeholder.com/40" class="w-full h-full object-cover"></div>
-            <button onclick="logout()" class="w-10 h-10 card-exec flex items-center justify-center ml-2 border-red-900/30">
-                <i class="fas fa-sign-out-alt text-red-600"></i>
-            </button>
+            <div class="w-10 h-10 rounded-full border border-gray-800 bg-gray-900 overflow-hidden"><img src="https://via.placeholder.com/40" class="w-full h-full object-cover"></div>
+            <button onclick="logout()" class="w-10 h-10 card-exec flex items-center justify-center border-red-900/30"><i class="fas fa-sign-out-alt text-red-600"></i></button>
         </div>
     </div>
 
     <div class="flex space-x-6 mb-6 border-b border-gray-900 pb-2 no-print text-[10px] uppercase font-bold tracking-widest">
-        <button onclick="switchTab('arsip')" id="btn-arsip" class="pb-2 text-gray-500">Arsip Data</button>
-        <button onclick="switchTab('persetujuan')" id="btn-persetujuan" class="tab-active pb-2">Persetujuan</button>
+        <button onclick="switchTab('rekapan')" id="btn-rekapan" class="tab-active pb-2">Rekapan Data</button>
+        <button onclick="switchTab('persetujuan')" id="btn-persetujuan" class="pb-2 text-gray-500">Persetujuan Pembelian</button>
     </div>
 
-    <div id="section-persetujuan" class="block">
+    <div id="section-rekapan" class="block">
+        <div class="card-exec p-5 mb-5 no-print">
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[9px] font-bold text-gray-500 uppercase italic">Filter Kapal</label>
+                    <select id="filter-kapal" class="input-dark mt-1"><option value="SEMUA">-- SEMUA KAPAL --</option></select>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-[9px] font-bold text-gray-500 uppercase italic">Dari Tanggal</label>
+                        <input type="date" id="start-date" class="input-dark mt-1">
+                    </div>
+                    <div>
+                        <label class="text-[9px] font-bold text-gray-500 uppercase italic">Sampai Tanggal</label>
+                        <input type="date" id="end-date" class="input-dark mt-1">
+                    </div>
+                </div>
+                <button onclick="filterRekapan()" class="w-full bg-blue-600 py-4 rounded-xl font-black uppercase text-[11px] tracking-widest shadow-lg shadow-blue-900/30">TAMPILKAN REKAP</button>
+            </div>
+        </div>
+        <div id="rekapan-list" class="space-y-3 pb-20"></div>
+    </div>
+
+    <div id="section-persetujuan" class="hidden">
         <div class="flex justify-between items-center mb-4">
-            <p id="count-pending" class="text-[9px] font-bold text-gray-500 uppercase italic">Sinkronisasi...</p>
-            <button onclick="window.print()" class="no-print text-gray-400 bg-gray-900 px-3 py-1.5 rounded-lg text-[9px] border border-gray-800 font-bold">
-                <i class="fas fa-print mr-1"></i> PRINT PDF
-            </button>
+            <p id="count-pending" class="text-[9px] font-bold text-gray-500 uppercase">Checking Database...</p>
+            <button onclick="window.print()" class="no-print text-gray-400 bg-gray-900 px-3 py-1.5 rounded-lg text-[9px] border border-gray-800 font-bold uppercase"><i class="fas fa-print mr-1"></i> PRINT PDF</button>
         </div>
         <div id="persetujuan-list" class="space-y-3 pb-20"></div>
     </div>
 
-    <div id="section-arsip" class="hidden">
-        <div class="card-exec p-5 mb-5 no-print">
-            <p class="text-[9px] text-gray-500 font-bold uppercase text-center mb-4">Filter Arsip Data</p>
-            <div class="grid grid-cols-2 gap-2 mb-4">
-                <input type="date" id="start-date" class="bg-black border border-gray-800 p-3 rounded-xl text-xs text-white outline-none">
-                <input type="date" id="end-date" class="bg-black border border-gray-800 p-3 rounded-xl text-xs text-white outline-none">
-            </div>
-            <button onclick="cariArsip()" class="w-full btn-blue py-4 rounded-xl font-black uppercase text-[10px] tracking-widest">Cari Data</button>
-        </div>
-        <div id="arsip-list" class="space-y-3 pb-20"></div>
-    </div>
-
 <script>
-    const API_URL = "ISI_URL_DEPLOY_BARU_DI_SINI";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxOgf5HbVs7_aW1u3HYMu5eXSzmiewrmj3uw2AmqUNSvpX5bEDbNMW0Dq-tHdHhKRFN/exec";
+    let masterData = [];
 
     function switchTab(t) {
-        document.getElementById('section-arsip').classList.toggle('hidden', t !== 'arsip');
+        document.getElementById('section-rekapan').classList.toggle('hidden', t !== 'rekapan');
         document.getElementById('section-persetujuan').classList.toggle('hidden', t !== 'persetujuan');
-        document.getElementById('btn-arsip').className = (t === 'arsip') ? 'tab-active pb-2' : 'pb-2 text-gray-500';
+        document.getElementById('btn-rekapan').className = (t === 'rekapan') ? 'tab-active pb-2' : 'pb-2 text-gray-500';
         document.getElementById('btn-persetujuan').className = (t === 'persetujuan') ? 'tab-active pb-2' : 'pb-2 text-gray-500';
-        if(t === 'persetujuan') loadPersetujuan();
+        if(t === 'persetujuan') renderPersetujuan();
     }
 
-    async function loadPersetujuan() {
-        const list = document.getElementById('persetujuan-list');
-        list.innerHTML = '<p class="text-center py-10 text-[10px] text-gray-600">Syncing...</p>';
+    async function loadData() {
         try {
             const r = await fetch(`${API_URL}?action=getRekapGlobal`);
             const res = await r.json();
-            const pending = res.data.filter(i => i.status === "PENDING");
-            document.getElementById('count-pending').innerText = `${pending.length} PERMINTAAN PENDING`;
+            masterData = res.data;
+            const selectKapal = document.getElementById('filter-kapal');
+            selectKapal.innerHTML = '<option value="SEMUA">-- SEMUA KAPAL --</option>';
+            res.kapal.sort().forEach(k => { selectKapal.innerHTML += `<option value="${k}">${k}</option>`; });
+            // Standar: Tampilkan rekapan kosong dulu sampai difilter
+            document.getElementById('rekapan-list').innerHTML = '<p class="text-center py-10 text-gray-700 text-[10px] uppercase italic">Silakan atur filter dan klik Tampilkan Rekap</p>';
+        } catch(e) { console.log("Database offline."); }
+    }
 
-            if(pending.length === 0) {
-                list.innerHTML = '<p class="text-center py-20 text-gray-700 text-[10px] uppercase font-bold italic">✅ Semua permintaan sudah disetujui</p>';
-                return;
-            }
+    function filterRekapan() {
+        const kapal = document.getElementById('filter-kapal').value;
+        const s = document.getElementById('start-date').value;
+        const e = document.getElementById('end-date').value;
+        const list = document.getElementById('rekapan-list');
+        if(!s || !e) return alert("Pilih tanggal dulu, Boss!");
+        
+        const ds = new Date(s).setHours(0,0,0,0);
+        const de = new Date(e).setHours(23,59,59,999);
+        let f = masterData.filter(i => i.tSort >= ds && i.tSort <= de);
+        if(kapal !== "SEMUA") f = f.filter(i => i.kapal === kapal);
 
-            list.innerHTML = pending.map(i => `
-                <div class="card-exec p-4 flex justify-between items-center border-l-4 border-blue-600">
-                    <div>
-                        <p class="text-[7px] text-gray-600 font-bold uppercase">${i.tDisplay} | ${i.kapal}</p>
-                        <h2 class="text-xs font-black uppercase italic">${i.barang}</h2>
-                        <p class="text-blue-500 font-bold text-xs">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
-                    </div>
-                    <button onclick="setujui('${i.kapal}', '${i.barang}', this)" class="btn-blue px-6 py-3 rounded-xl font-black text-[9px] uppercase">SETUJUI</button>
-                </div>
-            `).join('');
-        } catch(e) { list.innerHTML = "Gagal memuat data."; }
+        if(f.length === 0) { list.innerHTML = '<p class="text-center py-10 text-xs text-gray-500 uppercase">Data tidak ditemukan</p>'; return; }
+        list.innerHTML = f.map(i => `
+            <div class="card-exec p-4 flex justify-between items-center border-l-2 border-gray-800 mb-2">
+                <div><p class="text-[7px] text-gray-600 font-bold uppercase">${i.tDisplay} | ${i.kapal}</p><p class="text-[10px] font-bold uppercase">${i.barang}</p>
+                <p class="text-[8px] ${i.status === 'APPROVED' ? 'text-green-500' : 'text-yellow-500'} font-black italic uppercase">${i.status}</p></div>
+                <p class="text-[10px] font-black">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
+            </div>`).join('');
+    }
+
+    function renderPersetujuan() {
+        const list = document.getElementById('persetujuan-list');
+        const p = masterData.filter(i => i.status === "PENDING");
+        document.getElementById('count-pending').innerText = `${p.length} PERMINTAAN MENUNGGU`;
+        if(p.length === 0) { list.innerHTML = '<p class="text-center py-20 text-gray-700 text-[10px] uppercase font-bold italic">✅ Semua Approved</p>'; return; }
+        list.innerHTML = p.map(i => `
+            <div class="card-exec p-4 flex justify-between items-center border-l-4 border-blue-600">
+                <div><p class="text-[7px] text-gray-600 font-bold uppercase">${i.tDisplay} | ${i.kapal}</p><h2 class="text-xs font-black uppercase italic">${i.barang}</h2><p class="text-blue-500 font-bold text-xs">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p></div>
+                <button onclick="setujui('${i.kapal}', '${i.barang}', this)" class="bg-blue-600 px-6 py-3 rounded-xl font-black text-[9px] uppercase">SETUJUI</button>
+            </div>`).join('');
     }
 
     async function setujui(kapal, barang, btn) {
-        btn.innerText = "WAIT..."; btn.disabled = true;
+        btn.innerText = "..."; btn.disabled = true;
         try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ kapal: kapal, barang: barang })
-            });
-            const text = await response.text();
-            if (text.includes("SUCCESS")) {
-                alert("BERHASIL!"); loadPersetujuan();
-            } else { alert("Gagal!"); btn.innerText = "SETUJUI"; btn.disabled = false; }
-        } catch (e) { alert("Error!"); btn.innerText = "SETUJUI"; btn.disabled = false; }
-    }
-
-    async function cariArsip() {
-        const s = document.getElementById('start-date').value;
-        const e = document.getElementById('end-date').value;
-        if(!s || !e) return alert("Pilih Tanggal!");
-        const list = document.getElementById('arsip-list');
-        list.innerHTML = '<p class="text-center py-10 text-[10px] text-gray-600">Mencari...</p>';
-        
-        try {
-            const r = await fetch(`${API_URL}?action=getRekapGlobal`);
-            const res = await r.json();
-            const ds = new Date(s).setHours(0,0,0,0); 
-            const de = new Date(e).setHours(23,59,59,999);
-            
-            const filtered = res.data.filter(i => i.tSort >= ds && i.tSort <= de);
-            if(filtered.length === 0) { list.innerHTML = '<p class="text-center py-10 text-xs">Tidak ada data.</p>'; return; }
-            
-            list.innerHTML = filtered.map(i => `
-                <div class="card-exec p-4 flex justify-between items-center mb-2">
-                    <div><p class="text-[7px] text-gray-600 font-bold uppercase">${i.tDisplay} | ${i.kapal}</p><p class="text-[10px] font-bold uppercase">${i.barang}</p></div>
-                    <p class="text-[10px] font-black">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
-                </div>`).join('');
-        } catch(e) { alert("Error!"); }
+            const r = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ kapal: kapal, barang: barang }) });
+            alert("BERHASIL!"); loadData();
+        } catch (e) { alert("Gagal!"); btn.innerText = "SETUJUI"; btn.disabled = false; }
     }
 
     function logout() { if(confirm("Keluar?")) window.location.href = 'index.html'; }
-    window.onload = loadPersetujuan;
+    window.onload = loadData;
 </script>
 </body>
 </html>
