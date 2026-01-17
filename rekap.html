@@ -3,50 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OWNER PANEL - ACHI SYSTEM</title>
+    <title>OWNER CONTROL - ACHI SYSTEM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         body { background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .card-exec { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1rem; }
+        .card-exec { background: #0b0b0b; border: 1px solid #1a1a1a; border-radius: 12px; }
         .input-dark { background: #111; border: 1px solid #222; padding: 12px; border-radius: 10px; font-size: 13px; color: white; width: 100%; outline: none; }
         .tab-active { border-bottom: 3px solid #2563eb; color: #2563eb; font-weight: 800; }
-        @media print { .no-print { display: none !important; } body { background: #fff; color: #000; } }
     </style>
 </head>
 <body class="p-4">
 
-    <div class="flex justify-between items-center mb-6 no-print">
+    <div class="flex justify-between items-center mb-6">
         <div class="flex items-center gap-3">
-            <button onclick="window.history.back()" class="w-10 h-10 card-exec flex items-center justify-center text-gray-500 border-gray-800"><i class="fas fa-chevron-left"></i></button>
-            <div>
+            <div class="text-left">
                 <h1 class="text-lg font-black italic tracking-tighter uppercase leading-none">Owner Panel</h1>
-                <p class="text-[8px] text-blue-500 font-bold uppercase tracking-widest">Achi System Executive</p>
+                <p class="text-[8px] text-blue-500 font-bold uppercase tracking-widest">Executive System</p>
             </div>
         </div>
         <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center font-black border-2 border-blue-900">A</div>
     </div>
 
-    <div class="flex space-x-6 mb-6 border-b border-gray-900 pb-2 no-print text-[10px] uppercase font-bold tracking-widest">
+    <div class="flex space-x-6 mb-6 border-b border-gray-900 pb-2 text-[10px] uppercase font-bold tracking-widest">
         <button onclick="switchTab('rekapan')" id="btn-rekapan" class="tab-active pb-2">Rekapan Data</button>
         <button onclick="switchTab('persetujuan')" id="btn-persetujuan" class="pb-2 text-gray-500">Persetujuan</button>
     </div>
 
     <div id="section-rekapan">
-        <div class="card-exec p-5 mb-5 no-print">
+        <div class="card-exec p-5 mb-5">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="text-[9px] font-bold text-gray-500 uppercase">Pilih Kapal</label>
-                    <select id="filter-kapal" class="input-dark mt-1">
-                        <option value="SEMUA">-- SEMUA KAPAL --</option>
-                    </select>
+                    <select id="filter-kapal" class="input-dark mt-1"><option value="SEMUA">-- SEMUA KAPAL --</option></select>
                 </div>
                 <div>
                     <label class="text-[9px] font-bold text-gray-500 uppercase">Pilih No. Trip</label>
-                    <select id="filter-trip" class="input-dark mt-1">
-                        <option value="SEMUA">-- SEMUA TRIP --</option>
-                    </select>
+                    <select id="filter-trip" class="input-dark mt-1"><option value="SEMUA">-- SEMUA TRIP --</option></select>
                 </div>
                 <div>
                     <label class="text-[9px] font-bold text-gray-500 uppercase">Dari Tanggal</label>
@@ -59,26 +53,23 @@
             </div>
             <button onclick="applyFilters()" class="w-full bg-blue-600 py-4 rounded-xl mt-5 font-black uppercase text-[11px] tracking-widest">Tampilkan Rekap</button>
         </div>
-        
-        <div id="rekap-tools" class="hidden flex justify-end mb-4 no-print">
-            <button onclick="window.print()" class="text-gray-400 bg-gray-900 px-4 py-2 rounded-lg text-[10px] border border-gray-800 font-bold uppercase"><i class="fas fa-print mr-2"></i>Cetak</button>
-        </div>
         <div id="rekapan-list" class="space-y-2 pb-24"></div>
     </div>
 
     <div id="section-persetujuan" class="hidden">
-        <div id="persetujuan-list" class="space-y-3 pt-2 pb-24"></div>
+        <div id="persetujuan-list" class="space-y-3 pb-24"></div>
     </div>
 
 <script>
+    // URL Web App yang Boss Berikan
     const API_URL = "https://script.google.com/macros/s/AKfycbwXVYldmD36WRt1Qgu5rcXqLRCjDyorZeYwaDUNueOmaoSlCFyJcK3WVQsXktDPG6Q/exec"; 
     let masterData = [];
 
     async function init() {
         const list = document.getElementById('rekapan-list');
-        list.innerHTML = '<p class="text-center py-10 text-[10px] text-gray-600">Sinkronisasi Database...</p>';
+        list.innerHTML = '<p class="text-center py-10 text-[10px] text-gray-600 italic">Menghubungkan ke Database...</p>';
         try {
-            const r = await fetch(`${API_URL}?t=${new Date().getTime()}`);
+            const r = await fetch(API_URL);
             const res = await r.json();
             masterData = res.data;
 
@@ -90,8 +81,10 @@
             st.innerHTML = '<option value="SEMUA">-- SEMUA TRIP --</option>';
             res.trip.forEach(t => st.innerHTML += `<option value="${t}">TRIP ${t}</option>`);
 
-            list.innerHTML = '<p class="text-center py-10 text-gray-700 text-[10px] uppercase italic">Pilih filter untuk melihat data</p>';
-        } catch(e) { list.innerHTML = '<p class="text-red-500 text-center">Koneksi Error!</p>'; }
+            list.innerHTML = '<p class="text-center py-10 text-gray-700 text-[10px] uppercase italic">Data Siap. Silakan Filter.</p>';
+        } catch(e) { 
+            list.innerHTML = '<p class="text-red-500 text-center uppercase font-bold text-[10px]">Koneksi Error! Cek Deployment.</p>'; 
+        }
     }
 
     function switchTab(t) {
@@ -121,20 +114,18 @@
 
         const list = document.getElementById('rekapan-list');
         if(filtered.length === 0) {
-            list.innerHTML = '<p class="text-center py-10 text-gray-600 text-xs font-bold uppercase">DATA TIDAK DITEMUKAN</p>';
-            document.getElementById('rekap-tools').classList.add('hidden');
+            list.innerHTML = '<p class="text-center py-10 text-gray-600 text-[10px] font-bold uppercase italic">Data Tidak Ditemukan</p>';
             return;
         }
 
-        document.getElementById('rekap-tools').classList.remove('hidden');
         list.innerHTML = filtered.map(i => `
             <div class="card-exec p-4 flex justify-between items-center border-l-2 ${i.status === 'APPROVED' ? 'border-green-600' : 'border-blue-900'}">
                 <div>
-                    <p class="text-[7px] text-gray-600 font-bold uppercase">${i.tglDisplay} | TRIP ${i.trip} | ${i.kapal}</p>
-                    <p class="text-[10px] font-bold uppercase">${i.barang}</p>
+                    <p class="text-[7px] text-gray-500 font-bold uppercase">${i.tglDisplay} | TRIP ${i.trip} | ${i.kapal}</p>
+                    <p class="text-[11px] font-bold uppercase tracking-tight">${i.barang}</p>
                     <p class="text-[7px] font-black uppercase italic ${i.status === 'APPROVED' ? 'text-green-500' : 'text-yellow-500'}">${i.status}</p>
                 </div>
-                <p class="text-[10px] font-black italic">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
+                <p class="text-[11px] font-black italic">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
             </div>`).join('');
     }
 
@@ -142,17 +133,17 @@
         const list = document.getElementById('persetujuan-list');
         const pending = masterData.filter(i => i.status === "PENDING");
         if(pending.length === 0) {
-            list.innerHTML = '<p class="text-center py-20 text-gray-700 text-[10px] uppercase font-bold italic">✅ SEMUA BERES</p>';
+            list.innerHTML = '<p class="text-center py-20 text-gray-700 text-[10px] uppercase font-bold italic">Semua Permintaan Telah Disetujui</p>';
             return;
         }
         list.innerHTML = pending.map(i => `
             <div class="card-exec p-4 flex justify-between items-center border-l-4 border-blue-600">
                 <div>
-                    <p class="text-[7px] text-gray-600 font-bold uppercase">${i.tglDisplay} | TRIP ${i.trip} | ${i.kapal}</p>
-                    <h2 class="text-xs font-black uppercase italic">${i.barang}</h2>
-                    <p class="text-blue-500 font-bold text-xs mt-1">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
+                    <p class="text-[7px] text-gray-500 font-bold uppercase">${i.tglDisplay} | TRIP ${i.trip} | ${i.kapal}</p>
+                    <h2 class="text-[11px] font-black uppercase italic">${i.barang}</h2>
+                    <p class="text-blue-500 font-bold text-[10px] mt-1">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
                 </div>
-                <button onclick="setujui('${i.kapal}', '${i.barang}', this)" class="bg-blue-600 px-6 py-3 rounded-xl font-black text-[9px] uppercase shadow-lg">SETUJUI</button>
+                <button onclick="setujui('${i.kapal}', '${i.barang}', this)" class="bg-blue-600 px-6 py-3 rounded-xl font-black text-[9px] uppercase shadow-lg shadow-blue-900/40">Setujui</button>
             </div>`).join('');
     }
 
@@ -160,8 +151,8 @@
         btn.innerText = "WAIT"; btn.disabled = true;
         try {
             await fetch(API_URL, { method: 'POST', body: JSON.stringify({ kapal, barang }) });
-            alert("DISETUJUI!"); init();
-        } catch (e) { alert("Error!"); btn.innerText = "SETUJUI"; btn.disabled = false; }
+            alert("Berhasil Disetujui!"); init();
+        } catch (e) { alert("Gagal!"); btn.innerText = "Setujui"; btn.disabled = false; }
     }
 
     window.onload = init;
