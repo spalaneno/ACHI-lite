@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OWNER DASHBOARD - ACHI SYSTEM</title>
+    <title>SISTEM KONTROL - ACHI SYSTEM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -13,37 +13,29 @@
         .tab-active { border-bottom: 3px solid #2563eb; color: #2563eb; font-weight: 800; }
         .p-letter { width: 40px; height: 40px; border-radius: 50%; background: #2563eb; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; border: 2px solid #1e40af; }
         .input-dark { background: #111; border: 1px solid #222; padding: 12px; border-radius: 12px; font-size: 12px; color: white; outline: none; width: 100%; }
-        .btn-blue { background: #2563eb; transition: 0.3s; font-weight: 800; }
-        .btn-blue:hover { background: #1d4ed8; transform: translateY(-1px); }
-        @media print { .no-print { display: none !important; } body { background: #fff; color: #000; } .card-exec { border: 1px solid #ddd; } }
+        .owner-only { display: none; } /* Default disembunyikan */
+        @media print { .no-print { display: none !important; } }
     </style>
 </head>
 <body class="p-4">
 
     <div class="flex justify-between items-center mb-6 no-print">
         <div class="flex items-center gap-3">
-            <button onclick="window.location.href='dashboard.html'" class="w-10 h-10 card-exec flex items-center justify-center border-gray-800">
-                <i class="fas fa-chevron-left text-gray-500"></i>
-            </button>
+            <button onclick="window.location.href='dashboard.html'" class="w-10 h-10 card-exec flex items-center justify-center border-gray-800"><i class="fas fa-chevron-left text-gray-500"></i></button>
             <div class="text-left">
-                <h1 class="text-lg font-black italic tracking-tighter leading-none uppercase">Owner Dashboard</h1>
-                <p class="text-[8px] text-blue-500 font-bold uppercase tracking-widest">Executive Control Panel</p>
+                <h1 id="panel-title" class="text-lg font-black italic tracking-tighter leading-none uppercase italic">Panel User</h1>
+                <p id="user-role" class="text-[8px] text-blue-500 font-bold uppercase tracking-widest italic italic">Achi System Access</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <div class="p-letter">A</div>
-            <div class="w-10 h-10 rounded-full border border-gray-800 bg-gray-900 overflow-hidden">
-                <img src="https://via.placeholder.com/40" class="w-full h-full object-cover">
-            </div>
-            <button onclick="logout()" class="w-10 h-10 card-exec flex items-center justify-center border-red-900/30 ml-1">
-                <i class="fas fa-sign-out-alt text-red-600"></i>
-            </button>
+            <div id="user-initial" class="p-letter">-</div>
+            <button onclick="logout()" class="w-10 h-10 card-exec flex items-center justify-center border-red-900/30 ml-1"><i class="fas fa-sign-out-alt text-red-600"></i></button>
         </div>
     </div>
 
     <div class="flex space-x-6 mb-6 border-b border-gray-900 pb-2 no-print text-[10px] uppercase font-bold tracking-widest">
         <button onclick="switchTab('rekapan')" id="btn-rekapan" class="tab-active pb-2">Rekapan Data</button>
-        <button onclick="switchTab('persetujuan')" id="btn-persetujuan" class="pb-2 text-gray-500">Persetujuan Pembelian</button>
+        <button onclick="switchTab('persetujuan')" id="btn-persetujuan" class="owner-only pb-2">Persetujuan Pembelian</button>
     </div>
 
     <div id="section-rekapan" class="block">
@@ -51,159 +43,108 @@
             <div class="space-y-4">
                 <div>
                     <label class="text-[9px] font-bold text-gray-500 uppercase italic">Filter Nama Kapal</label>
-                    <select id="filter-kapal" class="input-dark mt-1">
-                        <option value="SEMUA">-- TAMPILKAN SEMUA KAPAL --</option>
-                    </select>
+                    <select id="filter-kapal" class="input-dark mt-1"><option value="SEMUA">-- SEMUA KAPAL --</option></select>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-[9px] font-bold text-gray-500 uppercase italic">Dari Tanggal</label>
-                        <input type="date" id="start-date" class="input-dark mt-1">
-                    </div>
-                    <div>
-                        <label class="text-[9px] font-bold text-gray-500 uppercase italic">Sampai Tanggal</label>
-                        <input type="date" id="end-date" class="input-dark mt-1">
-                    </div>
+                    <input type="date" id="start-date" class="input-dark">
+                    <input type="date" id="end-date" class="input-dark">
                 </div>
-                <button onclick="filterRekapan()" class="w-full btn-blue py-4 rounded-xl uppercase text-[11px] tracking-widest shadow-lg shadow-blue-900/20">TAMPILKAN REKAP</button>
+                <button onclick="filterRekapan()" class="w-full bg-blue-600 py-4 rounded-xl font-black uppercase text-[11px]">Tampilkan Data</button>
             </div>
-        </div>
-        
-        <div id="print-header" class="hidden flex justify-between items-center mb-4 px-2">
-            <h2 class="text-xs font-bold uppercase italic">Laporan Rekapan Data</h2>
-            <button onclick="window.print()" class="no-print text-gray-400 bg-gray-900 px-3 py-1.5 rounded-lg text-[9px] border border-gray-800 font-bold">
-                <i class="fas fa-print mr-1"></i> PRINT PDF
-            </button>
         </div>
         <div id="rekapan-list" class="space-y-2 pb-20"></div>
     </div>
 
     <div id="section-persetujuan" class="hidden">
-        <div id="persetujuan-list" class="space-y-3 pb-20 pt-2"></div>
+        <div id="persetujuan-list" class="space-y-3 pt-2"></div>
     </div>
 
 <script>
-    // MASUKKAN URL WEB APP GOOGLE SCRIPT BOSS DI SINI
     const API_URL = "https://script.google.com/macros/s/AKfycbwrwf2rj_v4i8UrFMz-l5L-e-47r15I323txenXmxsDeHnzggBFwLBPoNVBMbsRNw5t/exec"; 
     let masterData = [];
+    
+    // 1. CEK SIAPA YANG LOGIN
+    const currentUsername = localStorage.getItem("username") || "User";
+    const isOwner = (currentUsername.toLowerCase() === 'hengky' || currentUsername.toLowerCase() === 'achy');
 
-    // FUNGSI UTAMA LOAD DATA
-    async function loadData() {
-        const list = document.getElementById('rekapan-list');
-        list.innerHTML = '<p class="text-center py-10 text-[10px] text-gray-600 animate-pulse">MENGAMBIL DATA KAPAL...</p>';
-        
-        try {
-            const response = await fetch(`${API_URL}?action=getRekapGlobal&t=${new Date().getTime()}`);
-            const result = await response.json();
-            masterData = result.data;
-
-            // ISI DROPDOWN KAPAL SECARA DINAMIS
-            const selectKapal = document.getElementById('filter-kapal');
-            selectKapal.innerHTML = '<option value="SEMUA">-- TAMPILKAN SEMUA KAPAL --</option>';
-            
-            // Ambil nama kapal unik dari masterData
-            const uniqueKapal = [...new Set(masterData.map(item => item.kapal))].filter(k => k).sort();
-            uniqueKapal.forEach(k => {
-                const opt = document.createElement('option');
-                opt.value = k;
-                opt.innerText = k.toUpperCase();
-                selectKapal.appendChild(opt);
-            });
-
-            list.innerHTML = '<p class="text-center py-10 text-gray-700 text-[10px] uppercase italic">Silakan atur filter Kapal & Tanggal</p>';
-        } catch (error) {
-            console.error(error);
-            list.innerHTML = '<p class="text-center py-10 text-red-500 text-[10px]">GAGAL KONEKSI. PASTIKAN DEPLOYMENT SUDAH "ANYONE".</p>';
+    async function init() {
+        // Atur Tampilan berdasarkan Role
+        document.getElementById('user-initial').innerText = currentUsername.charAt(0).toUpperCase();
+        if(isOwner) {
+            document.getElementById('panel-title').innerText = "Owner Dashboard";
+            document.getElementById('user-role').innerText = "Executive Control";
+            document.querySelectorAll('.owner-only').forEach(el => el.style.display = 'block');
         }
+
+        try {
+            const r = await fetch(`${API_URL}?action=getRekapGlobal&t=${new Date().getTime()}`);
+            const res = await r.json();
+            masterData = res.data;
+            
+            const selectKapal = document.getElementById('filter-kapal');
+            const uniqueKapal = [...new Set(masterData.map(item => item.kapal))].filter(k => k).sort();
+            uniqueKapal.forEach(k => { selectKapal.innerHTML += `<option value="${k}">${k}</option>`; });
+            
+            document.getElementById('rekapan-list').innerHTML = '<p class="text-center py-10 text-gray-700 text-[10px] uppercase italic">Pilih filter untuk melihat arsip</p>';
+        } catch(e) { console.error("Koneksi Error"); }
     }
 
-    // PINDAH TAB
-    function switchTab(tab) {
-        document.getElementById('section-rekapan').classList.toggle('hidden', tab !== 'rekapan');
-        document.getElementById('section-persetujuan').classList.toggle('hidden', tab !== 'persetujuan');
-        document.getElementById('btn-rekapan').className = (tab === 'rekapan') ? 'tab-active pb-2' : 'pb-2 text-gray-500';
-        document.getElementById('btn-persetujuan').className = (tab === 'persetujuan') ? 'tab-active pb-2' : 'pb-2 text-gray-500';
-        if(tab === 'persetujuan') renderPersetujuan();
+    function switchTab(t) {
+        if(t === 'persetujuan' && !isOwner) return alert("Akses Ditolak!");
+        document.getElementById('section-rekapan').classList.toggle('hidden', t !== 'rekapan');
+        document.getElementById('section-persetujuan').classList.toggle('hidden', t !== 'persetujuan');
+        document.getElementById('btn-rekapan').className = (t === 'rekapan') ? 'tab-active pb-2' : 'pb-2 text-gray-500';
+        document.getElementById('btn-persetujuan').className = (t === 'persetujuan') ? 'tab-active pb-2' : 'pb-2 text-gray-500';
+        if(t === 'persetujuan') renderPersetujuan();
     }
 
-    // FILTER REKAPAN (KAPAL & TANGGAL)
     function filterRekapan() {
         const kapal = document.getElementById('filter-kapal').value;
-        const start = document.getElementById('start-date').value;
-        const end = document.getElementById('end-date').value;
-        const list = document.getElementById('rekapan-list');
+        const s = document.getElementById('start-date').value;
+        const e = document.getElementById('end-date').value;
+        if(!s || !e) return alert("Pilih Tanggal!");
+        const ds = new Date(s + "T00:00:00").getTime();
+        const de = new Date(e + "T23:59:59").getTime();
 
-        if(!start || !end) return alert("Pilih Rentang Tanggal!");
-
-        const ds = new Date(start + "T00:00:00").getTime();
-        const de = new Date(end + "T23:59:59").getTime();
-
-        let filtered = masterData.filter(item => {
-            const matchDate = item.tSort >= ds && item.tSort <= de;
-            const matchKapal = (kapal === "SEMUA") || (item.kapal === kapal);
+        let filtered = masterData.filter(i => {
+            const matchDate = i.tSort >= ds && i.tSort <= de;
+            const matchKapal = (kapal === "SEMUA") || (i.kapal === kapal);
             return matchDate && matchKapal;
         });
 
-        if(filtered.length === 0) {
-            list.innerHTML = '<p class="text-center py-10 text-xs text-gray-500 uppercase italic">Data tidak ditemukan untuk filter ini</p>';
-            document.getElementById('print-header').classList.add('hidden');
-            return;
-        }
-
-        document.getElementById('print-header').classList.remove('hidden');
+        const list = document.getElementById('rekapan-list');
         list.innerHTML = filtered.map(i => `
             <div class="card-exec p-4 flex justify-between items-center border-l-2 ${i.status === 'APPROVED' ? 'border-green-600' : 'border-gray-800'}">
                 <div>
                     <p class="text-[7px] text-gray-600 font-bold uppercase">${i.tDisplay} | ${i.kapal}</p>
                     <p class="text-[10px] font-bold uppercase">${i.barang}</p>
-                    <p class="text-[7px] font-black uppercase italic ${i.status === 'APPROVED' ? 'text-green-500' : 'text-yellow-500'}">${i.status}</p>
+                    <p class="text-[7px] font-black uppercase ${i.status === 'APPROVED' ? 'text-green-500' : 'text-yellow-500'} italic">${i.status}</p>
                 </div>
-                <div class="text-right">
-                    <p class="text-[10px] font-black italic">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
-                </div>
+                <p class="text-[10px] font-black">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
             </div>`).join('');
     }
 
-    // TAMPILKAN PERSETUJUAN
     function renderPersetujuan() {
         const list = document.getElementById('persetujuan-list');
         const pending = masterData.filter(i => i.status === "PENDING");
-        
-        if(pending.length === 0) {
-            list.innerHTML = '<p class="text-center py-20 text-gray-700 text-[10px] uppercase font-bold italic">✅ Semua Permintaan Sudah Approved</p>';
-            return;
-        }
-
-        list.innerHTML = `<p class="text-[9px] font-bold text-gray-500 uppercase mb-4 italic ml-2">${pending.length} Permintaan Menunggu Persetujuan</p>` + 
-        pending.map(i => `
+        list.innerHTML = pending.map(i => `
             <div class="card-exec p-4 flex justify-between items-center border-l-4 border-blue-600">
-                <div>
-                    <p class="text-[7px] text-gray-600 font-bold uppercase">${i.tDisplay} | ${i.kapal}</p>
-                    <h2 class="text-xs font-black uppercase italic">${i.barang}</h2>
-                    <p class="text-blue-500 font-bold text-xs mt-1">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p>
-                </div>
-                <button onclick="setujui('${i.kapal}', '${i.barang}', this)" class="bg-blue-600 px-6 py-3 rounded-xl font-black text-[9px] uppercase shadow-lg shadow-blue-900/20">SETUJUI</button>
+                <div><p class="text-[7px] text-gray-600 font-bold uppercase">${i.tDisplay} | ${i.kapal}</p><h2 class="text-xs font-black uppercase italic">${i.barang}</h2><p class="text-blue-500 font-bold text-xs">Rp ${parseFloat(i.harga).toLocaleString('id-ID')}</p></div>
+                <button onclick="setujui('${i.kapal}', '${i.barang}', this)" class="bg-blue-600 px-6 py-3 rounded-xl font-black text-[9px] uppercase">SETUJUI</button>
             </div>`).join('');
     }
 
-    // EKSEKUSI SETUJU
     async function setujui(kapal, barang, btn) {
-        const originalText = btn.innerText;
-        btn.innerText = "WAIT..."; btn.disabled = true;
+        if(!isOwner) return alert("Hanya Owner yang bisa menyetujui!");
+        btn.innerText = "WAIT"; btn.disabled = true;
         try {
-            const r = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ kapal, barang }) });
-            alert("PERMINTAAN DISETUJUI!");
-            loadData(); // Refresh masterData
-        } catch (e) { 
-            alert("Gagal koneksi!"); 
-            btn.innerText = originalText; btn.disabled = false; 
-        }
+            await fetch(API_URL, { method: 'POST', body: JSON.stringify({ kapal, barang }) });
+            alert("SUCCESS!"); init();
+        } catch (e) { alert("FAIL!"); btn.innerText = "SETUJUI"; btn.disabled = false; }
     }
 
-    function logout() { if(confirm("Keluar dari Panel Owner?")) window.location.href = 'index.html'; }
-
-    // MULAI JALANKAN SAAT HALAMAN DIBUKA
-    window.onload = loadData;
+    function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+    window.onload = init;
 </script>
 </body>
 </html>
