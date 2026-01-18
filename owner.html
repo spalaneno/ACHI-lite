@@ -1,69 +1,25 @@
 <script>
-window.rawHistory = [];
-
 window.initRoleData = function(res) {
     if(!res.success) return;
     
-    // Identitas Owner
-    document.getElementById('displayUser').innerText = res.user.username;
-    if(res.user.foto) document.getElementById('displayPhoto').src = res.user.foto;
+    // Pastikan ID elemen ada sebelum diisi agar tidak NULL
+    const elUser = document.getElementById('displayUser');
+    if(elUser) elUser.innerText = res.user.username;
 
-    // Angka Realtime di Atas
-    document.getElementById('valDaily').innerText = formatIDR(res.stats.daily);
-    document.getElementById('valWeekly').innerText = formatIDR(res.stats.weekly);
-    document.getElementById('valMonthly').innerText = formatIDR(res.stats.monthly);
+    if(document.getElementById('valDaily')) document.getElementById('valDaily').innerText = formatIDR(res.stats.daily);
+    if(document.getElementById('valWeekly')) document.getElementById('valWeekly').innerText = formatIDR(res.stats.weekly);
+    if(document.getElementById('valMonthly')) document.getElementById('valMonthly').innerText = formatIDR(res.stats.monthly);
 
-    window.rawHistory = res.history || [];
-
-    // MENGISI DROPDOWN ARMADA SECARA OTOMATIS
+    // MENGISI DROPDOWN ARMADA DARI SPREADSHEET (DINAMIS)
     const selKapal = document.getElementById('fKapal');
-    if(selKapal) {
-        // Kapal yang diatur aplikasi (Nabawi 09, Srikandi 01, Lastika Star)
-        const fixedKapal = ["KM. NABAWI 09", "KM. SRIKANDI 01", "KM. LASTIKA STAR"];
+    if(selKapal && res.armadaList) {
         selKapal.innerHTML = '<option value="Semua">Semua Armada</option>';
-        fixedKapal.forEach(k => {
+        res.armadaList.forEach(k => {
             selKapal.innerHTML += `<option value="${k}">${k}</option>`;
         });
     }
 
-    renderRekap();
+    window.rawHistory = res.history || [];
+    if(typeof renderRekap === "function") renderRekap();
 };
-
-function renderRekap() {
-    const fKapal = document.getElementById('fKapal').value;
-    const fTrip = document.getElementById('fTrip').value;
-    const fSearch = document.getElementById('fSearch').value.toLowerCase();
-    const fStart = document.getElementById('fStart').value;
-    const fEnd = document.getElementById('fEnd').value;
-    
-    const container = document.getElementById('rekapBody');
-    container.innerHTML = "";
-    let totalFiltered = 0;
-
-    const filtered = window.rawHistory.filter(item => {
-        const matchKapal = (fKapal === "Semua" || item.kapal === fKapal);
-        const matchSearch = Object.values(item).some(v => 
-            v.toString().toLowerCase().includes(fSearch)
-        );
-        // Tambahkan filter tanggal & trip di sini
-        return matchKapal && matchSearch;
-    });
-
-    filtered.forEach(item => {
-        totalFiltered += Number(item.total);
-        container.innerHTML += `
-            <tr class="border-b border-white/5 hover:bg-white/5">
-                <td class="p-4">${item.tanggal}</td>
-                <td class="p-4 font-bold text-red-500">${item.kapal}</td>
-                <td class="p-4">${item.barang}</td>
-                <td class="p-4 text-right">${formatIDR(item.harga)}</td>
-                <td class="p-4 text-right font-black text-white">${formatIDR(item.total)}</td>
-                <td class="p-4 text-center">
-                    <span class="px-3 py-1 rounded-full text-[10px] bg-emerald-500/10 text-emerald-500">${item.status}</span>
-                </td>
-            </tr>`;
-    });
-
-    document.getElementById('rekapTotal').innerText = formatIDR(totalFiltered);
-}
 </script>
