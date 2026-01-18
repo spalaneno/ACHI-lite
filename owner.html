@@ -1,36 +1,31 @@
 <script>
-// Variabel Global untuk menyimpan data agar bisa di-search tanpa reload
 window.rawHistory = [];
 
 window.initRoleData = function(res) {
     if(!res.success) return;
     
-    // Update Header Owner
-    document.getElementById('displayUser').innerText = res.user.nama;
-    document.getElementById('txtWelcome').innerText = res.user.jabatan;
-    
-    // Update Stats Card (Realtime di bagian atas)
-    if(document.getElementById('valDaily')) {
-        document.getElementById('valDaily').innerText = formatIDR(res.stats.daily);
-        document.getElementById('valWeekly').innerText = formatIDR(res.stats.weekly);
-        document.getElementById('valMonthly').innerText = formatIDR(res.stats.monthly);
-    }
+    // Identitas Owner
+    document.getElementById('displayUser').innerText = res.user.username;
+    if(res.user.foto) document.getElementById('displayPhoto').src = res.user.foto;
 
-    // Simpan data untuk direkap
+    // Angka Realtime di Atas
+    document.getElementById('valDaily').innerText = formatIDR(res.stats.daily);
+    document.getElementById('valWeekly').innerText = formatIDR(res.stats.weekly);
+    document.getElementById('valMonthly').innerText = formatIDR(res.stats.monthly);
+
     window.rawHistory = res.history || [];
 
-    // ISI DROPDOWN ARMADA SECARA OTOMATIS
+    // MENGISI DROPDOWN ARMADA SECARA OTOMATIS
     const selKapal = document.getElementById('fKapal');
     if(selKapal) {
-        // Ambil nama kapal unik (KM. Nabawi 09, KM. Srikandi 01, KM. Lastika Star)
-        const daftarKapal = [...new Set(window.rawHistory.map(x => x.kapal))];
+        // Kapal yang diatur aplikasi (Nabawi 09, Srikandi 01, Lastika Star)
+        const fixedKapal = ["KM. NABAWI 09", "KM. SRIKANDI 01", "KM. LASTIKA STAR"];
         selKapal.innerHTML = '<option value="Semua">Semua Armada</option>';
-        daftarKapal.forEach(k => {
-            if(k) selKapal.innerHTML += `<option value="${k}">${k}</option>`;
+        fixedKapal.forEach(k => {
+            selKapal.innerHTML += `<option value="${k}">${k}</option>`;
         });
     }
 
-    // Tampilkan data pertama kali
     renderRekap();
 };
 
@@ -38,56 +33,37 @@ function renderRekap() {
     const fKapal = document.getElementById('fKapal').value;
     const fTrip = document.getElementById('fTrip').value;
     const fSearch = document.getElementById('fSearch').value.toLowerCase();
-    const fStart = document.getElementById('fStart').value; // YYYY-MM-DD
+    const fStart = document.getElementById('fStart').value;
     const fEnd = document.getElementById('fEnd').value;
     
     const container = document.getElementById('rekapBody');
     container.innerHTML = "";
-    let grandTotal = 0;
+    let totalFiltered = 0;
 
     const filtered = window.rawHistory.filter(item => {
-        // Logika Filter Tanggal
-        const [d, m, y] = item.tanggal.split('/');
-        const itemDate = new Date(`${y}-${m}-${d}`);
-        const start = fStart ? new Date(fStart) : new Date(0);
-        const end = fEnd ? new Date(fEnd) : new Date(9999, 11, 31);
-
-        // Logika Global Search (Key apa saja: Barang, Harga, Satuan, Status, Pemohon)
-        const matchSearch = Object.values(item).some(val => 
-            val.toString().toLowerCase().includes(fSearch)
+        const matchKapal = (fKapal === "Semua" || item.kapal === fKapal);
+        const matchSearch = Object.values(item).some(v => 
+            v.toString().toLowerCase().includes(fSearch)
         );
-
-        return (fKapal === "Semua" || item.kapal === fKapal) &&
-               (fTrip === "" || item.trip.toString() === fTrip) &&
-               (itemDate >= start && itemDate <= end) &&
-               matchSearch;
+        // Tambahkan filter tanggal & trip di sini
+        return matchKapal && matchSearch;
     });
 
     filtered.forEach(item => {
-        grandTotal += Number(item.total) || 0;
+        totalFiltered += Number(item.total);
         container.innerHTML += `
-            <tr class="border-b border-zinc-800 hover:bg-white/5 transition-all">
+            <tr class="border-b border-white/5 hover:bg-white/5">
                 <td class="p-4">${item.tanggal}</td>
-                <td class="p-4 font-bold text-emerald-500">${item.kapal}</td>
-                <td class="p-4 text-[10px] uppercase">${item.kategori}</td>
-                <td class="p-4 font-bold">${item.barang}</td>
-                <td class="p-4">${item.qty_beli || item.qty_awal} ${item.satuan}</td>
+                <td class="p-4 font-bold text-red-500">${item.kapal}</td>
+                <td class="p-4">${item.barang}</td>
                 <td class="p-4 text-right">${formatIDR(item.harga)}</td>
                 <td class="p-4 text-right font-black text-white">${formatIDR(item.total)}</td>
                 <td class="p-4 text-center">
-                    <span class="px-2 py-1 rounded text-[8px] font-bold ${item.status === 'COMPLETED' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-orange-500/20 text-orange-500'}">
-                        ${item.status}
-                    </span>
+                    <span class="px-3 py-1 rounded-full text-[10px] bg-emerald-500/10 text-emerald-500">${item.status}</span>
                 </td>
-            </tr>
-        `;
+            </tr>`;
     });
 
-    // Update Grand Total di Footer
-    document.getElementById('rekapTotal').innerText = formatIDR(grandTotal);
-}
-
-function formatIDR(num) {
-    return "Rp " + Number(num).toLocaleString('id-ID');
+    document.getElementById('rekapTotal').innerText = formatIDR(totalFiltered);
 }
 </script>
