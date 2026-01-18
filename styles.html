@@ -1,1 +1,42 @@
-
+<style>
+    :root { --achi-red: #ff3131; --bg-black: #050505; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-black); }
+    .glass-card { 
+        background: rgba(255, 255, 255, 0.03); 
+        backdrop-filter: blur(10px); 
+        border: 1px solid rgba(255, 255, 255, 0.08); 
+        border-radius: 28px; 
+    }
+    .input-premium { 
+        background: rgba(255,255,255,0.02); 
+        border: 1px solid rgba(255,255,255,0.1); 
+        border-radius: 16px; 
+        color: white; 
+        outline: none; 
+    }
+    .input-premium:focus { border-color: var(--achi-red); }
+    .btn-red { background: linear-gradient(135deg, #ff3131, #8b0000); border-radius: 16px; }
+    
+    /* Layout Menu */
+    .menu-grid { display: grid; grid-cols: 3; gap: 1.5rem; padding: 2rem; }
+    .nav-box {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 24px;
+        padding: 25px 10px;
+        text-align: center;
+        display: flex; flex-direction: column; align-items: center; gap: 12px;
+    }
+    .nav-box i { font-size: 1.5rem; }
+    .nav-box span { font-[800] text-[9px] uppercase tracking-widest text-zinc-500; }
+    
+    /* Warna Role */
+    .owner-text { color: #ff3131; }
+    .acc-text { color: #3b82f6; }
+    .pur-text { color: #f59e0b; }
+    .kapten-text { color: #10b981; }
+    .kkm-text { color: #94a3b8; }
+    
+    .animate-up { animation: fadeInUp 0.6s ease-out; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+</style>
