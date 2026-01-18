@@ -3,123 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DASHBOARD ADMIN - ACHI SYSTEM</title>
+    <title>ACHI - Crewing & Handling Integration</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { background: #000; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .card-admin { background: #0a0a0a; border: 1px solid #221212; border-radius: 1.5rem; }
-        .input-red { background: #150a0a; border: 1px solid #331111; padding: 14px; border-radius: 12px; font-size: 14px; color: white; width: 100%; outline: none; transition: 0.3s; }
-        .input-red:focus { border-color: #dc2626; background: #1a0a0a; }
-        .btn-red { background: #dc2626; color: white; font-weight: 800; text-transform: uppercase; transition: 0.3s; box-shadow: 0 10px 20px -10px rgba(220, 38, 38, 0.5); }
-        .btn-red:hover { background: #b91c1c; transform: translateY(-1px); }
+        body { background-color: #000; color: #fff; font-family: 'Inter', sans-serif; }
+        .achi-card { background: linear-gradient(145deg, #1a1a1a, #0d0d0d); border-radius: 20px; border: 1px solid #333; }
+        .btn-primary { background-color: #e31e24; box-shadow: 0 4px 15px rgba(227, 30, 36, 0.4); }
+        .text-achi-red { color: #e31e24; }
+        .input-field { background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 12px; }
+        .balance-card { background: linear-gradient(135deg, #e31e24 0%, #7a1114 100%); }
+        #loader { background: rgba(0,0,0,0.9); z-index: 100; }
     </style>
 </head>
-<body class="p-5">
+<body>
 
-    <div class="flex justify-between items-center mb-8">
-        <div>
-            <h1 class="text-xl font-black italic tracking-tighter uppercase leading-none text-red-600">Admin Panel</h1>
-            <p class="text-[8px] text-gray-500 font-bold uppercase tracking-widest mt-1">Input Data Logistik Fleet</p>
-        </div>
-        <div class="flex gap-2">
-            <button onclick="window.location.href='rekap.html'" class="w-10 h-10 card-admin flex items-center justify-center text-red-600 border-red-900/20">
-                <i class="fas fa-file-invoice"></i>
-            </button>
-            <div class="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center font-black border-2 border-red-900">A</div>
+    <div id="loader" class="hidden fixed inset-0 flex items-center justify-center">
+        <div class="text-center">
+            <i class="fas fa-circle-notch fa-spin text-4xl text-achi-red mb-2"></i>
+            <p class="text-[10px] tracking-widest text-gray-500 uppercase font-bold text-achi-red">SINKRONISASI ACHI...</p>
         </div>
     </div>
 
-    <div class="card-admin p-6 space-y-5">
-        <div>
-            <label class="text-[9px] font-bold text-red-500/60 uppercase ml-1 tracking-widest">Pilih Armada Kapal</label>
-            <select id="input-kapal" class="input-red mt-1">
-                <option value="NABAWI 09">NABAWI 09</option>
-                <option value="LASTIKA STAR">LASTIKA STAR</option>
-                <option value="SRIKANDI 01">SRIKANDI 01</option>
-            </select>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-            <div>
-                <label class="text-[9px] font-bold text-red-500/60 uppercase ml-1 tracking-widest">Nomor Trip</label>
-                <input type="number" id="input-trip" placeholder="Contoh: 01" class="input-red mt-1">
+    <div id="login-page" class="flex flex-col items-center justify-center min-h-screen p-6">
+        <img src="logo.png" alt="ACHI Logo" class="w-36 mb-10">
+        <div class="achi-card p-10 w-full max-w-md shadow-2xl">
+            <h2 class="text-3xl font-bold mb-1 text-center italic text-achi-red italic uppercase tracking-tighter">ACHI</h2>
+            <p class="text-gray-500 text-center mb-10 text-[9px] tracking-[0.4em] uppercase">Crewing & Handling</p>
+            
+            <div class="space-y-5">
+                <input type="text" id="username" placeholder="Username" class="w-full p-4 input-field outline-none focus:border-red-600">
+                <input type="password" id="password" placeholder="Password" class="w-full p-4 input-field outline-none focus:border-red-600">
+                <button onclick="handleLogin()" class="w-full p-4 btn-primary font-bold rounded-xl mt-4 uppercase tracking-widest text-sm">Masuk</button>
             </div>
-            <div>
-                <label class="text-[9px] font-bold text-red-500/60 uppercase ml-1 tracking-widest">Tanggal</label>
-                <input type="date" id="input-tanggal" class="input-red mt-1">
+            <p id="loginError" class="text-red-500 text-center text-[10px] mt-6 hidden italic font-bold uppercase"></p>
+        </div>
+    </div>
+
+    <div id="main-dashboard" class="hidden min-h-screen pb-24">
+        <div class="p-6 flex justify-between items-center">
+            <img src="logo.png" class="w-16">
+            <div class="flex items-center space-x-4">
+                <div class="text-right">
+                    <p id="welcomeGreeting" class="text-[10px] text-gray-500 font-bold uppercase tracking-wider"></p>
+                    <p id="userDisplayName" class="font-bold text-sm text-white"></p>
+                </div>
+                <img id="userPhoto" src="https://via.placeholder.com/100" class="w-10 h-10 rounded-full border border-red-600 p-0.5">
             </div>
         </div>
 
-        <div>
-            <label class="text-[9px] font-bold text-red-500/60 uppercase ml-1 tracking-widest">Nama Barang / Keperluan</label>
-            <input type="text" id="input-barang" placeholder="Contoh: Pembelian Oli" class="input-red mt-1">
-        </div>
+        <div class="px-6 space-y-6">
+            <div id="crew-finance" class="grid grid-cols-2 gap-4">
+                <div class="balance-card p-5 rounded-3xl shadow-lg">
+                    <p class="text-[9px] text-white/60 font-bold uppercase tracking-widest">Saldo Upah</p>
+                    <h3 id="displaySaldo" class="text-xl font-bold mt-1">Rp 0</h3>
+                </div>
+                <div class="achi-card p-5 rounded-3xl">
+                    <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Hutang</p>
+                    <h3 id="displayHutang" class="text-xl font-bold text-achi-red mt-1">Rp 0</h3>
+                </div>
+            </div>
 
-        <div>
-            <label class="text-[9px] font-bold text-red-500/60 uppercase ml-1 tracking-widest">Estimasi Harga (Rp)</label>
-            <input type="number" id="input-harga" placeholder="Masukkan Nominal" class="input-red mt-1">
-        </div>
+            <div id="owner-stats" class="hidden space-y-4">
+                <h2 class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">Monitoring Dashboard</h2>
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="achi-card p-6 border-l-4 border-red-600 flex justify-between items-center">
+                        <div>
+                            <p class="text-[10px] text-gray-500 uppercase font-bold">Pengeluaran Realtime</p>
+                            <h3 id="statHarian" class="text-2xl font-bold mt-1">Rp 0</h3>
+                        </div>
+                        <i class="fas fa-chart-line text-gray-800 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
 
-        <button onclick="submitData()" id="btnSubmit" class="w-full btn-red py-4 rounded-xl mt-4 text-sm tracking-widest flex items-center justify-center gap-2">
-            <i class="fas fa-paper-plane text-[10px]"></i> KIRIM KE OWNER
-        </button>
+            <h2 class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mt-8">Layanan Utama</h2>
+            <div class="grid grid-cols-4 gap-4 text-center">
+                <div class="space-y-2 group">
+                    <div class="w-14 h-14 bg-[#111] rounded-2xl flex items-center justify-center mx-auto border border-gray-800 active:scale-90 transition">
+                        <i class="fas fa-ship text-achi-red text-lg"></i>
+                    </div>
+                    <p class="text-[9px] font-bold text-gray-500 uppercase">Armada</p>
+                </div>
+                <div class="space-y-2 group">
+                    <div class="w-14 h-14 bg-[#111] rounded-2xl flex items-center justify-center mx-auto border border-gray-800 active:scale-90 transition">
+                        <i class="fas fa-file-invoice text-achi-red text-lg"></i>
+                    </div>
+                    <p class="text-[9px] font-bold text-gray-500 uppercase">Anfrakan</p>
+                </div>
+                <div class="space-y-2 group">
+                    <div class="w-14 h-14 bg-[#111] rounded-2xl flex items-center justify-center mx-auto border border-gray-800 active:scale-90 transition">
+                        <i class="fas fa-receipt text-achi-red text-lg"></i>
+                    </div>
+                    <p class="text-[9px] font-bold text-gray-500 uppercase">Log</p>
+                </div>
+                <div class="space-y-2 group" onclick="location.reload()">
+                    <div class="w-14 h-14 bg-[#111] rounded-2xl flex items-center justify-center mx-auto border border-gray-800 active:scale-90 transition">
+                        <i class="fas fa-power-off text-gray-600 text-lg"></i>
+                    </div>
+                    <p class="text-[9px] font-bold text-gray-500 uppercase">Logout</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // URL WEB APP BOSS
-        const API_URL = "https://script.google.com/macros/s/AKfycbwXVYldmD36WRt1Qgu5rcXqLRCjDyorZeYwaDUNueOmaoSlCFyJcK3WVQsXktDPG6Q/exec";
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbypG1Pg3kTaQIc2HObIix3lt6O7nf0PiICenityDVzfIn6-Xp_jfS_Na-ydqZ-q_iCl/exec";
 
-        // Auto-set tanggal hari ini
-        document.getElementById('input-tanggal').valueAsDate = new Date();
+        function formatRupiah(angka) {
+            return "Rp " + new Intl.NumberFormat('id-ID').format(angka);
+        }
 
-        async function submitData() {
-            const kapal = document.getElementById('input-kapal').value;
-            const trip = document.getElementById('input-trip').value;
-            const tanggal = document.getElementById('input-tanggal').value;
-            const barang = document.getElementById('input-barang').value;
-            const harga = document.getElementById('input-harga').value;
-            const btn = document.getElementById('btnSubmit');
+        async function handleLogin() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const loader = document.getElementById('loader');
+            const errorMsg = document.getElementById('loginError');
+            
+            if(!user || !pass) return;
 
-            if(!trip || !barang || !harga) {
-                alert("Boss, data belum lengkap. Mohon periksa kembali!");
-                return;
-            }
-
-            btn.innerText = "SEDANG MENGIRIM...";
-            btn.disabled = true;
-
-            const payload = {
-                action: "inputLogistik",
-                tanggal: tanggal,
-                trip: trip,
-                barang: barang,
-                harga: harga,
-                kapal: kapal,
-                status: "PENDING"
-            };
+            loader.classList.remove('hidden');
+            errorMsg.classList.add('hidden');
 
             try {
-                // Gunakan mode no-cors jika hanya butuh submit tanpa baca response detail
-                await fetch(API_URL, {
+                const response = await fetch(`${WEB_APP_URL}?action=login`, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    cache: 'no-cache',
-                    body: JSON.stringify(payload)
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ username: user, password: pass })
                 });
-                
-                alert("Data Berhasil Terkirim ke Spreadsheet!");
-                
-                // Reset form setelah sukses
-                document.getElementById('input-barang').value = "";
-                document.getElementById('input-harga').value = "";
-                document.getElementById('input-trip').value = "";
-            } catch (error) {
-                alert("Gagal koneksi ke database. Pastikan internet aktif!");
+                const result = await response.json();
+
+                if(result.success) {
+                    document.getElementById('login-page').classList.add('hidden');
+                    document.getElementById('main-dashboard').classList.remove('hidden');
+                    
+                    let greeting = "Selamat Datang";
+                    let displayName = result.user.username;
+
+                    // Logika Sapaan Berdasarkan Nama di Database
+                    if(result.user.username === "Christy Novalita Pratiwi") {
+                        greeting = "Selamat Datang Ibu CEO";
+                        displayName = "Boss Achy";
+                    } else if(result.user.username === "Hengky") {
+                        greeting = "Selamat Datang Bapak CEO";
+                        displayName = "Pak CEO";
+                    }
+
+                    document.getElementById('welcomeGreeting').innerText = greeting;
+                    document.getElementById('userDisplayName').innerText = displayName;
+                    
+                    document.getElementById('displaySaldo').innerText = formatRupiah(result.user.saldo);
+                    document.getElementById('displayHutang').innerText = formatRupiah(result.user.hutang);
+                    if(result.user.foto) document.getElementById('userPhoto').src = result.user.foto;
+
+                    if(result.user.role === 'Owner') {
+                        document.getElementById('owner-stats').classList.remove('hidden');
+                        document.getElementById('crew-finance').classList.add('hidden');
+                        document.getElementById('statHarian').innerText = formatRupiah(result.stats.harian);
+                    }
+                } else {
+                    errorMsg.innerText = result.message;
+                    errorMsg.classList.remove('hidden');
+                }
+            } catch (e) {
+                errorMsg.innerText = "Gagal terhubung ke ACHI!";
+                errorMsg.classList.remove('hidden');
             } finally {
-                btn.innerHTML = '<i class="fas fa-paper-plane text-[10px]"></i> KIRIM KE OWNER';
-                btn.disabled = false;
+                loader.classList.add('hidden');
             }
         }
     </script>
