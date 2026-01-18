@@ -1,27 +1,35 @@
 <div class="animate-up">
     <header class="p-8 flex justify-between items-center">
         <div>
-            <p class="text-[10px] font-bold text-blue-500 uppercase tracking-[0.3em]">Accounting System</p>
-            <h2 id="userName" class="text-xl font-black"></h2>
+            <p class="text-[10px] font-extrabold text-blue-500 uppercase tracking-[0.4em] mb-1">Financial Controller</p>
+            <h2 id="displayUser" class="text-2xl font-black"></h2>
         </div>
-        <div class="w-12 h-12 glass-card flex items-center justify-center border-blue-600/20">
-            <i class="fas fa-calculator text-blue-500"></i>
+        <div class="w-12 h-12 glass-card flex items-center justify-center border-blue-600/20 shadow-lg shadow-blue-600/10">
+            <i class="fas fa-calculator text-blue-500 text-xl"></i>
         </div>
     </header>
 
     <div class="px-8 space-y-6">
-        <div class="glass-card p-6 bg-blue-600/5">
-            <p class="text-[9px] font-bold text-zinc-500 uppercase mb-1">Verifikasi Transaksi</p>
-            <h3 class="text-xl font-bold">Audit Progress</h3>
+        <div class="glass-card p-6 border-l-4 border-blue-600 bg-blue-600/5">
+            <p class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Total Kas Terdata</p>
+            <h3 id="valPemasukan" class="text-2xl font-bold">Rp 0</h3>
+            <div class="mt-4 pt-4 border-t border-white/5">
+                <p class="text-[8px] text-zinc-500 uppercase font-bold">Status: <span class="text-blue-500 italic">Ready to Audit</span></p>
+            </div>
         </div>
 
         <div class="grid grid-cols-3 gap-4">
-            <div class="nav-box"><i class="fas fa-file-invoice-dollar acc-text"></i><span>Audit</span></div>
-            <div class="nav-box"><i class="fas fa-book acc-text"></i><span>Jurnal</span></div>
-            <div class="nav-box"><i class="fas fa-wallet acc-text"></i><span>Kas Kapal</span></div>
-            <div class="nav-box"><i class="fas fa-receipt acc-text"></i><span>Gaji ABK</span></div>
-            <div class="nav-box"><i class="fas fa-file-export acc-text"></i><span>Export</span></div>
-            <div onclick="location.reload()" class="nav-box"><i class="fas fa-power-off text-zinc-700"></i><span>Keluar</span></div>
+            <div class="nav-box"><i class="fas fa-file-invoice-dollar text-blue-500"></i><span>Audit</span></div>
+            <div class="nav-box"><i class="fas fa-book text-blue-500"></i><span>Jurnal</span></div>
+            <div class="nav-box"><i class="fas fa-wallet text-blue-500"></i><span>Gaji</span></div>
+            <div class="nav-box"><i class="fas fa-file-export text-blue-500"></i><span>Laporan</span></div>
+            <div class="nav-box"><i class="fas fa-magnifying-glass-chart text-blue-500"></i><span>Analisa</span></div>
+            <div onclick="location.reload()" class="nav-box"><i class="fas fa-power-off text-zinc-700"></i><span>Logout</span></div>
         </div>
     </div>
 </div>
+<script>
+    function initRoleData(res) {
+        document.getElementById('valPemasukan').innerText = formatIDR(res.stats.pemasukan);
+    }
+</script>
