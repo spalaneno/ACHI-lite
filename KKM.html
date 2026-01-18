@@ -2,24 +2,25 @@
     <header class="p-8 flex justify-between items-center">
         <div>
             <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.4em] mb-1">Chief Engineer</p>
-            <h2 id="displayUser" class="text-2xl font-black"></h2>
+            <h2 id="displayUser" class="text-2xl font-black italic"></h2>
         </div>
-        <i class="fas fa-gears text-2xl text-zinc-800"></i>
+        <i class="fas fa-gears text-2xl text-zinc-700"></i>
     </header>
 
     <div class="px-8 space-y-6">
         <div class="glass-card p-6 border-l-4 border-slate-500 bg-zinc-900/50">
-            <p class="text-[9px] font-bold text-zinc-500 uppercase mb-2">Status Mesin Utama</p>
-            <h3 class="text-xl font-bold text-green-500 uppercase italic">Normal / Ready</h3>
+            <p class="text-[9px] font-bold text-zinc-500 uppercase mb-1 tracking-widest">Status Engine</p>
+            <h3 class="text-xl font-bold text-green-500 uppercase italic">Normal / Operasional</h3>
         </div>
 
         <div class="grid grid-cols-3 gap-4">
             <div class="nav-box"><i class="fas fa-oil-can text-slate-400"></i><span>BBM</span></div>
             <div class="nav-box"><i class="fas fa-wrench text-slate-400"></i><span>Servis</span></div>
-            <div class="nav-box"><i class="fas fa-screwdriver-wrench text-slate-400"></i><span>Part</span></div>
-            <div class="nav-box"><i class="fas fa-temperature-full text-slate-400"></i><span>Suhu</span></div>
-            <div class="nav-box"><i class="fas fa-file-medical text-slate-400"></i><span>Laporan</span></div>
-            <div onclick="location.reload()" class="nav-box"><i class="fas fa-power-off text-zinc-700"></i><span>Logout</span></div>
+            <div class="nav-box"><i class="fas fa-screwdriver-wrench text-slate-400"></i><span>Sparepart</span></div>
+            <div onclick="window.forceLogout()" class="nav-box border border-red-900/30">
+                <i class="fas fa-power-off text-red-600"></i>
+                <span class="text-red-500 font-bold">Keluar</span>
+            </div>
         </div>
     </div>
 </div>
