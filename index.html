@@ -21,31 +21,31 @@
     <div id="loader" class="hidden fixed inset-0 flex items-center justify-center">
         <div class="text-center">
             <i class="fas fa-circle-notch fa-spin text-4xl text-achi-red mb-2"></i>
-            <p class="text-[10px] tracking-widest text-gray-500 uppercase font-bold text-achi-red">SINKRONISASI ACHI...</p>
+            <p class="text-[10px] tracking-widest text-gray-500 uppercase font-bold text-achi-red italic">AUTHENTICATING...</p>
         </div>
     </div>
 
     <div id="login-page" class="flex flex-col items-center justify-center min-h-screen p-6">
-        <img src="logo.png" alt="ACHI Logo" class="w-36 mb-10">
-        <div class="achi-card p-10 w-full max-w-md shadow-2xl">
-            <h2 class="text-3xl font-bold mb-1 text-center italic text-achi-red italic uppercase tracking-tighter">ACHI</h2>
-            <p class="text-gray-500 text-center mb-10 text-[9px] tracking-[0.4em] uppercase">Crewing & Handling</p>
+        <img src="logo.png" alt="ACHI Logo" class="w-32 mb-8">
+        <div class="achi-card p-10 w-full max-w-md">
+            <h2 class="text-3xl font-black text-center italic text-achi-red uppercase tracking-tighter">ACHI</h2>
+            <p class="text-gray-500 text-center mb-10 text-[8px] tracking-[0.5em] uppercase">Crewing & Handling</p>
             
-            <div class="space-y-5">
+            <div class="space-y-4">
                 <input type="text" id="username" placeholder="Username" class="w-full p-4 input-field outline-none focus:border-red-600">
                 <input type="password" id="password" placeholder="Password" class="w-full p-4 input-field outline-none focus:border-red-600">
-                <button onclick="handleLogin()" class="w-full p-4 btn-primary font-bold rounded-xl mt-4 uppercase tracking-widest text-sm">Masuk</button>
+                <button onclick="handleLogin()" class="w-full p-4 btn-primary font-bold rounded-xl mt-2 uppercase text-xs tracking-widest">Login</button>
             </div>
-            <p id="loginError" class="text-red-500 text-center text-[10px] mt-6 hidden italic font-bold uppercase"></p>
+            <p id="loginError" class="text-red-500 text-center text-[10px] mt-6 hidden font-bold uppercase"></p>
         </div>
     </div>
 
-    <div id="main-dashboard" class="hidden min-h-screen pb-24">
+    <div id="main-dashboard" class="hidden min-h-screen">
         <div class="p-6 flex justify-between items-center">
-            <img src="logo.png" class="w-16">
-            <div class="flex items-center space-x-4">
+            <img src="logo.png" class="w-14">
+            <div class="flex items-center space-x-3">
                 <div class="text-right">
-                    <p id="welcomeGreeting" class="text-[10px] text-gray-500 font-bold uppercase tracking-wider"></p>
+                    <p id="welcomeGreeting" class="text-[10px] text-gray-500 font-bold uppercase"></p>
                     <p id="userDisplayName" class="font-bold text-sm text-white"></p>
                 </div>
                 <img id="userPhoto" src="https://via.placeholder.com/100" class="w-10 h-10 rounded-full border border-red-600 p-0.5">
@@ -54,55 +54,30 @@
 
         <div class="px-6 space-y-6">
             <div id="crew-finance" class="grid grid-cols-2 gap-4">
-                <div class="balance-card p-5 rounded-3xl shadow-lg">
-                    <p class="text-[9px] text-white/60 font-bold uppercase tracking-widest">Saldo Upah</p>
+                <div class="balance-card p-5 rounded-3xl">
+                    <p class="text-[9px] text-white/60 font-bold uppercase">Saldo Upah</p>
                     <h3 id="displaySaldo" class="text-xl font-bold mt-1">Rp 0</h3>
                 </div>
                 <div class="achi-card p-5 rounded-3xl">
-                    <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Hutang</p>
+                    <p class="text-[9px] text-gray-500 font-bold uppercase">Hutang</p>
                     <h3 id="displayHutang" class="text-xl font-bold text-achi-red mt-1">Rp 0</h3>
                 </div>
             </div>
 
             <div id="owner-stats" class="hidden space-y-4">
-                <h2 class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">Monitoring Dashboard</h2>
-                <div class="grid grid-cols-1 gap-4">
-                    <div class="achi-card p-6 border-l-4 border-red-600 flex justify-between items-center">
-                        <div>
-                            <p class="text-[10px] text-gray-500 uppercase font-bold">Pengeluaran Realtime</p>
-                            <h3 id="statHarian" class="text-2xl font-bold mt-1">Rp 0</h3>
-                        </div>
-                        <i class="fas fa-chart-line text-gray-800 text-2xl"></i>
+                <div class="achi-card p-6 border-l-4 border-red-600 flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] text-gray-500 uppercase font-bold">Total Pengeluaran</p>
+                        <h3 id="statHarian" class="text-2xl font-bold mt-1">Rp 0</h3>
                     </div>
                 </div>
             </div>
 
-            <h2 class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mt-8">Layanan Utama</h2>
-            <div class="grid grid-cols-4 gap-4 text-center">
-                <div class="space-y-2 group">
-                    <div class="w-14 h-14 bg-[#111] rounded-2xl flex items-center justify-center mx-auto border border-gray-800 active:scale-90 transition">
-                        <i class="fas fa-ship text-achi-red text-lg"></i>
-                    </div>
-                    <p class="text-[9px] font-bold text-gray-500 uppercase">Armada</p>
-                </div>
-                <div class="space-y-2 group">
-                    <div class="w-14 h-14 bg-[#111] rounded-2xl flex items-center justify-center mx-auto border border-gray-800 active:scale-90 transition">
-                        <i class="fas fa-file-invoice text-achi-red text-lg"></i>
-                    </div>
-                    <p class="text-[9px] font-bold text-gray-500 uppercase">Anfrakan</p>
-                </div>
-                <div class="space-y-2 group">
-                    <div class="w-14 h-14 bg-[#111] rounded-2xl flex items-center justify-center mx-auto border border-gray-800 active:scale-90 transition">
-                        <i class="fas fa-receipt text-achi-red text-lg"></i>
-                    </div>
-                    <p class="text-[9px] font-bold text-gray-500 uppercase">Log</p>
-                </div>
-                <div class="space-y-2 group" onclick="location.reload()">
-                    <div class="w-14 h-14 bg-[#111] rounded-2xl flex items-center justify-center mx-auto border border-gray-800 active:scale-90 transition">
-                        <i class="fas fa-power-off text-gray-600 text-lg"></i>
-                    </div>
-                    <p class="text-[9px] font-bold text-gray-500 uppercase">Logout</p>
-                </div>
+            <div class="grid grid-cols-4 gap-4 text-center mt-10">
+                <div class="space-y-2 group"><div class="w-14 h-14 bg-[#111] rounded-2xl flex items-center justify-center mx-auto border border-gray-800"><i class="fas fa-ship text-achi-red"></i></div><p class="text-[9px] font-bold text-gray-500 uppercase">Armada</p></div>
+                <div class="space-y-2 group"><div class="w-14 h-14 bg-[#111] rounded-2xl flex items-center justify-center mx-auto border border-gray-800"><i class="fas fa-file-signature text-achi-red"></i></div><p class="text-[9px] font-bold text-gray-500 uppercase">Anfrakan</p></div>
+                <div class="space-y-2 group"><div class="w-14 h-14 bg-[#111] rounded-2xl flex items-center justify-center mx-auto border border-gray-800"><i class="fas fa-receipt text-achi-red"></i></div><p class="text-[9px] font-bold text-gray-500 uppercase">Log</p></div>
+                <div class="space-y-2 group" onclick="location.reload()"><div class="w-14 h-14 bg-[#111] rounded-2xl flex items-center justify-center mx-auto border border-gray-800"><i class="fas fa-sign-out-alt text-gray-600"></i></div><p class="text-[9px] font-bold text-gray-500 uppercase">Keluar</p></div>
             </div>
         </div>
     </div>
@@ -110,20 +85,14 @@
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbypG1Pg3kTaQIc2HObIix3lt6O7nf0PiICenityDVzfIn6-Xp_jfS_Na-ydqZ-q_iCl/exec";
 
-        function formatRupiah(angka) {
-            return "Rp " + new Intl.NumberFormat('id-ID').format(angka);
-        }
-
         async function handleLogin() {
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
             const loader = document.getElementById('loader');
             const errorMsg = document.getElementById('loginError');
             
             if(!user || !pass) return;
-
             loader.classList.remove('hidden');
-            errorMsg.classList.add('hidden');
 
             try {
                 const response = await fetch(`${WEB_APP_URL}?action=login`, {
@@ -137,36 +106,36 @@
                     document.getElementById('login-page').classList.add('hidden');
                     document.getElementById('main-dashboard').classList.remove('hidden');
                     
-                    let greeting = "Selamat Datang";
-                    let displayName = result.user.username;
+                    let g = "Halo,";
+                    let d = result.user.username;
+                    let u = result.user.username.toUpperCase();
 
-                    // Logika Sapaan Berdasarkan Nama di Database
-                    if(result.user.username === "Christy Novalita Pratiwi") {
-                        greeting = "Selamat Datang Ibu CEO";
-                        displayName = "Boss Achy";
-                    } else if(result.user.username === "Hengky") {
-                        greeting = "Selamat Datang Bapak CEO";
-                        displayName = "Pak CEO";
+                    // LOGIKA FIX UNTUK ACHI & HENGKY
+                    if(u === "ACHI" || u === "CHRISTY NOVALITA PRATIWI") {
+                        g = "Selamat Datang Ibu CEO";
+                        d = "Boss Achy";
+                    } else if(u === "HENGKY") {
+                        g = "Selamat Datang Bapak CEO";
+                        d = "Pak CEO";
                     }
 
-                    document.getElementById('welcomeGreeting').innerText = greeting;
-                    document.getElementById('userDisplayName').innerText = displayName;
-                    
-                    document.getElementById('displaySaldo').innerText = formatRupiah(result.user.saldo);
-                    document.getElementById('displayHutang').innerText = formatRupiah(result.user.hutang);
+                    document.getElementById('welcomeGreeting').innerText = g;
+                    document.getElementById('userDisplayName').innerText = d;
+                    document.getElementById('displaySaldo').innerText = "Rp " + new Intl.NumberFormat('id-ID').format(result.user.saldo);
+                    document.getElementById('displayHutang').innerText = "Rp " + new Intl.NumberFormat('id-ID').format(result.user.hutang);
                     if(result.user.foto) document.getElementById('userPhoto').src = result.user.foto;
 
                     if(result.user.role === 'Owner') {
                         document.getElementById('owner-stats').classList.remove('hidden');
                         document.getElementById('crew-finance').classList.add('hidden');
-                        document.getElementById('statHarian').innerText = formatRupiah(result.stats.harian);
+                        document.getElementById('statHarian').innerText = "Rp " + new Intl.NumberFormat('id-ID').format(result.stats.harian);
                     }
                 } else {
                     errorMsg.innerText = result.message;
                     errorMsg.classList.remove('hidden');
                 }
             } catch (e) {
-                errorMsg.innerText = "Gagal terhubung ke ACHI!";
+                errorMsg.innerText = "Koneksi Gagal!";
                 errorMsg.classList.remove('hidden');
             } finally {
                 loader.classList.add('hidden');
