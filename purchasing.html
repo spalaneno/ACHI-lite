@@ -1,27 +1,28 @@
 <div class="animate-up">
     <header class="p-8 flex justify-between items-center">
         <div>
-            <p class="text-[10px] font-extrabold text-amber-500 uppercase tracking-[0.4em] mb-1">Supply Chain</p>
+            <p class="text-[10px] font-extrabold text-amber-500 uppercase tracking-[0.4em] mb-1">Logistik & Pengadaan</p>
             <h2 id="displayUser" class="text-2xl font-black"></h2>
         </div>
-        <div class="w-12 h-12 glass-card flex items-center justify-center border-amber-500/20">
-            <i class="fas fa-cart-shopping text-amber-500 text-xl"></i>
-        </div>
+        <i class="fas fa-cart-shopping text-2xl text-amber-500 opacity-30"></i>
     </header>
 
     <div class="px-8 space-y-6">
         <div class="glass-card p-6 border-l-4 border-amber-500 bg-amber-500/5">
-            <p class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Anfrakan Masuk</p>
-            <h3 class="text-2xl font-bold">0 <span class="text-xs text-zinc-500 font-normal">Permintaan</span></h3>
+            <p class="text-[9px] font-bold text-zinc-500 uppercase mb-1 tracking-widest">Monitoring Anfra</p>
+            <h3 class="text-xl font-bold text-white italic">Cek Log Antrian...</h3>
         </div>
 
         <div class="grid grid-cols-3 gap-4">
-            <div class="nav-box"><i class="fas fa-clipboard-list text-amber-500"></i><span>Anfra</span></div>
-            <div class="nav-box"><i class="fas fa-truck text-amber-500"></i><span>Supplier</span></div>
+            <div class="nav-box"><i class="fas fa-clipboard-list text-amber-500"></i><span>Daftar Anfra</span></div>
+            <div class="nav-box"><i class="fas fa-truck text-amber-500"></i><span>Vendor</span></div>
             <div class="nav-box"><i class="fas fa-tags text-amber-500"></i><span>Harga</span></div>
             <div class="nav-box"><i class="fas fa-box-open text-amber-500"></i><span>Stok</span></div>
             <div class="nav-box"><i class="fas fa-file-invoice text-amber-500"></i><span>PO</span></div>
-            <div onclick="location.reload()" class="nav-box"><i class="fas fa-power-off text-zinc-700"></i><span>Logout</span></div>
+            <div onclick="window.forceLogout()" class="nav-box border border-red-900/30">
+                <i class="fas fa-power-off text-red-600"></i>
+                <span class="text-red-500 font-bold">Keluar</span>
+            </div>
         </div>
     </div>
 </div>
