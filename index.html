@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ACHI - Premium Integration</title>
+    <title>ACHI - Integration</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -11,8 +11,8 @@
         :root { --achi-red: #ff3131; --bg-black: #050505; }
         body { background-color: var(--bg-black); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; }
         .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 28px; }
-        .input-premium { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; padding: 1.2rem; width: 100%; transition: 0.3s; font-size: 14px; }
-        .btn-red { background: linear-gradient(135deg, #ff3131, #8b0000); border-radius: 16px; padding: 1.2rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; width: 100%; cursor: pointer; border: none; color: white; }
+        .input-premium { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; padding: 1.2rem; width: 100%; font-size: 14px; }
+        .btn-red { background: linear-gradient(135deg, #ff3131, #8b0000); border-radius: 16px; padding: 1.2rem; font-weight: 800; text-transform: uppercase; width: 100%; cursor: pointer; color: white; border: none; }
         .welcome-overlay { position: fixed; inset: 0; background: black; z-index: 1000; display: flex; flex-direction: column; items-center; justify-content: center; }
         .hidden { display: none !important; }
         .animate-zoom { animation: zoomIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
@@ -34,8 +34,8 @@
 
     <div id="app-container">
         <section id="login-page" class="min-h-screen flex items-center justify-center p-8">
-            <div class="w-full max-w-sm">
-                <div class="text-center mb-12"><h1 class="text-5xl font-black italic text-red-600">ACHI</h1></div>
+            <div class="w-full max-w-sm text-center">
+                <h1 class="text-5xl font-black italic text-red-600 mb-8">ACHI</h1>
                 <div class="glass-card p-10">
                     <div class="space-y-4">
                         <input type="text" id="username" placeholder="Username" class="input-premium">
@@ -49,13 +49,7 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycby0DW8jDbfDvQg03jdb5LW5l4qsJoZIAz4ZwFRp7oYGSXFQTnCn1dMCAr2XCrgSofPc/exec";
-
-        window.onload = function() {
-            const saved = localStorage.getItem('achi_session');
-            if (saved) renderRolePage(JSON.parse(saved), false);
-            else document.getElementById('login-page').classList.remove('hidden');
-        };
+        const API_URL = "https://script.google.com/macros/s/AKfycbyxmug54LpTjlK0MAAKS89Ry7I6ZWpB_g0YUA7_nf_EmsFqXB6fuY1LQPizSSmtCg-D/exec";
 
         async function handleLogin() {
             const u = document.getElementById('username').value.trim();
@@ -87,14 +81,14 @@
             document.getElementById('welcome-screen').classList.remove('hidden');
             document.getElementById('loader').classList.add('hidden');
 
-            setTimeout(() => { renderRolePage(out, true); }, 1200);
+            setTimeout(() => { renderRolePage(out); }, 1200);
         }
 
-        async function renderRolePage(res, isNew) {
-            if(!isNew) document.getElementById('loader').classList.remove('hidden');
+        async function renderRolePage(res) {
             let role = (res.user.role || "").toLowerCase();
             let name = (res.user.username || "").toUpperCase();
             
+            // Nama File Bersih (Tanpa Angka 1)
             let file = 'crew.html'; 
             if (name === 'HENGKY' || role === 'owner') file = 'owner.html';
             else if (role === 'kapten') file = 'kapten.html';
@@ -116,25 +110,18 @@
                     document.body.appendChild(newScript).parentNode.removeChild(newScript);
                 }
                 
-                // ISI DROPDOWN SECARA DINAMIS
-                const selKapal = document.getElementById('fKapal');
-                if(selKapal && res.armadaList) {
-                    selKapal.innerHTML = '<option value="Semua">Semua Armada</option>';
-                    res.armadaList.forEach(k => {
-                        selKapal.innerHTML += `<option value="${k}">${k}</option>`;
-                    });
-                }
-
-                if(window.initRoleData) window.initRoleData(res);
-                document.getElementById('welcome-screen').classList.add('hidden');
-                document.getElementById('login-page').classList.add('hidden');
-                dash.classList.remove('hidden');
+                setTimeout(() => {
+                    if(window.initRoleData) window.initRoleData(res);
+                    document.getElementById('welcome-screen').classList.add('hidden');
+                    document.getElementById('login-page').classList.add('hidden');
+                    dash.classList.remove('hidden');
+                    document.getElementById('loader').classList.add('hidden');
+                }, 150);
             } catch(e) { 
                 alert("Error: " + e.message);
                 localStorage.clear();
                 location.reload();
             }
-            document.getElementById('loader').classList.add('hidden');
         }
 
         function formatIDR(v) { return "Rp " + new Intl.NumberFormat('id-ID').format(v || 0); }
