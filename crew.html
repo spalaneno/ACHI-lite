@@ -1,0 +1,30 @@
+<div class="animate-up">
+    <header class="p-8 flex justify-between items-center">
+        <div>
+            <p class="text-[10px] font-extrabold text-zinc-500 uppercase tracking-[0.4em] mb-1">Deck Crew</p>
+            <h2 id="displayUser" class="text-2xl font-black"></h2>
+        </div>
+        <img id="displayPhoto" class="w-14 h-14 rounded-full border-2 border-zinc-800 object-cover">
+    </header>
+
+    <div class="px-8 space-y-6">
+        <div class="glass-card p-6 border-l-4 border-zinc-600 bg-zinc-900/50">
+            <p class="text-[9px] font-bold text-zinc-500 uppercase mb-2 tracking-widest">Total Upah Saya</p>
+            <h3 id="valUpahCrew" class="text-3xl font-black text-white">Rp 0</h3>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div class="nav-box"><i class="fas fa-history text-zinc-500"></i><span>Riwayat Kerja</span></div>
+            <div onclick="window.forceLogout()" class="nav-box border border-red-900/30 text-red-500">
+                <i class="fas fa-power-off"></i>
+                <span class="font-bold">Keluar</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.initRoleData = function(res) {
+        if(document.getElementById('valUpahCrew')) document.getElementById('valUpahCrew').innerText = formatIDR(res.user.saldo);
+    };
+</script>
