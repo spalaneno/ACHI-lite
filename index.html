@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ACHI - Premium Integration</title>
+    <title>ACHI - Premium System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -14,22 +14,20 @@
         .input-premium { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; padding: 1.2rem; width: 100%; transition: 0.3s; font-size: 14px; }
         .input-premium:focus { border-color: var(--achi-red); box-shadow: 0 0 20px rgba(255,49,49,0.15); }
         .btn-red { background: linear-gradient(135deg, #ff3131, #8b0000); border-radius: 16px; padding: 1.2rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; width: 100%; transition: 0.3s; cursor: pointer; border: none; color: white; }
-        .btn-red:active { transform: scale(0.96); }
         .nav-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 25px 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; transition: 0.4s; cursor: pointer; }
-        .nav-box:active { background: rgba(255,255,255,0.1); transform: scale(0.9); }
+        .nav-box:active { transform: scale(0.9); background: rgba(255,255,255,0.1); }
         .nav-box i { font-size: 1.5rem; }
         .nav-box span { font-size: 9px; font-weight: 800; text-transform: uppercase; color: #71717a; letter-spacing: 0.1em; }
         .animate-up { animation: fadeInUp 0.6s ease-out forwards; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .hidden { display: none; }
+        .hidden { display: none !important; }
     </style>
 </head>
-<body class="antialiased">
-
+<body>
     <div id="loader" class="fixed inset-0 flex items-center justify-center bg-black z-[999]">
         <div class="flex flex-col items-center">
             <div class="w-12 h-12 border-4 border-t-red-600 border-white/10 rounded-full animate-spin"></div>
-            <p class="mt-4 text-[10px] tracking-[0.4em] text-zinc-500 font-bold uppercase">ACHI SECURE SYNC...</p>
+            <p class="mt-4 text-[10px] tracking-[0.4em] text-zinc-500 font-bold uppercase italic">ACHI Secure Sync...</p>
         </div>
     </div>
 
@@ -37,14 +35,13 @@
         <section id="login-page" class="hidden min-h-screen flex items-center justify-center p-8">
             <div class="w-full max-w-sm">
                 <div class="text-center mb-12">
-                    <h1 class="text-4xl font-black italic tracking-tighter text-red-600">ACHI</h1>
-                    <p class="text-[9px] font-bold text-zinc-500 uppercase tracking-[0.5em] mt-2">Marine Management System</p>
+                    <h1 class="text-4xl font-black italic text-red-600">ACHI</h1>
                 </div>
-                <div class="glass-card p-10 shadow-2xl">
+                <div class="glass-card p-10">
                     <div class="space-y-4">
                         <input type="text" id="username" placeholder="Username" class="input-premium">
                         <input type="password" id="password" placeholder="Password" class="input-premium">
-                        <button onclick="handleLogin()" id="loginBtn" class="btn-red mt-4">Login System</button>
+                        <button onclick="handleLogin()" id="loginBtn" class="btn-red mt-4 uppercase">Login</button>
                     </div>
                 </div>
             </div>
@@ -53,78 +50,66 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwcfT14QtXqRW80Gc4p4GjbFY5xx0O_lrygHh9qPxRe6LSYgT6tSJald-Z4U2GOeJPB/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbwcfT14QtXqRW80Gc4p4GjbFY5xx0O_lrygHh9qPxRe6LSYgT6tSJald-Z4U2GOeJPB/exec";
         const formatIDR = (v) => "Rp " + new Intl.NumberFormat('id-ID').format(v);
 
+        // Fungsi Logout Global yang dipanggil dari file role
+        window.appLogout = function() {
+            if(confirm("Keluar dari sistem ACHI, Boss?")) {
+                localStorage.removeItem('achi_user_session');
+                window.location.reload();
+            }
+        };
+
         window.onload = function() {
-            const savedUser = localStorage.getItem('achi_user_session');
-            if (savedUser) {
-                renderRolePage(JSON.parse(savedUser));
-            } else {
+            const saved = localStorage.getItem('achi_user_session');
+            if (saved) renderRolePage(JSON.parse(saved));
+            else {
                 document.getElementById('login-page').classList.remove('hidden');
                 document.getElementById('loader').classList.add('hidden');
             }
         };
 
         async function handleLogin() {
-            const user = document.getElementById('username').value.trim();
-            const pass = document.getElementById('password').value.trim();
-            if(!user || !pass) return;
-
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value.trim();
+            if(!u || !p) return;
             document.getElementById('loader').classList.remove('hidden');
             try {
-                const response = await fetch(`${API_URL}?action=login`, {
-                    method: 'POST',
-                    body: JSON.stringify({ username: user, password: pass })
-                });
-                const result = await response.json();
-                if(result.success) {
-                    localStorage.setItem('achi_user_session', JSON.stringify(result));
-                    renderRolePage(result);
+                const res = await fetch(`${API_URL}?action=login`, { method: 'POST', body: JSON.stringify({username:u, password:p}) });
+                const out = await res.json();
+                if(out.success) {
+                    localStorage.setItem('achi_user_session', JSON.stringify(out));
+                    renderRolePage(out);
                     document.getElementById('login-page').classList.add('hidden');
-                } else {
-                    alert(result.message);
-                }
-            } catch (e) {
-                alert("Koneksi Error.");
-            } finally {
-                document.getElementById('loader').classList.add('hidden');
-            }
+                } else alert(out.message);
+            } catch(e) { alert("Error Login"); }
+            document.getElementById('loader').classList.add('hidden');
         }
 
         async function renderRolePage(res) {
             document.getElementById('loader').classList.remove('hidden');
             let role = res.user.role.toLowerCase();
-            let u = res.user.username.toUpperCase();
-            let fileName = 'crew.html';
+            let name = res.user.username.toUpperCase();
+            let file = 'crew.html';
 
-            if (role === 'owner' || u === 'HENGKY' || u === 'ACHI' || u === 'CHRISTY NOVALITA PRATIWI') fileName = 'owner.html';
-            else if (role === 'accounting') fileName = 'accounting.html';
-            else if (role === 'purchasing') fileName = 'purchasing.html';
-            else if (role === 'kapten') fileName = 'kapten.html';
-            else if (role === 'kkm') fileName = 'kkm.html';
+            if (role === 'owner' || name === 'HENGKY' || name === 'ACHI') file = 'owner.html';
+            else if (role === 'accounting') file = 'accounting.html';
+            else if (role === 'purchasing') file = 'purchasing.html';
+            else if (role === 'kapten') file = 'kapten.html';
+            else if (role === 'kkm') file = 'kkm.html';
 
             try {
-                const response = await fetch(fileName);
-                const html = await response.text();
+                const resp = await fetch(file);
+                const html = await resp.text();
                 const dash = document.getElementById('dashboard-content');
                 dash.innerHTML = html;
                 if(document.getElementById('displayUser')) document.getElementById('displayUser').innerText = res.user.username;
                 if(document.getElementById('displayPhoto') && res.user.foto) document.getElementById('displayPhoto').src = res.user.foto;
                 if(typeof initRoleData === "function") initRoleData(res);
                 dash.classList.remove('hidden');
-            } catch (e) {
-                logout();
-            } finally {
-                document.getElementById('loader').classList.add('hidden');
-            }
-        }
-
-        function logout() {
-            if(confirm("Apakah Boss yakin ingin keluar?")) {
-                localStorage.removeItem('achi_user_session');
-                location.reload();
-            }
+            } catch(e) { window.appLogout(); }
+            document.getElementById('loader').classList.add('hidden');
         }
     </script>
 </body>
