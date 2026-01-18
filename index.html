@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ACHI - Premium System</title>
+    <title>ACHI - Premium Integration</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -13,24 +13,35 @@
         .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 28px; }
         .input-premium { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; padding: 1.2rem; width: 100%; transition: 0.3s; font-size: 14px; }
         .btn-red { background: linear-gradient(135deg, #ff3131, #8b0000); border-radius: 16px; padding: 1.2rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; width: 100%; cursor: pointer; border: none; color: white; }
-        .nav-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 25px 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; transition: 0.4s; cursor: pointer; height: 100%; }
+        .welcome-overlay { position: fixed; inset: 0; background: black; z-index: 1000; display: flex; flex-direction: column; items-center; justify-content: center; }
         .hidden { display: none !important; }
-        .animate-up { animation: fadeInUp 0.4s ease-out forwards; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-zoom { animation: zoomIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
-    <div id="loader" class="fixed inset-0 flex items-center justify-center bg-black z-[999]">
+    <div id="loader" class="fixed inset-0 flex items-center justify-center bg-black z-[999] hidden">
         <div class="flex flex-col items-center">
             <div class="w-12 h-12 border-4 border-t-red-600 border-white/10 rounded-full animate-spin"></div>
             <p class="mt-4 text-[10px] tracking-[0.4em] text-zinc-500 font-bold uppercase italic">ACHI Secure Sync...</p>
         </div>
     </div>
 
+    <div id="welcome-screen" class="welcome-overlay hidden">
+        <div class="text-center animate-zoom">
+            <h2 class="text-zinc-500 text-[10px] tracking-[0.5em] uppercase font-bold mb-2">Authenticated</h2>
+            <h1 class="text-4xl font-black italic text-white" id="welcome-name">SELAMAT DATANG</h1>
+            <p class="text-red-600 font-bold mt-2 tracking-widest text-[12px]" id="welcome-role">ACCESS GRANTED</p>
+        </div>
+    </div>
+
     <div id="app-container">
-        <section id="login-page" class="hidden min-h-screen flex items-center justify-center p-8">
+        <section id="login-page" class="min-h-screen flex items-center justify-center p-8">
             <div class="w-full max-w-sm">
-                <div class="text-center mb-12"><h1 class="text-4xl font-black italic text-red-600">ACHI</h1></div>
+                <div class="text-center mb-12">
+                    <h1 class="text-5xl font-black italic text-red-600 tracking-tighter">ACHI</h1>
+                    <p class="text-zinc-500 text-[10px] tracking-[0.3em] uppercase mt-2 font-bold">Crewing & Handling</p>
+                </div>
                 <div class="glass-card p-10">
                     <div class="space-y-4">
                         <input type="text" id="username" placeholder="Username" class="input-premium">
@@ -40,58 +51,71 @@
                 </div>
             </div>
         </section>
-        <div id="dashboard-content" class="hidden min-h-screen pb-20"></div>
+
+        <div id="dashboard-content" class="hidden min-h-screen"></div>
     </div>
 
     <script>
-        // MASUKKAN URL GOOGLE SCRIPT TERBARU BOSS DI SINI
-        const API_URL = "https://script.google.com/macros/s/AKfycby0DW8jDbfDvQg03jdb5LW5l4qsJoZIAz4ZwFRp7oYGSXFQTnCn1dMCAr2XCrgSofPc/exec";
-
-        const formatIDR = (v) => "Rp " + new Intl.NumberFormat('id-ID').format(v || 0);
-
-        window.forceLogout = function() {
-            localStorage.clear();
-            sessionStorage.clear();
-            window.location.href = window.location.pathname + '?v=' + Date.now();
-        };
+        // PASTE URL WEB APP GOOGLE SCRIPT ANDA DI SINI
+        const API_URL = "https://script.google.com/macros/s/AKfycby5F-jpNzuq-iGKD4Q3G6VTI2JT_WomOEM1ixRGw9aaX0xYbtJoxEQhZiTo4lSYXi2s/exec";
 
         window.onload = function() {
-            const saved = localStorage.getItem('achi_user_session');
-            if (saved) {
-                try { renderRolePage(JSON.parse(saved)); } 
-                catch(e) { window.forceLogout(); }
-            } else {
-                document.getElementById('login-page').classList.remove('hidden');
-                document.getElementById('loader').classList.add('hidden');
-            }
+            const saved = localStorage.getItem('achi_session');
+            if (saved) renderRolePage(JSON.parse(saved), false);
+            else document.getElementById('login-page').classList.remove('hidden');
         };
 
         async function handleLogin() {
             const u = document.getElementById('username').value.trim();
             const p = document.getElementById('password').value.trim();
             if(!u || !p) return;
+            
             document.getElementById('loader').classList.remove('hidden');
             try {
                 const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({action:'login', username:u, password:p}) });
                 const out = await res.json();
+                
                 if(out.success) {
-                    localStorage.setItem('achi_user_session', JSON.stringify(out));
-                    renderRolePage(out);
-                    document.getElementById('login-page').classList.add('hidden');
-                } else alert(out.message);
-            } catch(e) { alert("Error Koneksi, Boss."); }
-            document.getElementById('loader').classList.add('hidden');
+                    localStorage.setItem('achi_session', JSON.stringify(out));
+                    showWelcome(out);
+                } else {
+                    alert(out.message);
+                    document.getElementById('loader').classList.add('hidden');
+                }
+            } catch(e) { 
+                alert("Koneksi Gagal!"); 
+                document.getElementById('loader').classList.add('hidden');
+            }
         }
 
-        async function renderRolePage(res) {
-            document.getElementById('loader').classList.remove('hidden');
-            let role = (res.user.role || "").toLowerCase();
-            let name = (res.user.username || "").toUpperCase();
-            let file = 'crew.html';
+        function showWelcome(out) {
+            const user = out.user.username.toUpperCase();
+            let sapaan = "Selamat Datang";
+            
+            if (user === 'HENGKY') sapaan = "Selamat Datang Pak CEO";
+            else if (user === 'ACHI') sapaan = "Selamat Datang Ibu CEO";
+            else sapaan = "Halo, " + out.user.username;
 
-            if (role === 'owner' || name === 'HENGKY') file = 'owner.html';
-            else if (role === 'kapten') file = 'kapten.html';
-            else if (role === 'accounting') file = 'accounting.html';
+            document.getElementById('welcome-name').innerText = sapaan;
+            document.getElementById('welcome-role').innerText = (out.user.role).toUpperCase() + " ACCESS GRANTED";
+            
+            document.getElementById('login-page').classList.add('hidden');
+            document.getElementById('welcome-screen').classList.remove('hidden');
+            document.getElementById('loader').classList.add('hidden');
+
+            setTimeout(() => {
+                renderRolePage(out, true);
+            }, 1200);
+        }
+
+        async function renderRolePage(res, isNew) {
+            if(!isNew) document.getElementById('loader').classList.remove('hidden');
+            
+            let role = res.user.role;
+            let file = 'crew.html';
+            if (role === 'owner' || res.user.username.toUpperCase() === 'HENGKY') file = 'owner.html';
+            else if (role === 'kapten' || role === 'kkm') file = 'kapten.html';
+            else if (role === 'accounting' || role === 'od' || role === 'purchasing') file = 'accounting.html';
 
             try {
                 const resp = await fetch(file + '?v=' + Date.now());
@@ -99,7 +123,7 @@
                 const dash = document.getElementById('dashboard-content');
                 dash.innerHTML = html;
                 
-                // Menjalankan Script yang ada di dalam file eksternal
+                // Eksekusi Script di file external
                 const scripts = dash.getElementsByTagName('script');
                 for (let s of scripts) {
                     const newScript = document.createElement("script");
@@ -108,10 +132,18 @@
                 }
                 
                 if(window.initRoleData) window.initRoleData(res);
+                
+                document.getElementById('welcome-screen').classList.add('hidden');
+                document.getElementById('login-page').classList.add('hidden');
                 dash.classList.remove('hidden');
-            } catch(e) { window.forceLogout(); }
+            } catch(e) { 
+                localStorage.clear();
+                location.reload();
+            }
             document.getElementById('loader').classList.add('hidden');
         }
+
+        function formatIDR(v) { return "Rp " + new Intl.NumberFormat('id-ID').format(v || 0); }
     </script>
 </body>
 </html>
