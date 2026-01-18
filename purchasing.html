@@ -1,124 +1,27 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Purchasing List - CV EJA</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body { background: #030303; color: white; font-family: 'Inter', sans-serif; }
-        .glass-card { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 1.5rem; margin-bottom: 1rem; }
-        .input-edit { background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 0.5rem; padding: 5px 10px; font-size: 12px; width: 100%; }
-        .btn-finalize { background: linear-gradient(135deg, #059669, #064e3b); color: white; font-weight: 900; text-transform: uppercase; font-size: 10px; padding: 12px; border-radius: 1rem; width: 100%; }
-    </style>
-</head>
-<body class="pb-20">
+<div class="animate-up">
+    <header class="p-8 flex justify-between items-center">
+        <div>
+            <p class="text-[10px] font-extrabold text-amber-500 uppercase tracking-[0.4em] mb-1">Supply Chain</p>
+            <h2 id="displayUser" class="text-2xl font-black"></h2>
+        </div>
+        <div class="w-12 h-12 glass-card flex items-center justify-center border-amber-500/20">
+            <i class="fas fa-cart-shopping text-amber-500 text-xl"></i>
+        </div>
+    </header>
 
-    <div class="p-5 flex justify-between items-center bg-black border-b border-white/5 sticky top-0 z-20">
-        <button onclick="location.href='dashboard.html'" class="text-gray-400 flex items-center gap-2">
-            <i class="fas fa-chevron-left"></i> <span class="text-[9px] font-black uppercase">Dashboard</span>
-        </button>
-        <p class="text-[10px] font-black uppercase italic tracking-widest text-green-500">Purchasing List</p>
-        <button onclick="logout()" class="text-red-600"><i class="fas fa-power-off"></i></button>
-    </div>
-
-    <div class="p-6">
-        <div class="mb-6">
-            <h2 class="text-xl font-black italic tracking-tighter uppercase">Daftar Belanja</h2>
-            <p class="text-[8px] text-gray-500 font-black uppercase tracking-widest">Lengkapi harga & qty untuk transaksi final</p>
+    <div class="px-8 space-y-6">
+        <div class="glass-card p-6 border-l-4 border-amber-500 bg-amber-500/5">
+            <p class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Anfrakan Masuk</p>
+            <h3 class="text-2xl font-bold">0 <span class="text-xs text-zinc-500 font-normal">Permintaan</span></h3>
         </div>
 
-        <div id="list-purchasing" class="space-y-4">
-            <p class="text-center text-[10px] text-gray-600 animate-pulse py-10">Memuat daftar belanja yang disetujui...</p>
+        <div class="grid grid-cols-3 gap-4">
+            <div class="nav-box"><i class="fas fa-clipboard-list text-amber-500"></i><span>Anfra</span></div>
+            <div class="nav-box"><i class="fas fa-truck text-amber-500"></i><span>Supplier</span></div>
+            <div class="nav-box"><i class="fas fa-tags text-amber-500"></i><span>Harga</span></div>
+            <div class="nav-box"><i class="fas fa-box-open text-amber-500"></i><span>Stok</span></div>
+            <div class="nav-box"><i class="fas fa-file-invoice text-amber-500"></i><span>PO</span></div>
+            <div onclick="location.reload()" class="nav-box"><i class="fas fa-power-off text-zinc-700"></i><span>Logout</span></div>
         </div>
     </div>
-
-<script>
-    const USER = JSON.parse(localStorage.getItem('achi_session'));
-    const API = "https://script.google.com/macros/s/AKfycbzk03FnZDF_z2F8MNzUDF42WM6pzxsHZMufwRNNg-ejDMb9ri86iEKeSUqQGXU81T0-/exec";
-
-    if(!USER || USER.level > 3) {
-        alert("Akses Khusus Admin & Staf");
-        window.location.href = "dashboard.html";
-    }
-
-    async function loadPurchasing() {
-        const list = document.getElementById('list-purchasing');
-        try {
-            // Mengambil data dengan status 'APPROVED' (artinya sudah di-acc Owner)
-            const r = await fetch(`${API}?action=getLogistikData&status=APPROVED`);
-            const data = await r.json();
-
-            if (data.length === 0) {
-                list.innerHTML = `<div class="text-center py-20 text-[10px] text-gray-600 font-black uppercase tracking-widest">Belum ada daftar belanja baru</div>`;
-                return;
-            }
-
-            list.innerHTML = data.map(n => `
-                <div class="glass-card p-5 border-l-4 border-green-600">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <p class="text-[8px] text-green-500 font-black uppercase">${n.kat} | ${n.kapal}</p>
-                            <p class="text-sm font-black uppercase italic">${n.item}</p>
-                            <p class="text-[8px] text-gray-500 font-bold uppercase italic">Diminta oleh: ${n.user}</p>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-3 mb-4">
-                        <div>
-                            <label class="text-[7px] font-black text-gray-600 uppercase">Qty</label>
-                            <input type="number" id="qty-${n.row}" value="${n.qty}" class="input-edit">
-                        </div>
-                        <div>
-                            <label class="text-[7px] font-black text-gray-600 uppercase">Satuan</label>
-                            <input type="text" id="sat-${n.row}" value="${n.sat}" class="input-edit">
-                        </div>
-                        <div class="col-span-2">
-                            <label class="text-[7px] font-black text-yellow-600 uppercase">Harga Satuan (Final)</label>
-                            <input type="number" id="hrg-${n.row}" value="${n.harga}" class="input-edit border-yellow-900/30" placeholder="Input harga beli...">
-                        </div>
-                    </div>
-
-                    <button onclick="selesaikanTransaksi(${n.row})" class="btn-finalize">Selesaikan & Simpan Nota</button>
-                </div>
-            `).join('');
-        } catch(e) { list.innerHTML = "Gagal memuat data belanja."; }
-    }
-
-    async function selesaikanTransaksi(row) {
-        const qty = document.getElementById(`qty-${row}`).value;
-        const sat = document.getElementById(`sat-${row}`).value;
-        const hrg = document.getElementById(`hrg-${row}`).value;
-
-        if(!hrg || hrg <= 0) {
-            alert("Mohon lengkapi harga terlebih dahulu.");
-            return;
-        }
-
-        if(!confirm(`Simpan transaksi final ini?`)) return;
-
-        try {
-            const params = new URLSearchParams({
-                action: 'finalizePurchasing',
-                row: row,
-                qty: qty,
-                satuan: sat,
-                harga: hrg
-            });
-
-            const r = await fetch(`${API}?${params.toString()}`);
-            const res = await r.json();
-            
-            if(res.status === "success") {
-                alert(`Transaksi Selesai. Data telah masuk ke laporan keuangan.`);
-                loadPurchasing();
-            }
-        } catch(e) { alert("Gagal menyimpan transaksi."); }
-    }
-
-    function logout() { localStorage.clear(); window.location.href="index.html"; }
-    loadPurchasing();
-</script>
-</body>
-</html>
+</div>
