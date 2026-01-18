@@ -1,5 +1,5 @@
 <div class="animate-up">
-    <header class="p-8 flex justify-between items-center">
+    <header class="p-8 flex justify-between items-center no-print">
         <div>
             <p id="txtWelcome" class="text-[10px] font-extrabold text-red-600 uppercase tracking-[0.4em] mb-1">Executive Dashboard</p>
             <h2 id="displayUser" class="text-2xl font-black italic">BOSS ACHY</h2>
@@ -7,79 +7,98 @@
         <img id="displayPhoto" src="https://via.placeholder.com/150" class="w-14 h-14 rounded-2xl border-2 border-red-600 object-cover shadow-lg">
     </header>
 
-    <div id="owner-main" class="px-8 space-y-6">
+    <div id="owner-main" class="px-8 space-y-6 no-print">
         <div class="glass-card p-8 border-l-4 border-red-600 bg-zinc-900/40">
-            <p class="text-zinc-500 text-[10px] font-bold uppercase mb-2 italic">Cash Flow Summary</p>
+            <p class="text-zinc-500 text-[10px] font-bold uppercase mb-2">Total Pemasukan (Global)</p>
             <h3 id="valPemasukan" class="text-4xl font-black text-white italic tracking-tighter">Rp 0</h3>
             <div class="mt-4 pt-4 border-t border-white/5 flex justify-between">
-                <span class="text-[9px] font-bold text-zinc-500 uppercase">Total Expenses</span>
+                <span class="text-[9px] font-bold text-zinc-500 uppercase italic">Total Biaya Operasional</span>
                 <span id="valPengeluaran" class="text-[9px] font-bold text-red-500 uppercase">Rp 0</span>
             </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-4">
-            <div onclick="openRekap()" class="nav-box border border-red-600/20 bg-red-600/5 hover:bg-red-600/10 transition-all">
-                <i class="fas fa-chart-line text-red-600"></i>
-                <span class="text-white">Rekap Trip</span>
+        <div class="grid grid-cols-2 gap-4">
+            <div onclick="openRekap()" class="nav-box border border-red-600/20 bg-red-600/5 hover:bg-red-600/10 transition-all py-8">
+                <i class="fas fa-file-invoice-dollar text-red-600 text-2xl"></i>
+                <span class="text-white mt-2">Rekap Keuangan</span>
             </div>
-            <div onclick="alert('Fitur Approval dalam pengembangan oleh OD')" class="nav-box border border-emerald-900/20 bg-emerald-900/5">
-                <i class="fas fa-check-double text-emerald-500"></i>
-                <span class="text-zinc-500">Approval</span>
-            </div>
-            <div onclick="window.forceLogout()" class="nav-box border border-zinc-800">
-                <i class="fas fa-power-off text-zinc-600"></i>
-                <span class="text-zinc-600 font-bold">Keluar</span>
+            <div onclick="window.forceLogout()" class="nav-box border border-zinc-800 py-8">
+                <i class="fas fa-power-off text-zinc-600 text-2xl"></i>
+                <span class="text-zinc-600 mt-2">Keluar</span>
             </div>
         </div>
     </div>
 
-    <div id="rekap-view" class="hidden px-8 animate-up">
-        <div class="flex items-center justify-between mb-6">
-            <div class="flex items-center gap-4">
-                <button onclick="closeRekap()" class="w-10 h-10 glass-card flex items-center justify-center text-zinc-400">
-                    <i class="fas fa-arrow-left"></i>
-                </button>
-                <h2 class="text-xl font-black italic uppercase text-white">Laporan Rekap</h2>
-            </div>
-            <div class="text-right">
-                <p class="text-[8px] font-bold text-zinc-500 uppercase">Estimasi Profit</p>
-                <p id="totalProfitRekap" class="text-sm font-black text-emerald-500">Rp 0</p>
+    <div id="rekap-view" class="hidden px-6 animate-up min-h-screen bg-black">
+        <div class="flex items-center justify-between mb-6 no-print pt-6">
+            <button onclick="closeRekap()" class="w-10 h-10 glass-card flex items-center justify-center text-zinc-400">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <button onclick="window.print()" class="bg-red-600 text-white px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-lg shadow-red-900/40">
+                <i class="fas fa-print mr-2"></i> Cetak Laporan
+            </button>
+        </div>
+
+        <div class="glass-card p-6 mb-6 space-y-4 no-print border-white/5">
+            <div class="grid grid-cols-2 gap-3">
+                <div class="col-span-2">
+                    <label class="text-[8px] font-bold text-zinc-500 uppercase ml-1">Pilih Armada</label>
+                    <select id="selKapal" onchange="renderRekap()" class="input-premium bg-zinc-900 border-none text-[11px] h-10 mt-1"></select>
+                </div>
+                <div>
+                    <label class="text-[8px] font-bold text-zinc-500 uppercase ml-1">Dari Tanggal</label>
+                    <input type="date" id="dateStart" onchange="renderRekap()" class="input-premium bg-zinc-900 border-none text-[10px] h-10 mt-1">
+                </div>
+                <div>
+                    <label class="text-[8px] font-bold text-zinc-500 uppercase ml-1">Sampai Tanggal</label>
+                    <input type="date" id="dateEnd" onchange="renderRekap()" class="input-premium bg-zinc-900 border-none text-[10px] h-10 mt-1">
+                </div>
             </div>
         </div>
 
-        <div class="glass-card p-4 mb-6 grid grid-cols-2 gap-3">
-            <div>
-                <label class="text-[8px] font-bold text-zinc-500 uppercase mb-1 block ml-1">Pilih Kapal</label>
-                <select id="selKapal" onchange="renderRekap()" class="input-premium bg-zinc-900 border-none text-[11px] py-2 px-3 h-10"></select>
+        <div id="print-area">
+            <div class="hidden print:block text-center mb-8">
+                <h1 class="text-2xl font-black italic text-black">ACHI SYSTEM - FINANCIAL REPORT</h1>
+                <p id="printInfo" class="text-xs font-bold text-zinc-600 uppercase mt-1"></p>
+                <hr class="mt-4 border-zinc-200">
             </div>
-            <div>
-                <label class="text-[8px] font-bold text-zinc-500 uppercase mb-1 block ml-1">Filter Trip</label>
-                <select id="selTrip" onchange="renderRekap()" class="input-premium bg-zinc-900 border-none text-[11px] py-2 px-3 h-10">
-                    <option value="Semua">Semua Trip</option>
-                    <option value="1">Trip 1</option>
-                    <option value="2">Trip 2</option>
-                    <option value="3">Trip 3</option>
-                    <option value="4">Trip 4</option>
-                    <option value="5">Trip 5</option>
-                </select>
-            </div>
-        </div>
 
-        <div id="listRekap" class="space-y-4 pb-10"></div>
+            <div class="flex justify-between items-end mb-4 px-2">
+                <div>
+                    <p class="text-[10px] font-black text-red-600 uppercase tracking-[0.2em]">Summary Result</p>
+                    <h3 id="profitTitle" class="text-2xl font-black text-white print:text-black">Rp 0</h3>
+                </div>
+                <div class="text-right text-[9px] font-bold text-zinc-500">
+                    P: <span id="sumP" class="text-emerald-500">0</span><br>
+                    O: <span id="sumK" class="text-red-500">0</span>
+                </div>
+            </div>
+
+            <div id="listRekap" class="space-y-3 pb-20"></div>
+        </div>
     </div>
 </div>
+
+<style>
+    @media print {
+        body { background: white !important; color: black !important; }
+        .no-print { display: none !important; }
+        .glass-card { background: white !important; border: 1px solid #eee !important; color: black !important; border-radius: 0 !important; box-shadow: none !important; }
+        #rekap-view { padding: 0 !important; background: white !important; }
+        .text-white { color: black !important; }
+        .text-zinc-500 { color: #666 !important; }
+        #listRekap { padding-bottom: 0 !important; }
+    }
+</style>
 
 <script>
     var cacheDetails = { p: [], k: [] };
 
     window.initRoleData = function(res) {
-        if(!res || !res.user) return;
-        
-        // Stats Utama
-        document.getElementById('valPemasukan').innerText = formatIDR(res.stats.pemasukan || 0);
-        document.getElementById('valPengeluaran').innerText = formatIDR(res.stats.pengeluaran || 0);
+        if(!res) return;
+        document.getElementById('valPemasukan').innerText = formatIDR(res.stats.pemasukan);
+        document.getElementById('valPengeluaran').innerText = formatIDR(res.stats.pengeluaran);
 
-        // Identitas
         const user = res.user.username.toUpperCase();
         if(user === "HENGKY") {
             document.getElementById('txtWelcome').innerText = "Selamat Datang CEO";
@@ -87,16 +106,14 @@
         }
         if(res.user.foto) document.getElementById('displayPhoto').src = res.user.foto;
 
-        // Simpan Data ke Cache
-        cacheDetails.p = res.details ? (res.details.pemasukan || []) : [];
-        cacheDetails.k = res.details ? (res.details.pengeluaran || []) : [];
+        cacheDetails.p = res.details.pemasukan || [];
+        cacheDetails.k = res.details.pengeluaran || [];
 
-        // Isi Dropdown Kapal Otomatis
         const sel = document.getElementById('selKapal');
         if(sel) {
-            sel.innerHTML = '<option value="Semua">Semua Kapal</option>';
-            const kapals = [...new Set(cacheDetails.p.map(x => x.kapal))];
-            kapals.forEach(k => { if(k) sel.innerHTML += `<option value="${k}">${k}</option>`; });
+            sel.innerHTML = '<option value="Semua">Semua Armada</option>';
+            const listK = [...new Set([...cacheDetails.p.map(x=>x.kapal), ...cacheDetails.k.map(x=>x.kapal)])];
+            listK.forEach(k => { if(k) sel.innerHTML += `<option value="${k}">${k}</option>`; });
         }
     };
 
@@ -111,62 +128,67 @@
         document.getElementById('owner-main').classList.remove('hidden');
     }
 
+    function parseDate(dateStr) {
+        if(!dateStr) return new Date(0);
+        const [d, m, y] = dateStr.split('/');
+        return new Date(y, m - 1, d);
+    }
+
     function renderRekap() {
         const list = document.getElementById('listRekap');
-        const filterK = document.getElementById('selKapal').value;
-        const filterT = document.getElementById('selTrip').value;
-        const profitLabel = document.getElementById('totalProfitRekap');
+        const fKapal = document.getElementById('selKapal').value;
+        const fStart = document.getElementById('dateStart').value;
+        const fEnd = document.getElementById('dateEnd').value;
         
         list.innerHTML = "";
-        let totalP = 0;
-        let totalK = 0;
+        let tP = 0, tK = 0;
 
-        // Gabungkan & Filter
         const all = [
             ...cacheDetails.p.map(x => ({...x, type:'IN'})),
             ...cacheDetails.k.map(x => ({...x, type:'OUT'}))
-        ].filter(x => 
-            (filterK === "Semua" || x.kapal === filterK) && 
-            (filterT === "Semua" || x.trip == filterT)
-        );
+        ].filter(item => {
+            const itemDate = parseDate(item.tanggal);
+            const start = fStart ? new Date(fStart) : new Date(0);
+            const end = fEnd ? new Date(fEnd) : new Date(8640000000000000);
+            
+            return (fKapal === "Semua" || item.kapal === fKapal) && 
+                   (itemDate >= start && itemDate <= end);
+        });
 
-        // Sorting Berdasarkan Tanggal (Terbaru di atas)
-        all.sort((a,b) => new Date(b.tanggal.split('/').reverse().join('-')) - new Date(a.tanggal.split('/').reverse().join('-')));
-
-        if(all.length === 0) {
-            list.innerHTML = '<div class="glass-card p-10 text-center opacity-30 text-[10px] font-bold uppercase tracking-widest">Tidak ada data transaksi</div>';
-            profitLabel.innerText = "Rp 0";
-            return;
-        }
+        all.sort((a,b) => parseDate(b.tanggal) - parseDate(a.tanggal));
 
         all.forEach(item => {
             const isIN = item.type === 'IN';
-            if(isIN) totalP += Number(item.jumlah); else totalK += Number(item.jumlah);
+            if(isIN) tP += Number(item.jumlah); else tK += Number(item.jumlah);
 
-            const card = document.createElement('div');
-            card.className = `glass-card p-5 border-l-4 ${isIN ? 'border-emerald-500' : 'border-red-500'} animate-up`;
-            card.innerHTML = `
-                <div class="flex justify-between items-start">
-                    <div class="flex-1">
+            const div = document.createElement('div');
+            div.className = `glass-card p-4 border-l-4 ${isIN ? 'border-emerald-500' : 'border-red-500'} print:border-zinc-300`;
+            div.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <div>
                         <div class="flex items-center gap-2 mb-1">
-                             <span class="text-[7px] font-black bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded uppercase tracking-tighter">${item.kapal}</span>
-                             <span class="text-[7px] font-black bg-zinc-800 text-red-500 px-1.5 py-0.5 rounded uppercase tracking-tighter">TRIP ${item.trip || '-'}</span>
+                            <span class="text-[8px] font-black text-white bg-zinc-800 px-2 py-0.5 rounded print:text-black print:bg-zinc-100">${item.kapal}</span>
+                            <span class="text-[8px] font-black text-red-500 uppercase tracking-tighter">TRIP ${item.trip || '-'}</span>
                         </div>
-                        <h4 class="text-xs font-bold text-white italic leading-tight">${item.keterangan || 'Tanpa Keterangan'}</h4>
-                        <p class="text-[9px] text-zinc-500 mt-1 font-medium">${item.tanggal}</p>
+                        <h4 class="text-[11px] font-bold text-white print:text-black leading-tight italic">${item.keterangan}</h4>
+                        <p class="text-[8px] text-zinc-500 mt-1 font-bold">${item.tanggal}</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-sm font-black ${isIN ? 'text-emerald-500' : 'text-red-500'}">${isIN ? '+' : '-'}${formatIDR(item.jumlah).replace('Rp ','')}</p>
-                        <i class="fas ${isIN ? 'fa-arrow-trend-up text-emerald-900/30' : 'fa-arrow-trend-down text-red-900/30'} text-[10px] mt-1"></i>
+                        <p class="text-sm font-black ${isIN ? 'text-emerald-500' : 'text-red-500'} print:text-black">
+                            ${isIN ? '+' : '-'}${formatIDR(item.jumlah).replace('Rp ','')}
+                        </p>
                     </div>
                 </div>
             `;
-            list.appendChild(card);
+            list.appendChild(div);
         });
 
-        // Update Profit di Header Rekap
-        const netProfit = totalP - totalK;
-        profitLabel.innerText = formatIDR(netProfit);
-        profitLabel.className = `text-sm font-black ${netProfit >= 0 ? 'text-emerald-500' : 'text-red-500'}`;
+        // Update Summary
+        const profit = tP - tK;
+        document.getElementById('profitTitle').innerText = formatIDR(profit);
+        document.getElementById('profitTitle').className = `text-2xl font-black ${profit >= 0 ? 'text-emerald-500' : 'text-red-500'} print:text-black`;
+        document.getElementById('sumP').innerText = formatIDR(tP);
+        document.getElementById('sumK').innerText = formatIDR(tK);
+        document.getElementById('printInfo').innerText = `Laporan: ${fKapal} | Periode: ${fStart || 'Awal'} s/d ${fEnd || 'Sekarang'}`;
     }
 </script>
