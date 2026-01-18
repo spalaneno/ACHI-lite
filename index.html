@@ -15,17 +15,18 @@
         .input-premium:focus { border-color: var(--achi-red); box-shadow: 0 0 20px rgba(255,49,49,0.15); }
         .btn-red { background: linear-gradient(135deg, #ff3131, #8b0000); border-radius: 16px; padding: 1.2rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; width: 100%; transition: 0.3s; cursor: pointer; border: none; color: white; }
         .btn-red:active { transform: scale(0.96); }
-        .nav-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 25px 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; transition: 0.4s; }
+        .nav-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 25px 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; transition: 0.4s; cursor: pointer; }
         .nav-box:active { background: rgba(255,255,255,0.1); transform: scale(0.9); }
         .nav-box i { font-size: 1.5rem; }
         .nav-box span { font-size: 9px; font-weight: 800; text-transform: uppercase; color: #71717a; letter-spacing: 0.1em; }
         .animate-up { animation: fadeInUp 0.6s ease-out forwards; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .hidden { display: none; }
     </style>
 </head>
 <body class="antialiased">
 
-    <div id="loader" class="hidden fixed inset-0 flex items-center justify-center bg-black z-[999]">
+    <div id="loader" class="fixed inset-0 flex items-center justify-center bg-black z-[999]">
         <div class="flex flex-col items-center">
             <div class="w-12 h-12 border-4 border-t-red-600 border-white/10 rounded-full animate-spin"></div>
             <p class="mt-4 text-[10px] tracking-[0.4em] text-zinc-500 font-bold uppercase">ACHI SECURE SYNC...</p>
@@ -33,30 +34,37 @@
     </div>
 
     <div id="app-container">
-        <section id="login-page" class="min-h-screen flex items-center justify-center p-8">
+        <section id="login-page" class="hidden min-h-screen flex items-center justify-center p-8">
             <div class="w-full max-w-sm">
                 <div class="text-center mb-12">
-                    <h1 class="text-4xl font-black italic tracking-tighter text-red-600 drop-shadow-2xl">ACHI</h1>
+                    <h1 class="text-4xl font-black italic tracking-tighter text-red-600">ACHI</h1>
                     <p class="text-[9px] font-bold text-zinc-500 uppercase tracking-[0.5em] mt-2">Marine Management System</p>
                 </div>
                 <div class="glass-card p-10 shadow-2xl">
                     <div class="space-y-4">
                         <input type="text" id="username" placeholder="Username" class="input-premium">
                         <input type="password" id="password" placeholder="Password" class="input-premium">
-                        <button onclick="handleLogin()" class="btn-red mt-4">Login System</button>
+                        <button onclick="handleLogin()" id="loginBtn" class="btn-red mt-4">Login System</button>
                     </div>
                 </div>
             </div>
         </section>
-
         <div id="dashboard-content" class="hidden min-h-screen pb-20"></div>
     </div>
 
     <script>
-        // URL WEB APP BOSS SUDAH TERPASANG
         const API_URL = "https://script.google.com/macros/s/AKfycbwcfT14QtXqRW80Gc4p4GjbFY5xx0O_lrygHh9qPxRe6LSYgT6tSJald-Z4U2GOeJPB/exec"; 
-        
         const formatIDR = (v) => "Rp " + new Intl.NumberFormat('id-ID').format(v);
+
+        window.onload = function() {
+            const savedUser = localStorage.getItem('achi_user_session');
+            if (savedUser) {
+                renderRolePage(JSON.parse(savedUser));
+            } else {
+                document.getElementById('login-page').classList.remove('hidden');
+                document.getElementById('loader').classList.add('hidden');
+            }
+        };
 
         async function handleLogin() {
             const user = document.getElementById('username').value.trim();
@@ -64,40 +72,32 @@
             if(!user || !pass) return;
 
             document.getElementById('loader').classList.remove('hidden');
-
             try {
                 const response = await fetch(`${API_URL}?action=login`, {
                     method: 'POST',
-                    mode: 'no-cors', // Penting untuk Apps Script redirect
                     body: JSON.stringify({ username: user, password: pass })
                 });
-                
-                // Karena Apps Script redirect, kita coba tarik data ulang jika mode 'no-cors' terkendala
-                const directRes = await fetch(`${API_URL}?action=login`, {
-                    method: 'POST',
-                    body: JSON.stringify({ username: user, password: pass })
-                });
-                const result = await directRes.json();
-
+                const result = await response.json();
                 if(result.success) {
-                    document.getElementById('login-page').classList.add('hidden');
+                    localStorage.setItem('achi_user_session', JSON.stringify(result));
                     renderRolePage(result);
+                    document.getElementById('login-page').classList.add('hidden');
                 } else {
                     alert(result.message);
                 }
             } catch (e) {
-                alert("Koneksi Error. Pastikan Web App sudah di-deploy 'Anyone'.");
+                alert("Koneksi Error.");
             } finally {
                 document.getElementById('loader').classList.add('hidden');
             }
         }
 
         async function renderRolePage(res) {
+            document.getElementById('loader').classList.remove('hidden');
             let role = res.user.role.toLowerCase();
             let u = res.user.username.toUpperCase();
             let fileName = 'crew.html';
 
-            // Logika Penentuan File Root sesuai instruksi Boss
             if (role === 'owner' || u === 'HENGKY' || u === 'ACHI' || u === 'CHRISTY NOVALITA PRATIWI') fileName = 'owner.html';
             else if (role === 'accounting') fileName = 'accounting.html';
             else if (role === 'purchasing') fileName = 'purchasing.html';
@@ -109,16 +109,21 @@
                 const html = await response.text();
                 const dash = document.getElementById('dashboard-content');
                 dash.innerHTML = html;
-                dash.classList.remove('hidden');
-
-                // Inisialisasi Data User Global
                 if(document.getElementById('displayUser')) document.getElementById('displayUser').innerText = res.user.username;
                 if(document.getElementById('displayPhoto') && res.user.foto) document.getElementById('displayPhoto').src = res.user.foto;
-                
-                // Jalankan fungsi pengisian data spesifik role
                 if(typeof initRoleData === "function") initRoleData(res);
+                dash.classList.remove('hidden');
             } catch (e) {
-                alert("File " + fileName + " tidak ditemukan di root repository.");
+                logout();
+            } finally {
+                document.getElementById('loader').classList.add('hidden');
+            }
+        }
+
+        function logout() {
+            if(confirm("Apakah Boss yakin ingin keluar?")) {
+                localStorage.removeItem('achi_user_session');
+                location.reload();
             }
         }
     </script>
