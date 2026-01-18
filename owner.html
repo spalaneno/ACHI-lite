@@ -1,0 +1,35 @@
+<div class="animate-up">
+    <header class="p-8 flex justify-between items-center">
+        <div>
+            <p class="text-[10px] font-bold text-red-600 uppercase tracking-[0.3em]">Executive Dashboard</p>
+            <h2 id="userName" class="text-xl font-black italic"></h2>
+        </div>
+        <img id="userPhoto" class="w-14 h-14 rounded-2xl border-2 border-red-600 p-0.5 object-cover">
+    </header>
+
+    <div class="px-8 space-y-6">
+        <div class="glass-card p-8 border-l-4 border-red-600 shadow-2xl">
+            <p class="text-zinc-500 text-[10px] font-bold uppercase mb-2">Estimasi Laba Trip</p>
+            <h3 id="txtPemasukan" class="text-3xl font-black">Rp 0</h3>
+            <div class="mt-4 pt-4 border-t border-white/5 flex justify-between">
+                <span class="text-[9px] font-bold text-zinc-500 uppercase">Operasional</span>
+                <span id="txtPengeluaran" class="text-[9px] font-bold text-red-500 uppercase">Rp 0</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4">
+            <div class="nav-box"><i class="fas fa-chart-line owner-text"></i><span>Analisa</span></div>
+            <div class="nav-box"><i class="fas fa-vault owner-text"></i><span>Brankas</span></div>
+            <div class="nav-box"><i class="fas fa-users-gear owner-text"></i><span>Crew</span></div>
+            <div class="nav-box"><i class="fas fa-ship owner-text"></i><span>Armada</span></div>
+            <div class="nav-box"><i class="fas fa-file-contract owner-text"></i><span>Laporan</span></div>
+            <div onclick="location.reload()" class="nav-box"><i class="fas fa-power-off text-zinc-700"></i><span>Keluar</span></div>
+        </div>
+    </div>
+</div>
+<script>
+    window.roleInit = function(res) {
+        document.getElementById('txtPemasukan').innerText = formatIDR(res.stats.pemasukan);
+        document.getElementById('txtPengeluaran').innerText = formatIDR(res.stats.pengeluaran);
+    };
+</script>
