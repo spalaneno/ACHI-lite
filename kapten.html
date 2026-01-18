@@ -2,40 +2,36 @@
     <header class="p-8 flex justify-between items-center">
         <div>
             <p class="text-[10px] font-extrabold text-emerald-500 uppercase tracking-[0.4em] mb-1">Vessel Master</p>
-            <h2 id="displayUser" class="text-2xl font-black"></h2>
+            <h2 id="displayUser" class="text-2xl font-black italic"></h2>
         </div>
-        <p id="valKapal" class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest"></p>
+        <p id="valKapal" class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest bg-zinc-800 px-3 py-1 rounded-full"></p>
     </header>
-
     <div id="kapten-menu" class="px-8 space-y-6">
-        <div class="glass-card p-6 border-b-2 border-emerald-500">
-            <p class="text-[9px] font-bold text-zinc-500 uppercase mb-2">Saldo Upah</p>
-            <h3 id="valUpah" class="text-xl font-black">Rp 0</h3>
+        <div class="glass-card p-6 border-b-2 border-emerald-500 bg-emerald-500/5">
+            <p class="text-[9px] font-bold text-zinc-500 uppercase mb-2">Estimasi Upah</p>
+            <h3 id="valUpah" class="text-2xl font-black">Rp 0</h3>
         </div>
         <div class="grid grid-cols-3 gap-4">
             <div onclick="toggleAnfra()" class="nav-box border-emerald-500/20"><i class="fas fa-file-pen text-emerald-500"></i><span>Anfrakan</span></div>
-            <div class="nav-box"><i class="fas fa-map-location-dot text-emerald-500"></i><span>Posisi</span></div>
             <div class="nav-box"><i class="fas fa-users text-emerald-500"></i><span>Crew</span></div>
-            <div class="nav-box"><i class="fas fa-message text-emerald-500"></i><span>Lapor</span></div>
             <div class="nav-box"><i class="fas fa-history text-emerald-500"></i><span>Log</span></div>
-            <div onclick="logout()" class="nav-box"><i class="fas fa-power-off text-zinc-700"></i><span>Logout</span></div>
+            <div onclick="window.appLogout()" class="nav-box"><i class="fas fa-power-off text-zinc-700"></i><span>Logout</span></div>
         </div>
     </div>
-
     <div id="anfra-form" class="hidden px-8 animate-up">
-        <button onclick="toggleAnfra()" class="mb-6 text-zinc-500 text-xs uppercase font-bold"><i class="fas fa-arrow-left mr-2"></i> Kembali</button>
+        <button onclick="toggleAnfra()" class="mb-6 text-zinc-500 text-[10px] font-bold uppercase"><i class="fas fa-arrow-left mr-2"></i> Batal</button>
         <div class="glass-card p-8 space-y-4">
-            <h2 class="text-lg font-black text-emerald-500 uppercase italic">Form Anfrakan</h2>
-            <select id="kat" class="input-premium bg-zinc-900"><option>Suku Cadang</option><option>Logistik</option></select>
+            <h2 class="text-sm font-black text-emerald-500 uppercase tracking-widest">Input Anfrakan</h2>
+            <select id="kat" class="input-premium bg-zinc-900 border-zinc-800"><option>Suku Cadang</option><option>Logistik</option></select>
             <textarea id="item" placeholder="Rincian Barang..." class="input-premium h-32"></textarea>
-            <button onclick="sendAnfra()" id="btnAnfra" class="btn-red bg-emerald-600">Kirim Permintaan</button>
+            <button onclick="sendAnfra()" id="btnAnfra" class="btn-red bg-emerald-600 border-none shadow-lg">Kirim Sekarang</button>
         </div>
     </div>
 </div>
 <script>
     function initRoleData(res) {
         document.getElementById('valUpah').innerText = formatIDR(res.user.saldo);
-        document.getElementById('valKapal').innerText = res.user.kapal;
+        document.getElementById('valKapal').innerText = res.user.kapal || "ACHI FLEET";
         window.userNow = res.user;
     }
     function toggleAnfra() {
@@ -44,16 +40,13 @@
     }
     async function sendAnfra() {
         const item = document.getElementById('item').value;
-        if(!item) return alert("Isi barang!");
+        if(!item) return alert("Rincian wajib diisi, Boss.");
         document.getElementById('loader').classList.remove('hidden');
         try {
-            const res = await fetch(API_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'submitAnfra', user: userNow.username, kapal: userNow.kapal, item: item, kategori: document.getElementById('kat').value })
-            });
-            const out = await res.json();
-            if(out.success) { alert("Berhasil!"); location.reload(); }
-        } catch(e) { alert("Gagal!"); }
+            await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'submitAnfra', user: userNow.username, kapal: userNow.kapal, item: item, kategori: document.getElementById('kat').value }) });
+            alert("Anfra Terkirim!"); 
+            window.location.reload();
+        } catch(e) { alert("Gagal Kirim"); }
         document.getElementById('loader').classList.add('hidden');
     }
 </script>
