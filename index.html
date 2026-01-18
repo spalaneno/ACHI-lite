@@ -1,90 +1,126 @@
-/**
- * ACHI - Integrated Management System 2026
- * Developer: Gemini for Boss
- */
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ACHI - Premium Integration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --achi-red: #ff3131; --bg-black: #050505; }
+        body { background-color: var(--bg-black); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 28px; }
+        .input-premium { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; padding: 1.2rem; width: 100%; transition: 0.3s; font-size: 14px; }
+        .input-premium:focus { border-color: var(--achi-red); box-shadow: 0 0 20px rgba(255,49,49,0.15); }
+        .btn-red { background: linear-gradient(135deg, #ff3131, #8b0000); border-radius: 16px; padding: 1.2rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; width: 100%; transition: 0.3s; cursor: pointer; border: none; color: white; }
+        .btn-red:active { transform: scale(0.96); }
+        .nav-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 25px 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; transition: 0.4s; }
+        .nav-box:active { background: rgba(255,255,255,0.1); transform: scale(0.9); }
+        .nav-box i { font-size: 1.5rem; }
+        .nav-box span { font-size: 9px; font-weight: 800; text-transform: uppercase; color: #71717a; letter-spacing: 0.1em; }
+        .animate-up { animation: fadeInUp 0.6s ease-out forwards; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="antialiased">
 
-function doGet() {
-  return HtmlService.createHtmlOutputFromFile('index')
-    .setTitle("ACHI System")
-    .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no')
-    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
-}
+    <div id="loader" class="hidden fixed inset-0 flex items-center justify-center bg-black z-[999]">
+        <div class="flex flex-col items-center">
+            <div class="w-12 h-12 border-4 border-t-red-600 border-white/10 rounded-full animate-spin"></div>
+            <p class="mt-4 text-[10px] tracking-[0.4em] text-zinc-500 font-bold uppercase">ACHI SECURE SYNC...</p>
+        </div>
+    </div>
 
-// Fungsi untuk memanggil file HTML lain ke dalam index
-function include(filename) {
-  return HtmlService.createHtmlOutputFromFile(filename).getContent();
-}
+    <div id="app-container">
+        <section id="login-page" class="min-h-screen flex items-center justify-center p-8">
+            <div class="w-full max-w-sm">
+                <div class="text-center mb-12">
+                    <h1 class="text-4xl font-black italic tracking-tighter text-red-600 drop-shadow-2xl">ACHI</h1>
+                    <p class="text-[9px] font-bold text-zinc-500 uppercase tracking-[0.5em] mt-2">Marine Management System</p>
+                </div>
+                <div class="glass-card p-10 shadow-2xl">
+                    <div class="space-y-4">
+                        <input type="text" id="username" placeholder="Username" class="input-premium">
+                        <input type="password" id="password" placeholder="Password" class="input-premium">
+                        <button onclick="handleLogin()" class="btn-red mt-4">Login System</button>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-function doPost(e) {
-  var action = e.parameter.action;
-  var payload = JSON.parse(e.postData.contents);
-  
-  if (action === 'login') {
-    return ContentService.createTextOutput(JSON.stringify(loginProcess(payload)))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
+        <div id="dashboard-content" class="hidden min-h-screen pb-20"></div>
+    </div>
 
-function loginProcess(data) {
-  try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var userSheet = ss.getSheetByName("Users");
-    // Deteksi sheet transaksi secara otomatis (cari Data_Log atau sheet pertama)
-    var transSheet = ss.getSheetByName("Data_Log") || ss.getSheets()[0]; 
-    
-    if (!userSheet) return { success: false, message: "Database 'Users' tidak ditemukan!" };
-    
-    var userValues = userSheet.getDataRange().getValues();
-    
-    for (var i = 1; i < userValues.length; i++) {
-      var dbUser = userValues[i][0].toString().trim();
-      var dbPass = userValues[i][1].toString().trim();
-      
-      if (dbUser.toLowerCase() === data.username.toLowerCase() && dbPass === data.password.toString()) {
-        var role = userValues[i][2];
-        var u = dbUser.toUpperCase();
+    <script>
+        // URL WEB APP BOSS SUDAH TERPASANG
+        const API_URL = "https://script.google.com/macros/s/AKfycbwcfT14QtXqRW80Gc4p4GjbFY5xx0O_lrygHh9qPxRe6LSYgT6tSJald-Z4U2GOeJPB/exec"; 
         
-        // Identifikasi Owner Spesifik
-        var isOwner = (role === "Owner" || u === "HENGKY" || u === "ACHI" || u === "CHRISTY NOVALITA PRATIWI");
+        const formatIDR = (v) => "Rp " + new Intl.NumberFormat('id-ID').format(v);
 
-        // Data statistik khusus Owner & Accounting
-        var stats = { pemasukan: 0, pengeluaran: 0 };
-        if (isOwner || role === "Accounting") {
-           stats = calculateTripStats(transSheet);
+        async function handleLogin() {
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+            if(!user || !pass) return;
+
+            document.getElementById('loader').classList.remove('hidden');
+
+            try {
+                const response = await fetch(`${API_URL}?action=login`, {
+                    method: 'POST',
+                    mode: 'no-cors', // Penting untuk Apps Script redirect
+                    body: JSON.stringify({ username: user, password: pass })
+                });
+                
+                // Karena Apps Script redirect, kita coba tarik data ulang jika mode 'no-cors' terkendala
+                const directRes = await fetch(`${API_URL}?action=login`, {
+                    method: 'POST',
+                    body: JSON.stringify({ username: user, password: pass })
+                });
+                const result = await directRes.json();
+
+                if(result.success) {
+                    document.getElementById('login-page').classList.add('hidden');
+                    renderRolePage(result);
+                } else {
+                    alert(result.message);
+                }
+            } catch (e) {
+                alert("Koneksi Error. Pastikan Web App sudah di-deploy 'Anyone'.");
+            } finally {
+                document.getElementById('loader').classList.add('hidden');
+            }
         }
 
-        return {
-          success: true,
-          user: {
-            username: dbUser,
-            role: isOwner ? "Owner" : role,
-            kapal: userValues[i][3],
-            foto: userValues[i][4] || "",
-            saldo: userValues[i][5] || 0,
-            hutang: userValues[i][6] || 0
-          },
-          stats: stats
-        };
-      }
-    }
-    return { success: false, message: "Username atau Password salah!" };
-  } catch (err) {
-    return { success: false, message: "Sistem Error: " + err.message };
-  }
-}
+        async function renderRolePage(res) {
+            let role = res.user.role.toLowerCase();
+            let u = res.user.username.toUpperCase();
+            let fileName = 'crew.html';
 
-function calculateTripStats(sheet) {
-  if (!sheet) return { pemasukan: 0, pengeluaran: 0 };
-  var data = sheet.getDataRange().getValues();
-  var pmsk = 0; var pglr = 0; 
-  for (var i = 1; i < data.length; i++) {
-    var nilai = parseFloat(data[i][9]) || 0; // Kolom J (Harga Total)
-    var kategori = data[i][5].toString().toLowerCase(); // Kolom F (Keterangan)
-    if (kategori.includes("jual") || kategori.includes("masuk") || kategori.includes("setoran")) {
-      pmsk += nilai;
-    } else {
-      pglr += nilai;
-    }
-  }
-  return { pemasukan: pmsk, pengeluaran: pglr };
-}
+            // Logika Penentuan File Root sesuai instruksi Boss
+            if (role === 'owner' || u === 'HENGKY' || u === 'ACHI' || u === 'CHRISTY NOVALITA PRATIWI') fileName = 'owner.html';
+            else if (role === 'accounting') fileName = 'accounting.html';
+            else if (role === 'purchasing') fileName = 'purchasing.html';
+            else if (role === 'kapten') fileName = 'kapten.html';
+            else if (role === 'kkm') fileName = 'kkm.html';
+
+            try {
+                const response = await fetch(fileName);
+                const html = await response.text();
+                const dash = document.getElementById('dashboard-content');
+                dash.innerHTML = html;
+                dash.classList.remove('hidden');
+
+                // Inisialisasi Data User Global
+                if(document.getElementById('displayUser')) document.getElementById('displayUser').innerText = res.user.username;
+                if(document.getElementById('displayPhoto') && res.user.foto) document.getElementById('displayPhoto').src = res.user.foto;
+                
+                // Jalankan fungsi pengisian data spesifik role
+                if(typeof initRoleData === "function") initRoleData(res);
+            } catch (e) {
+                alert("File " + fileName + " tidak ditemukan di root repository.");
+            }
+        }
+    </script>
+</body>
+</html>
