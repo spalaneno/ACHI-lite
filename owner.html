@@ -1,56 +1,40 @@
 <div class="animate-up">
     <header class="p-8 flex justify-between items-center">
         <div>
-            <p class="text-[10px] font-extrabold text-red-600 uppercase tracking-[0.4em] mb-1">Executive Access</p>
-            <h2 id="displayUser" class="text-2xl font-black tracking-tight"></h2>
+            <p class="text-[10px] font-extrabold text-red-600 uppercase tracking-[0.4em] mb-1">Executive Dashboard</p>
+            <h2 id="displayUser" class="text-2xl font-black"></h2>
         </div>
-        <img id="displayPhoto" class="w-14 h-14 rounded-2xl border-2 border-red-600 p-0.5 object-cover shadow-lg shadow-red-600/20">
+        <img id="displayPhoto" class="w-14 h-14 rounded-2xl border-2 border-red-600 p-0.5 object-cover">
     </header>
 
     <div class="px-8 space-y-6">
-        <div class="glass-card p-8 border-l-4 border-red-600 shadow-2xl bg-gradient-to-br from-zinc-900 to-black">
-            <p class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest mb-2">Total Laba Trip Ini</p>
-            <h3 id="valPemasukan" class="text-4xl font-black text-white tracking-tighter">Rp 0</h3>
-            <div class="mt-6 pt-6 border-t border-white/5 flex justify-between items-center">
-                <div>
-                    <p class="text-[8px] text-zinc-500 uppercase font-bold">Pengeluaran</p>
-                    <p id="valPengeluaran" class="text-xs font-bold text-red-500"></p>
-                </div>
-                <div class="text-right">
-                    <p class="text-[8px] text-zinc-500 uppercase font-bold">Status Kas</p>
-                    <p class="text-xs font-bold text-green-500 uppercase italic">Sehat</p>
-                </div>
+        <div class="glass-card p-8 border-l-4 border-red-600 shadow-2xl">
+            <p class="text-zinc-500 text-[10px] font-bold uppercase mb-2">Total Laba Trip</p>
+            <h3 id="valPemasukan" class="text-4xl font-black text-white">Rp 0</h3>
+            <div class="mt-4 pt-4 border-t border-white/5 flex justify-between">
+                <span class="text-[9px] font-bold text-zinc-500 uppercase">Pengeluaran</span>
+                <span id="valPengeluaran" class="text-[9px] font-bold text-red-500 uppercase">Rp 0</span>
             </div>
         </div>
 
-        <div>
-            <p class="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.3em] mb-6 px-1">Kontrol Manajemen</p>
-            <div class="grid grid-cols-3 gap-4">
-                <div class="nav-box"><i class="fas fa-chart-line text-red-500"></i><span>Analisa</span></div>
-                <div class="nav-box"><i class="fas fa-vault text-red-500"></i><span>Brankas</span></div>
-                <div class="nav-box"><i class="fas fa-users-gear text-red-500"></i><span>Crew</span></div>
-                <div class="nav-box"><i class="fas fa-ship text-red-500"></i><span>Armada</span></div>
-                <div class="nav-box"><i class="fas fa-file-contract text-red-500"></i><span>Laporan</span></div>
-                <div onclick="location.reload()" class="nav-box"><i class="fas fa-power-off text-zinc-700"></i><span>Logout</span></div>
-            </div>
+        <div class="grid grid-cols-3 gap-4">
+            <div class="nav-box"><i class="fas fa-chart-line text-red-500"></i><span>Analisa</span></div>
+            <div class="nav-box"><i class="fas fa-vault text-red-500"></i><span>Brankas</span></div>
+            <div class="nav-box"><i class="fas fa-users-gear text-red-500"></i><span>Crew</span></div>
+            <div class="nav-box"><i class="fas fa-ship text-red-500"></i><span>Armada</span></div>
+            <div class="nav-box"><i class="fas fa-file-contract text-red-500"></i><span>Laporan</span></div>
+            <div onclick="logout()" class="nav-box"><i class="fas fa-power-off text-zinc-700"></i><span>Logout</span></div>
         </div>
     </div>
 </div>
-
 <script>
-    // Fungsi pengisian data otomatis untuk Owner
     function initRoleData(res) {
         document.getElementById('valPemasukan').innerText = formatIDR(res.stats.pemasukan);
         document.getElementById('valPengeluaran').innerText = formatIDR(res.stats.pengeluaran);
-        
-        // Custom Greeting untuk Boss
         const u = res.user.username.toUpperCase();
         if(u === 'HENGKY') {
             document.querySelector('p.text-red-600').innerText = "Selamat Datang CEO";
             document.getElementById('displayUser').innerText = "Pak CEO";
-        } else if(u === 'ACHI' || u === 'CHRISTY NOVALITA PRATIWI') {
-            document.querySelector('p.text-red-600').innerText = "Dashboard Owner";
-            document.getElementById('displayUser').innerText = "Boss Achy";
         }
     }
 </script>
