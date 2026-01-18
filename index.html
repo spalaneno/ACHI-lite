@@ -12,15 +12,10 @@
         body { background-color: var(--bg-black); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
         .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 28px; }
         .input-premium { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; outline: none; padding: 1.2rem; width: 100%; transition: 0.3s; font-size: 14px; }
-        .input-premium:focus { border-color: var(--achi-red); box-shadow: 0 0 20px rgba(255,49,49,0.15); }
         .btn-red { background: linear-gradient(135deg, #ff3131, #8b0000); border-radius: 16px; padding: 1.2rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; width: 100%; transition: 0.3s; cursor: pointer; border: none; color: white; }
         .nav-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 25px 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; transition: 0.4s; cursor: pointer; }
-        .nav-box:active { transform: scale(0.9); background: rgba(255,255,255,0.1); }
-        .nav-box i { font-size: 1.5rem; }
-        .nav-box span { font-size: 9px; font-weight: 800; text-transform: uppercase; color: #71717a; letter-spacing: 0.1em; }
-        .animate-up { animation: fadeInUp 0.6s ease-out forwards; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         .hidden { display: none !important; }
+        #loader { transition: opacity 0.5s; }
     </style>
 </head>
 <body>
@@ -35,38 +30,50 @@
         <section id="login-page" class="hidden min-h-screen flex items-center justify-center p-8">
             <div class="w-full max-w-sm">
                 <div class="text-center mb-12">
-                    <h1 class="text-4xl font-black italic text-red-600">ACHI</h1>
+                    <h1 class="text-4xl font-black italic text-red-600 tracking-tighter">ACHI</h1>
                 </div>
-                <div class="glass-card p-10">
+                <div class="glass-card p-10 shadow-2xl">
                     <div class="space-y-4">
                         <input type="text" id="username" placeholder="Username" class="input-premium">
                         <input type="password" id="password" placeholder="Password" class="input-premium">
-                        <button onclick="handleLogin()" id="loginBtn" class="btn-red mt-4 uppercase">Login</button>
+                        <button onclick="handleLogin()" id="loginBtn" class="btn-red mt-4">MASUK</button>
                     </div>
                 </div>
+                <button onclick="window.forceLogout()" class="w-full mt-8 text-[10px] text-zinc-600 font-bold uppercase tracking-widest">Clear Cache System</button>
             </div>
         </section>
+
         <div id="dashboard-content" class="hidden min-h-screen pb-20"></div>
     </div>
 
     <script>
+        // MASUKKAN URL GOOGLE SCRIPT BOSS DI SINI
         const API_URL = "https://script.google.com/macros/s/AKfycbwcfT14QtXqRW80Gc4p4GjbFY5xx0O_lrygHh9qPxRe6LSYgT6tSJald-Z4U2GOeJPB/exec";
+
         const formatIDR = (v) => "Rp " + new Intl.NumberFormat('id-ID').format(v);
 
-        // Fungsi Logout Global yang dipanggil dari file role
-        window.appLogout = function() {
-            if(confirm("Keluar dari sistem ACHI, Boss?")) {
-                localStorage.removeItem('achi_user_session');
-                window.location.reload();
+        // FUNGSI LOGOUT GLOBAL (Ditaruh paling atas agar selalu siap)
+        window.forceLogout = function() {
+            if(confirm("Boss, yakin ingin keluar & bersihkan sesi?")) {
+                localStorage.clear();
+                sessionStorage.clear();
+                // Redirect ke halaman utama dengan parameter unik untuk mematikan cache
+                window.location.href = window.location.pathname + '?v=' + Date.now();
             }
         };
 
         window.onload = function() {
-            const saved = localStorage.getItem('achi_user_session');
-            if (saved) renderRolePage(JSON.parse(saved));
-            else {
-                document.getElementById('login-page').classList.remove('hidden');
-                document.getElementById('loader').classList.add('hidden');
+            try {
+                const saved = localStorage.getItem('achi_user_session');
+                if (saved) {
+                    renderRolePage(JSON.parse(saved));
+                } else {
+                    document.getElementById('login-page').classList.remove('hidden');
+                    document.getElementById('loader').style.display = 'none';
+                }
+            } catch (e) {
+                console.error("Load Error:", e);
+                window.forceLogout();
             }
         };
 
@@ -74,42 +81,65 @@
             const u = document.getElementById('username').value.trim();
             const p = document.getElementById('password').value.trim();
             if(!u || !p) return;
-            document.getElementById('loader').classList.remove('hidden');
+            
+            document.getElementById('loader').style.display = 'flex';
             try {
-                const res = await fetch(`${API_URL}?action=login`, { method: 'POST', body: JSON.stringify({username:u, password:p}) });
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({action:'login', username:u, password:p})
+                });
                 const out = await res.json();
                 if(out.success) {
                     localStorage.setItem('achi_user_session', JSON.stringify(out));
                     renderRolePage(out);
                     document.getElementById('login-page').classList.add('hidden');
-                } else alert(out.message);
-            } catch(e) { alert("Error Login"); }
-            document.getElementById('loader').classList.add('hidden');
+                } else {
+                    alert(out.message);
+                    document.getElementById('loader').style.display = 'none';
+                }
+            } catch(e) {
+                alert("Gagal koneksi ke server, Boss.");
+                document.getElementById('loader').style.display = 'none';
+            }
         }
 
         async function renderRolePage(res) {
-            document.getElementById('loader').classList.remove('hidden');
-            let role = res.user.role.toLowerCase();
-            let name = res.user.username.toUpperCase();
+            const loader = document.getElementById('loader');
+            loader.style.display = 'flex';
+            
+            let role = (res.user.role || "").toLowerCase();
+            let name = (res.user.username || "").toUpperCase();
             let file = 'crew.html';
 
             if (role === 'owner' || name === 'HENGKY' || name === 'ACHI') file = 'owner.html';
-            else if (role === 'accounting') file = 'accounting.html';
-            else if (role === 'purchasing') file = 'purchasing.html';
             else if (role === 'kapten') file = 'kapten.html';
-            else if (role === 'kkm') file = 'kkm.html';
+            else if (role === 'accounting') file = 'accounting.html';
 
             try {
-                const resp = await fetch(file);
+                // ANTI-CACHE: File dipanggil dengan ID unik setiap kali
+                const resp = await fetch(file + '?v=' + Date.now());
+                if(!resp.ok) throw new Error("File dashboard tidak ditemukan");
+                
                 const html = await resp.text();
                 const dash = document.getElementById('dashboard-content');
                 dash.innerHTML = html;
-                if(document.getElementById('displayUser')) document.getElementById('displayUser').innerText = res.user.username;
-                if(document.getElementById('displayPhoto') && res.user.foto) document.getElementById('displayPhoto').src = res.user.foto;
-                if(typeof initRoleData === "function") initRoleData(res);
+                
+                // Distribusi Data
+                if(window.initRoleData) {
+                    window.initRoleData(res);
+                } else {
+                    // Jika initRoleData belum siap, tunggu sebentar
+                    setTimeout(() => { if(window.initRoleData) window.initRoleData(res); }, 500);
+                }
+                
                 dash.classList.remove('hidden');
-            } catch(e) { window.appLogout(); }
-            document.getElementById('loader').classList.add('hidden');
+            } catch(e) {
+                console.error("Render Error:", e);
+                alert("Dashboard gagal dimuat. Membersihkan sistem...");
+                window.forceLogout();
+            } finally {
+                loader.style.display = 'none';
+            }
         }
     </script>
 </body>
