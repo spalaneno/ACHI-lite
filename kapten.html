@@ -4,34 +4,132 @@
             <p class="text-[10px] font-extrabold text-emerald-500 uppercase tracking-[0.4em] mb-1">Vessel Master</p>
             <h2 id="displayUser" class="text-2xl font-black"></h2>
         </div>
-        <i class="fas fa-anchor text-2xl text-zinc-800"></i>
+        <div class="text-right">
+             <p id="valKapal" class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">-</p>
+             <p class="text-[8px] text-emerald-500 italic">Active Trip</p>
+        </div>
     </header>
 
-    <div class="px-8 space-y-6">
+    <div id="kapten-main-menu" class="px-8 space-y-6">
         <div class="grid grid-cols-2 gap-4">
             <div class="glass-card p-6 border-b-2 border-emerald-500">
-                <p class="text-[9px] font-bold text-zinc-500 uppercase mb-2">Upah</p>
-                <h3 id="valUpah" class="text-sm font-black">Rp 0</h3>
+                <p class="text-[9px] font-bold text-zinc-500 uppercase mb-2">Saldo Upah</p>
+                <h3 id="valUpah" class="text-sm font-black text-white">Rp 0</h3>
             </div>
             <div class="glass-card p-6 border-b-2 border-emerald-500">
-                <p class="text-[9px] font-bold text-zinc-500 uppercase mb-2">Kapal</p>
-                <h3 id="valKapal" class="text-sm font-black text-emerald-500 uppercase tracking-tighter">-</h3>
+                <p class="text-[9px] font-bold text-zinc-500 uppercase mb-2">Status Anfra</p>
+                <h3 class="text-[10px] font-black text-emerald-500 uppercase">Clear</h3>
             </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-4">
-            <div class="nav-box"><i class="fas fa-file-pen text-emerald-500"></i><span>Anfrakan</span></div>
-            <div class="nav-box"><i class="fas fa-map-location-dot text-emerald-500"></i><span>Posisi</span></div>
-            <div class="nav-box"><i class="fas fa-users text-emerald-500"></i><span>Crew</span></div>
-            <div class="nav-box"><i class="fas fa-message text-emerald-500"></i><span>Lapor</span></div>
-            <div class="nav-box"><i class="fas fa-history text-emerald-500"></i><span>Log</span></div>
-            <div onclick="location.reload()" class="nav-box"><i class="fas fa-power-off text-zinc-700"></i><span>Logout</span></div>
+        <div>
+            <p class="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.3em] mb-6 px-1">Menu Operasional</p>
+            <div class="grid grid-cols-3 gap-4">
+                <div onclick="toggleAnfraForm()" class="nav-box border-emerald-500/20">
+                    <i class="fas fa-file-pen text-emerald-500"></i>
+                    <span>Anfrakan</span>
+                </div>
+                <div class="nav-box"><i class="fas fa-map-location-dot text-emerald-500"></i><span>Posisi</span></div>
+                <div class="nav-box"><i class="fas fa-users text-emerald-500"></i><span>Crew</span></div>
+                <div class="nav-box"><i class="fas fa-message text-emerald-500"></i><span>Lapor</span></div>
+                <div class="nav-box"><i class="fas fa-history text-emerald-500"></i><span>Log</span></div>
+                <div onclick="location.reload()" class="nav-box">
+                    <i class="fas fa-power-off text-zinc-700"></i>
+                    <span>Logout</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="anfra-form-container" class="hidden px-8 animate-up pb-20">
+        <div class="flex items-center gap-4 mb-8">
+            <button onclick="toggleAnfraForm()" class="w-10 h-10 glass-card flex items-center justify-center text-zinc-400">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h2 class="text-xl font-black italic uppercase tracking-tighter text-emerald-500">Input Anfrakan</h2>
+        </div>
+
+        <div class="glass-card p-8 space-y-5">
+            <div>
+                <label class="text-[10px] font-bold text-zinc-500 uppercase mb-2 block">Kategori Barang</label>
+                <select id="anfra-kategori" class="input-premium bg-zinc-900 border-zinc-800">
+                    <option value="Suku Cadang">Suku Cadang / Mesin</option>
+                    <option value="Logistik">Logistik / Konsumsi</option>
+                    <option value="Alat Dek">Peralatan Dek</option>
+                    <option value="BBM/Pelumas">BBM & Pelumas</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-[10px] font-bold text-zinc-500 uppercase mb-2 block">Nama Barang & Spesifikasi</label>
+                <textarea id="anfra-item" placeholder="Contoh: Oli Mesin Meditran S 20L (2 Galon)" class="input-premium h-32"></textarea>
+            </div>
+            <div>
+                <label class="text-[10px] font-bold text-zinc-500 uppercase mb-2 block">Urgensi</label>
+                <select id="anfra-urgensi" class="input-premium bg-zinc-900">
+                    <option value="Normal">Normal</option>
+                    <option value="Urgent">Segera (Urgent)</option>
+                    <option value="Darurat">Darurat (A1)</option>
+                </select>
+            </div>
+            <button onclick="submitAnfra()" id="btn-submit-anfra" class="btn-red bg-gradient-to-r from-emerald-600 to-emerald-900 border-none mt-4 shadow-lg shadow-emerald-900/20">
+                Kirim Permintaan
+            </button>
         </div>
     </div>
 </div>
+
 <script>
     function initRoleData(res) {
         document.getElementById('valUpah').innerText = formatIDR(res.user.saldo);
-        document.getElementById('valKapal').innerText = res.user.kapal || "Belum Ada Kapal";
+        document.getElementById('valKapal').innerText = res.user.kapal || "ACHI FLEET";
+        // Simpan data user global untuk submit
+        window.currentUser = res.user;
+    }
+
+    function toggleAnfraForm() {
+        document.getElementById('kapten-main-menu').classList.toggle('hidden');
+        document.getElementById('anfra-form-container').classList.toggle('hidden');
+    }
+
+    async function submitAnfra() {
+        const item = document.getElementById('anfra-item').value.trim();
+        const kategori = document.getElementById('anfra-kategori').value;
+        const urgensi = document.getElementById('anfra-urgensi').value;
+        const btn = document.getElementById('btn-submit-anfra');
+
+        if(!item) { alert("Tolong isi rincian barang, Boss Kapten."); return; }
+
+        document.getElementById('loader').classList.remove('hidden');
+        btn.disabled = true;
+        btn.innerText = "MENGIRIM...";
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'submitAnfra',
+                    user: window.currentUser.username,
+                    kapal: window.currentUser.kapal,
+                    kategori: kategori,
+                    item: item,
+                    urgensi: urgensi
+                })
+            });
+            const result = await response.json();
+
+            if(result.success) {
+                alert("Anfrakan berhasil dikirim ke Purchasing & Boss.");
+                document.getElementById('anfra-item').value = "";
+                toggleAnfraForm();
+            } else {
+                alert("Gagal kirim: " + result.message);
+            }
+        } catch (e) {
+            alert("Sistem Error atau URL API salah.");
+        } finally {
+            document.getElementById('loader').classList.add('hidden');
+            btn.disabled = false;
+            btn.innerText = "Kirim Permintaan";
+        }
     }
 </script>
