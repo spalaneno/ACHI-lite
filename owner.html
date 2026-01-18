@@ -1,54 +1,172 @@
 <div class="animate-up">
     <header class="p-8 flex justify-between items-center">
         <div>
-            <p id="sapaan" class="text-[10px] font-extrabold text-red-600 uppercase tracking-[0.4em] mb-1">Executive Dashboard</p>
+            <p id="txtWelcome" class="text-[10px] font-extrabold text-red-600 uppercase tracking-[0.4em] mb-1">Executive Dashboard</p>
             <h2 id="displayUser" class="text-2xl font-black italic">BOSS ACHY</h2>
         </div>
-        <img id="displayPhoto" src="https://via.placeholder.com/150" class="w-14 h-14 rounded-2xl border-2 border-red-600 object-cover">
+        <img id="displayPhoto" src="https://via.placeholder.com/150" class="w-14 h-14 rounded-2xl border-2 border-red-600 object-cover shadow-lg">
     </header>
 
-    <div class="px-8 space-y-6">
-        <div class="glass-card p-8 border-l-4 border-red-600 shadow-2xl bg-zinc-900/40">
-            <p class="text-zinc-500 text-[10px] font-bold uppercase mb-2">Total Pemasukan</p>
-            <h3 id="valPemasukan" class="text-4xl font-black text-white tracking-tighter">Rp 0</h3>
+    <div id="owner-main" class="px-8 space-y-6">
+        <div class="glass-card p-8 border-l-4 border-red-600 bg-zinc-900/40">
+            <p class="text-zinc-500 text-[10px] font-bold uppercase mb-2 italic">Cash Flow Summary</p>
+            <h3 id="valPemasukan" class="text-4xl font-black text-white italic tracking-tighter">Rp 0</h3>
             <div class="mt-4 pt-4 border-t border-white/5 flex justify-between">
-                <span class="text-[9px] font-bold text-zinc-500 uppercase">Operational Cost</span>
+                <span class="text-[9px] font-bold text-zinc-500 uppercase">Total Expenses</span>
                 <span id="valPengeluaran" class="text-[9px] font-bold text-red-500 uppercase">Rp 0</span>
             </div>
         </div>
 
         <div class="grid grid-cols-3 gap-4">
-            <div onclick="alert('Fitur Rekap Segera Siap!')" class="nav-box border border-red-600/20 bg-red-600/5">
+            <div onclick="openRekap()" class="nav-box border border-red-600/20 bg-red-600/5 hover:bg-red-600/10 transition-all">
                 <i class="fas fa-chart-line text-red-600"></i>
-                <span class="text-white">Rekap</span>
+                <span class="text-white">Rekap Trip</span>
             </div>
-            <div class="nav-box"><i class="fas fa-ship text-zinc-600"></i><span>Armada</span></div>
-            <div onclick="window.forceLogout()" class="nav-box border border-red-900/30">
-                <i class="fas fa-power-off text-red-600"></i>
-                <span class="text-red-500 font-bold">Keluar</span>
+            <div onclick="alert('Fitur Approval dalam pengembangan oleh OD')" class="nav-box border border-emerald-900/20 bg-emerald-900/5">
+                <i class="fas fa-check-double text-emerald-500"></i>
+                <span class="text-zinc-500">Approval</span>
+            </div>
+            <div onclick="window.forceLogout()" class="nav-box border border-zinc-800">
+                <i class="fas fa-power-off text-zinc-600"></i>
+                <span class="text-zinc-600 font-bold">Keluar</span>
             </div>
         </div>
+    </div>
+
+    <div id="rekap-view" class="hidden px-8 animate-up">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-4">
+                <button onclick="closeRekap()" class="w-10 h-10 glass-card flex items-center justify-center text-zinc-400">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2 class="text-xl font-black italic uppercase text-white">Laporan Rekap</h2>
+            </div>
+            <div class="text-right">
+                <p class="text-[8px] font-bold text-zinc-500 uppercase">Estimasi Profit</p>
+                <p id="totalProfitRekap" class="text-sm font-black text-emerald-500">Rp 0</p>
+            </div>
+        </div>
+
+        <div class="glass-card p-4 mb-6 grid grid-cols-2 gap-3">
+            <div>
+                <label class="text-[8px] font-bold text-zinc-500 uppercase mb-1 block ml-1">Pilih Kapal</label>
+                <select id="selKapal" onchange="renderRekap()" class="input-premium bg-zinc-900 border-none text-[11px] py-2 px-3 h-10"></select>
+            </div>
+            <div>
+                <label class="text-[8px] font-bold text-zinc-500 uppercase mb-1 block ml-1">Filter Trip</label>
+                <select id="selTrip" onchange="renderRekap()" class="input-premium bg-zinc-900 border-none text-[11px] py-2 px-3 h-10">
+                    <option value="Semua">Semua Trip</option>
+                    <option value="1">Trip 1</option>
+                    <option value="2">Trip 2</option>
+                    <option value="3">Trip 3</option>
+                    <option value="4">Trip 4</option>
+                    <option value="5">Trip 5</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="listRekap" class="space-y-4 pb-10"></div>
     </div>
 </div>
 
 <script>
-    // Fungsi ini dipanggil otomatis oleh index.html
+    var cacheDetails = { p: [], k: [] };
+
     window.initRoleData = function(res) {
-        if(!res) return;
+        if(!res || !res.user) return;
         
-        // Update Saldo
-        if(document.getElementById('valPemasukan')) 
-            document.getElementById('valPemasukan').innerText = formatIDR(res.stats.pemasukan || 0);
-        if(document.getElementById('valPengeluaran')) 
-            document.getElementById('valPengeluaran').innerText = formatIDR(res.stats.pengeluaran || 0);
-        
-        // Update Identitas
-        const name = (res.user.username || "").toUpperCase();
-        if(name === 'HENGKY') {
-            document.getElementById('sapaan').innerText = "Selamat Datang CEO";
+        // Stats Utama
+        document.getElementById('valPemasukan').innerText = formatIDR(res.stats.pemasukan || 0);
+        document.getElementById('valPengeluaran').innerText = formatIDR(res.stats.pengeluaran || 0);
+
+        // Identitas
+        const user = res.user.username.toUpperCase();
+        if(user === "HENGKY") {
+            document.getElementById('txtWelcome').innerText = "Selamat Datang CEO";
             document.getElementById('displayUser').innerText = "PAK CEO";
         }
-        
         if(res.user.foto) document.getElementById('displayPhoto').src = res.user.foto;
+
+        // Simpan Data ke Cache
+        cacheDetails.p = res.details ? (res.details.pemasukan || []) : [];
+        cacheDetails.k = res.details ? (res.details.pengeluaran || []) : [];
+
+        // Isi Dropdown Kapal Otomatis
+        const sel = document.getElementById('selKapal');
+        if(sel) {
+            sel.innerHTML = '<option value="Semua">Semua Kapal</option>';
+            const kapals = [...new Set(cacheDetails.p.map(x => x.kapal))];
+            kapals.forEach(k => { if(k) sel.innerHTML += `<option value="${k}">${k}</option>`; });
+        }
     };
+
+    function openRekap() {
+        document.getElementById('owner-main').classList.add('hidden');
+        document.getElementById('rekap-view').classList.remove('hidden');
+        renderRekap();
+    }
+
+    function closeRekap() {
+        document.getElementById('rekap-view').classList.add('hidden');
+        document.getElementById('owner-main').classList.remove('hidden');
+    }
+
+    function renderRekap() {
+        const list = document.getElementById('listRekap');
+        const filterK = document.getElementById('selKapal').value;
+        const filterT = document.getElementById('selTrip').value;
+        const profitLabel = document.getElementById('totalProfitRekap');
+        
+        list.innerHTML = "";
+        let totalP = 0;
+        let totalK = 0;
+
+        // Gabungkan & Filter
+        const all = [
+            ...cacheDetails.p.map(x => ({...x, type:'IN'})),
+            ...cacheDetails.k.map(x => ({...x, type:'OUT'}))
+        ].filter(x => 
+            (filterK === "Semua" || x.kapal === filterK) && 
+            (filterT === "Semua" || x.trip == filterT)
+        );
+
+        // Sorting Berdasarkan Tanggal (Terbaru di atas)
+        all.sort((a,b) => new Date(b.tanggal.split('/').reverse().join('-')) - new Date(a.tanggal.split('/').reverse().join('-')));
+
+        if(all.length === 0) {
+            list.innerHTML = '<div class="glass-card p-10 text-center opacity-30 text-[10px] font-bold uppercase tracking-widest">Tidak ada data transaksi</div>';
+            profitLabel.innerText = "Rp 0";
+            return;
+        }
+
+        all.forEach(item => {
+            const isIN = item.type === 'IN';
+            if(isIN) totalP += Number(item.jumlah); else totalK += Number(item.jumlah);
+
+            const card = document.createElement('div');
+            card.className = `glass-card p-5 border-l-4 ${isIN ? 'border-emerald-500' : 'border-red-500'} animate-up`;
+            card.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                             <span class="text-[7px] font-black bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded uppercase tracking-tighter">${item.kapal}</span>
+                             <span class="text-[7px] font-black bg-zinc-800 text-red-500 px-1.5 py-0.5 rounded uppercase tracking-tighter">TRIP ${item.trip || '-'}</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-white italic leading-tight">${item.keterangan || 'Tanpa Keterangan'}</h4>
+                        <p class="text-[9px] text-zinc-500 mt-1 font-medium">${item.tanggal}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-black ${isIN ? 'text-emerald-500' : 'text-red-500'}">${isIN ? '+' : '-'}${formatIDR(item.jumlah).replace('Rp ','')}</p>
+                        <i class="fas ${isIN ? 'fa-arrow-trend-up text-emerald-900/30' : 'fa-arrow-trend-down text-red-900/30'} text-[10px] mt-1"></i>
+                    </div>
+                </div>
+            `;
+            list.appendChild(card);
+        });
+
+        // Update Profit di Header Rekap
+        const netProfit = totalP - totalK;
+        profitLabel.innerText = formatIDR(netProfit);
+        profitLabel.className = `text-sm font-black ${netProfit >= 0 ? 'text-emerald-500' : 'text-red-500'}`;
+    }
 </script>
