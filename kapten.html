@@ -1,36 +1,37 @@
 <div class="animate-up">
     <header class="p-8 flex justify-between items-center">
         <div>
-            <p class="text-[10px] font-bold text-emerald-500 uppercase tracking-[0.3em]">Master of Vessel</p>
-            <h2 id="userName" class="text-xl font-black"></h2>
+            <p class="text-[10px] font-extrabold text-emerald-500 uppercase tracking-[0.4em] mb-1">Vessel Master</p>
+            <h2 id="displayUser" class="text-2xl font-black"></h2>
         </div>
         <i class="fas fa-anchor text-2xl text-zinc-800"></i>
     </header>
 
     <div class="px-8 space-y-6">
         <div class="grid grid-cols-2 gap-4">
-            <div class="glass-card p-5 border-b-2 border-emerald-500">
-                <p class="text-[9px] font-bold text-zinc-500 uppercase">Posisi</p>
-                <h3 class="text-sm font-bold">On Duty</h3>
+            <div class="glass-card p-6 border-b-2 border-emerald-500">
+                <p class="text-[9px] font-bold text-zinc-500 uppercase mb-2">Upah</p>
+                <h3 id="valUpah" class="text-sm font-black">Rp 0</h3>
             </div>
-            <div class="glass-card p-5 border-b-2 border-emerald-500">
-                <p class="text-[9px] font-bold text-zinc-500 uppercase">Upah</p>
-                <h3 id="upahKapten" class="text-sm font-bold">Rp 0</h3>
+            <div class="glass-card p-6 border-b-2 border-emerald-500">
+                <p class="text-[9px] font-bold text-zinc-500 uppercase mb-2">Kapal</p>
+                <h3 id="valKapal" class="text-sm font-black text-emerald-500 uppercase tracking-tighter">-</h3>
             </div>
         </div>
 
         <div class="grid grid-cols-3 gap-4">
-            <div class="nav-box"><i class="fas fa-file-signature kapten-text"></i><span>Anfrakan</span></div>
-            <div class="nav-box"><i class="fas fa-map-location-dot kapten-text"></i><span>Log Posisi</span></div>
-            <div class="nav-box"><i class="fas fa-users kapten-text"></i><span>Data ABK</span></div>
-            <div class="nav-box"><i class="fas fa-clock-rotate-left kapten-text"></i><span>History</span></div>
-            <div class="nav-box"><i class="fas fa-message kapten-text"></i><span>Lapor Boss</span></div>
-            <div onclick="location.reload()" class="nav-box"><i class="fas fa-power-off text-zinc-700"></i><span>Keluar</span></div>
+            <div class="nav-box"><i class="fas fa-file-pen text-emerald-500"></i><span>Anfrakan</span></div>
+            <div class="nav-box"><i class="fas fa-map-location-dot text-emerald-500"></i><span>Posisi</span></div>
+            <div class="nav-box"><i class="fas fa-users text-emerald-500"></i><span>Crew</span></div>
+            <div class="nav-box"><i class="fas fa-message text-emerald-500"></i><span>Lapor</span></div>
+            <div class="nav-box"><i class="fas fa-history text-emerald-500"></i><span>Log</span></div>
+            <div onclick="location.reload()" class="nav-box"><i class="fas fa-power-off text-zinc-700"></i><span>Logout</span></div>
         </div>
     </div>
 </div>
 <script>
-    window.roleInit = function(res) {
-        document.getElementById('upahKapten').innerText = formatIDR(res.user.saldo);
-    };
+    function initRoleData(res) {
+        document.getElementById('valUpah').innerText = formatIDR(res.user.saldo);
+        document.getElementById('valKapal').innerText = res.user.kapal || "Belum Ada Kapal";
+    }
 </script>
